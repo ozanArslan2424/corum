@@ -30,4 +30,9 @@ export class HttpError extends HttpErrorAbstract implements HttpErrorInterface {
 		const status = Status.METHOD_NOT_ALLOWED;
 		return new HttpError(msg ?? status.toString(), status);
 	}
+
+	static unprocessableEntity(msg?: string): HttpError {
+		const status = Status.UNPROCESSABLE_ENTITY;
+		return new HttpError(msg ?? status.toString(), status);
+	}
 }

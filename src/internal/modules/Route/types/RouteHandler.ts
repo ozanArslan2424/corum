@@ -2,5 +2,5 @@ import type { RouteContextInterface } from "@/internal/modules/RouteContext/Rout
 import type { MaybePromise } from "@/internal/utils/MaybePromise";
 
 export type RouteHandler<R = unknown, B = unknown, S = unknown, P = unknown> = (
-	context: RouteContextInterface<B, S, P>,
+	context: RouteContextInterface<R, B, S, P>,
 ) => MaybePromise<R>;

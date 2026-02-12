@@ -43,12 +43,15 @@ export abstract class ControllerAbstract<
 	>(
 		definition: RouteDefinition<Path>,
 		handler: RouteHandler<B, R, S, P>,
-		model?: RouteSchemas<B, R, S, P>,
+		schemas?: RouteSchemas<B, R, S, P>,
 	): RouteInterface<Path, B, R, S, P> {
 		return new Route(
 			this.resolveRouteDefinition(definition),
-			handler,
-			model,
+			async (ctx) => {
+				await this.opts?.beforeEach?.(ctx);
+				return handler(ctx);
+			},
+			schemas,
 			this.id,
 		);
 	}

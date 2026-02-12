@@ -1,14 +1,11 @@
 import { Status } from "@/internal/enums/Status";
 import type { HttpRequestInterface } from "@/internal/modules/HttpRequest/HttpRequestInterface";
 import { HttpError } from "@/internal/modules/HttpError/HttpError";
-import type { SchemaType } from "@/internal/modules/Parser/types/SchemaType";
 import { appendEntry } from "@/internal/utils/appendEntry";
 import { getProcessedValue } from "@/internal/utils/getProcessedValue";
-import { Parser } from "@/internal/modules/Parser/Parser";
+import type { Type } from "arktype";
 
 export class RequestParser {
-	private readonly parser = new Parser();
-
 	async getJsonBody(req: HttpRequestInterface): Promise<unknown> {
 		return await req.json();
 	}
@@ -69,12 +66,12 @@ export class RequestParser {
 		return getProcessedValue(text);
 	}
 
-	async getBody<ReqBody = unknown>(
+	async getBody<B = unknown>(
 		req: HttpRequestInterface,
-		schema?: SchemaType<ReqBody>,
-	): Promise<ReqBody> {
+		schema?: Type<B>,
+	): Promise<Type<B>["inferOut"]> {
 		let data;
-		const empty = {} as ReqBody;
+		const empty = {} as Type<B>["inferOut"];
 
 		try {
 			switch (req.normalizedContentType) {
@@ -106,26 +103,24 @@ export class RequestParser {
 					return empty;
 			}
 
-			if (schema) {
-				return this.parser.parse(data, schema, "unprocessable.body") as ReqBody;
-			}
-
-			return data as ReqBody;
+			return this.parse(data, schema);
 		} catch (err) {
 			if (err instanceof SyntaxError) return empty;
 			throw err;
 		}
 	}
 
-	getParams<ReqParams = unknown>(
+	getParams<P = unknown>(
 		path: string,
 		url: URL,
-		schema?: SchemaType<ReqParams>,
-	): ReqParams {
+		schema?: Type<P>,
+	): Type<P>["inferOut"] {
 		const data: Record<string, unknown> = {};
 
 		if (!path.includes(":")) {
-			return data as ReqParams;
+			throw HttpError.unprocessableEntity(
+				"This endpoint doesn't take parameters.",
+			);
 		}
 
 		const defParts = path.split("/");
@@ -141,36 +136,21 @@ export class RequestParser {
 			}
 		}
 
-		if (schema) {
-			return this.parser.parse(
-				data,
-				schema,
-				"unprocessable.search",
-			) as ReqParams;
-		}
-
-		return data as ReqParams;
+		return this.parse(data, schema);
 	}
 
-	getSearch<ReqSearch = unknown>(
-		url: URL,
-		schema?: SchemaType<ReqSearch>,
-	): ReqSearch {
-		const data: Record<string, unknown> = {};
+	getSearch<S = unknown>(url: URL, schema?: Type<S>): Type<S>["inferOut"] {
+		return this.parse(url, schema);
+	}
 
-		for (const [key, value] of url.searchParams.entries()) {
-			const processedValue = getProcessedValue(value);
-			appendEntry(data, key, processedValue);
+	parse<T = unknown>(input: unknown, schema?: Type<T>): Type<T>["inferOut"] {
+		try {
+			if (schema) {
+				return schema.assert(input);
+			}
+			return input as Type<T>["inferOut"];
+		} catch (err) {
+			throw HttpError.unprocessableEntity((err as Error).message);
 		}
-
-		if (schema) {
-			return this.parser.parse(
-				data,
-				schema,
-				"unprocessable.search",
-			) as ReqSearch;
-		}
-
-		return data as ReqSearch;
 	}
 }

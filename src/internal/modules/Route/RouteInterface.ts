@@ -11,7 +11,7 @@ export interface RouteInterface<
 	P = unknown,
 > {
 	handler: RouteHandler<R, B, S, P>;
-	readonly model?: RouteSchemas<R, B, S, P>;
+	readonly schemas?: RouteSchemas<R, B, S, P>;
 	controllerId?: string;
 	get path(): Path;
 	get method(): Method;

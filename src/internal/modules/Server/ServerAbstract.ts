@@ -129,7 +129,7 @@ export abstract class ServerAbstract implements ServerInterface {
 		const ctx = await RouteContext.makeFromRequest(
 			req,
 			route.path,
-			route.model,
+			route.schemas,
 		);
 		const returnData = await route.handler(ctx);
 		if (returnData instanceof HttpResponse) {

@@ -1,6 +1,6 @@
-import type { MaybePromise } from "@/internal/utils/MaybePromise";
+import type { MiddlewareHandler } from "@/internal/modules/Middleware/types/MiddlewareHandler";
 
 export type ControllerOptions<Prefix extends string = string> = {
 	prefix?: Prefix;
-	beforeEach?: <D>(data?: D) => MaybePromise<D> | void;
+	beforeEach?: MiddlewareHandler;
 };

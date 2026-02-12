@@ -1,8 +1,8 @@
-import type { SchemaType } from "@/internal/modules/Parser/types/SchemaType";
+import type { Type } from "arktype";
 
 export type RouteSchemas<R = unknown, B = unknown, S = unknown, P = unknown> = {
-	response?: SchemaType<R>;
-	body?: SchemaType<B>;
-	search?: SchemaType<S>;
-	params?: SchemaType<P>;
+	response?: Type<R>;
+	body?: Type<B>;
+	search?: Type<S>;
+	params?: Type<P>;
 };

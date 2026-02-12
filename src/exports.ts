@@ -22,10 +22,6 @@ export type { HttpResponseInterface as ResponseInterface } from "@/internal/modu
 
 export * from "@/internal/modules/Cors/Cors";
 
-export * from "@/internal/modules/Parser/types/InferSchema";
-
-export * from "@/internal/modules/Parser/types/InferSchema";
-
 export * from "@/internal/modules/Logger/Logger";
 
 export { setLogger } from "@/internal/modules/Logger/LoggerClass";

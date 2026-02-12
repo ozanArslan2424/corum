@@ -18,7 +18,7 @@ export abstract class RouteAbstract<
 	constructor(
 		private readonly definition: RouteDefinition<Path>,
 		handler: RouteHandler<R, B, S, P>,
-		readonly model?: RouteSchemas<R, B, S, P>,
+		readonly schemas?: RouteSchemas<R, B, S, P>,
 		readonly controllerId?: string,
 	) {
 		this.handler = handler;

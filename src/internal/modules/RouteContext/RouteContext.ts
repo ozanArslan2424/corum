@@ -1,6 +1,5 @@
 import { HttpRequest } from "@/internal/modules/HttpRequest/HttpRequest";
 import type { HttpRequestInterface } from "@/internal/modules/HttpRequest/HttpRequestInterface";
-import { HttpResponse } from "@/internal/modules/HttpResponse/HttpResponse";
 import { RequestParser } from "@/internal/modules/Parser/RequestParser";
 import { RouteContextAbstract } from "@/internal/modules/RouteContext/RouteContextAbstract";
 import type { RouteContextInterface } from "@/internal/modules/RouteContext/RouteContextInterface";
@@ -29,9 +28,9 @@ import type { RouteSchemas } from "@/internal/modules/Parser/types/RouteSchemas"
  * cookies = To set the Response {@link Cookies}
  * */
 
-export class RouteContext<B = unknown, S = unknown, P = unknown>
-	extends RouteContextAbstract<B, S, P>
-	implements RouteContextInterface<B, S, P>
+export class RouteContext<R = unknown, B = unknown, S = unknown, P = unknown>
+	extends RouteContextAbstract<R, B, S, P>
+	implements RouteContextInterface<R, B, S, P>
 {
 	static async makeFromRequest<
 		Path extends string = string,
@@ -42,29 +41,18 @@ export class RouteContext<B = unknown, S = unknown, P = unknown>
 	>(
 		request: HttpRequestInterface,
 		path: Path,
-		model?: RouteSchemas<R, B, S, P>,
-	): Promise<RouteContextInterface<B, S, P>> {
+		schemas?: RouteSchemas<R, B, S, P>,
+	): Promise<RouteContextInterface<R, B, S, P>> {
 		const requestParser = new RequestParser();
 
 		const req = new HttpRequest(request);
 		const url = new URL(req.url);
 		const headers = req.headers;
 		const cookies = req.cookies;
-		const body = await requestParser.getBody(req, model?.body);
-		const search = requestParser.getSearch(url, model?.search);
-		const params = requestParser.getParams(path, url, model?.params);
+		const body = await requestParser.getBody(req, schemas?.body);
+		const search = requestParser.getSearch(url, schemas?.search);
+		const params = requestParser.getParams(path, url, schemas?.params);
 
-		const res = new HttpResponse();
-
-		return new RouteContext(
-			req,
-			url,
-			headers,
-			cookies,
-			body,
-			search,
-			params,
-			res,
-		);
+		return new RouteContext(req, url, headers, cookies, body, search, params);
 	}
 }

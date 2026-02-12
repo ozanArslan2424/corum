@@ -1,7 +1,7 @@
 import type { CookiesInterface } from "@/internal/modules/Cookies/CookiesInterface";
 
-import type { CookieOptions } from "@/internal/types/CookieOptions";
-import type { CookiesInit } from "@/internal/types/CookiesInit";
+import type { CookieOptions } from "@/internal/modules/Cookies/types/CookieOptions";
+import type { CookiesInit } from "@/internal/modules/Cookies/types/CookiesInit";
 
 import { capitalize } from "@/internal/utils/capitalize";
 import { getEntries } from "@/internal/utils/getEntries";

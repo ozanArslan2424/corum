@@ -1,7 +1,7 @@
 import { ServerAbstract } from "@/internal/modules/Server/ServerAbstract";
 import type { ServerInterface } from "@/internal/modules/Server/ServerInterface";
-import type { ServeOptions } from "@/internal/types/ServeOptions";
-import type { ServerAppUsingBun } from "@/internal/types/ServerAppUsingBun";
+import type { ServeOptions } from "@/internal/modules/Server/types/ServeOptions";
+import type { ServerAppUsingBun } from "@/internal/modules/Server/types/ServerAppUsingBun";
 
 export class ServerUsingBun extends ServerAbstract implements ServerInterface {
 	private app: ServerAppUsingBun | undefined;
@@ -12,7 +12,6 @@ export class ServerUsingBun extends ServerAbstract implements ServerInterface {
 
 	async close(): Promise<void> {
 		this.logger.log("Shutting down...");
-		await this.databaseClient?.disconnect();
 		this.app?.stop();
 		process.exit(0);
 	}
@@ -22,7 +21,6 @@ export class ServerUsingBun extends ServerAbstract implements ServerInterface {
 			port: options.port,
 			hostname: options.hostname,
 			fetch: options.fetch,
-			routes: options.staticPages,
 		});
 	}
 }

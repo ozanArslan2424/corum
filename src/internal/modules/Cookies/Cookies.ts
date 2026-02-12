@@ -1,11 +1,11 @@
 import { CookiesAbstract } from "@/internal/modules/Cookies/CookiesAbstract";
 import { RuntimeOptions } from "@/internal/enums/RuntimeOptions";
-import { getRuntime } from "@/internal/global/getRuntime";
 import type { CookiesInterface } from "@/internal/modules/Cookies/CookiesInterface";
 import { CookiesUsingBun } from "@/internal/modules/Cookies/CookiesUsingBun";
 import { CookiesUsingMap } from "@/internal/modules/Cookies/CookiesUsingMap";
-import type { CookieOptions } from "@/internal/types/CookieOptions";
-import type { CookiesInit } from "@/internal/types/CookiesInit";
+import type { CookieOptions } from "@/internal/modules/Cookies/types/CookieOptions";
+import type { CookiesInit } from "@/internal/modules/Cookies/types/CookiesInit";
+import { getRuntime } from "@/internal/modules/Server/getRuntime";
 
 /** Simple cookie map/jar to collect and manipulate cookies. */
 

@@ -1,15 +1,17 @@
-import type { ConfigValueParser } from "@/internal/types/ConfigValueParser";
-import type { ConfigEnvKey } from "@/internal/types/ConfigEnvKey";
-import { getRuntime } from "@/internal/global/getRuntime";
-import { RuntimeOptions } from "@/internal/enums/RuntimeOptions";
+import type { ConfigValueParser } from "@/internal/modules/Config/types/ConfigValueParser";
+import type { ConfigEnvKey } from "@/internal/modules/Config/types/ConfigEnvKey";
 
 export class Config {
 	static get env() {
-		return getRuntime() === RuntimeOptions.bun
-			? Bun.env
-			: typeof process !== "undefined" && process?.env
-				? process.env
-				: {};
+		if (typeof Bun !== "undefined") {
+			return Bun.env;
+		}
+
+		if (typeof process !== "undefined" && process?.env) {
+			return process.env;
+		}
+
+		return {};
 	}
 
 	static get<T = string>(
@@ -19,11 +21,13 @@ export class Config {
 		const value = this.env[key];
 		if (value !== undefined && value !== "") {
 			return opts?.parser ? opts?.parser(value) : (value as T);
-		} else if (opts?.fallback !== undefined) {
-			return opts?.fallback;
-		} else {
-			throw new Error(`${key} doesn't exist in env`);
 		}
+
+		if (opts?.fallback !== undefined) {
+			return opts?.fallback;
+		}
+
+		throw new Error(`${key} doesn't exist in env`);
 	}
 
 	static set(key: string, value: string) {

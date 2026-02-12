@@ -4,9 +4,8 @@ import { pathMaker } from "../utils/pathMaker";
 import z from "zod";
 import { Status } from "@/internal/enums/Status";
 import { Route } from "@/internal/modules/Route/Route";
-import { Server } from "@/exports";
+import { testServer } from "test/utils/testServer";
 
-const s = new Server({});
 const prefix = "/request-params/zod";
 const path = pathMaker(prefix);
 const req = reqMaker(prefix);
@@ -47,7 +46,9 @@ describe("Request Params - Zod", () => {
 			},
 		);
 		const param = "hello";
-		const res = await s.handle(req(`/string/${param}`, { method: "GET" }));
+		const res = await testServer.handle(
+			req(`/string/${param}`, { method: "GET" }),
+		);
 		expect(res.status).toBe(200);
 		expect(await res.text()).toBe(param);
 	});
@@ -61,7 +62,9 @@ describe("Request Params - Zod", () => {
 			},
 		);
 		const param = 8;
-		const res = await s.handle(req(`/number/${param}`, { method: "GET" }));
+		const res = await testServer.handle(
+			req(`/number/${param}`, { method: "GET" }),
+		);
 		expect(res.status).toBe(200);
 		expect(await res.text().then((data) => parseInt(data))).toBe(param);
 	});
@@ -75,7 +78,9 @@ describe("Request Params - Zod", () => {
 			},
 		);
 		const param = true;
-		const res = await s.handle(req(`/boolean/${param}`, { method: "GET" }));
+		const res = await testServer.handle(
+			req(`/boolean/${param}`, { method: "GET" }),
+		);
 		expect(res.status).toBe(200);
 		expect(await res.text().then((data) => data === "true")).toBe(param);
 	});
@@ -90,7 +95,7 @@ describe("Request Params - Zod", () => {
 		);
 		const userId = "user123";
 		const postId = 456;
-		const res = await s.handle(
+		const res = await testServer.handle(
 			req(`/multiple/${userId}/${postId}`, { method: "GET" }),
 		);
 		expect(res.status).toBe(200);
@@ -107,7 +112,7 @@ describe("Request Params - Zod", () => {
 			},
 		);
 		const validId = "hello";
-		const res = await s.handle(
+		const res = await testServer.handle(
 			req(`/constraints/${validId}`, { method: "GET" }),
 		);
 		expect(res.status).toBe(200);
@@ -123,7 +128,7 @@ describe("Request Params - Zod", () => {
 			},
 		);
 		const invalidId = "s";
-		const res = await s.handle(
+		const res = await testServer.handle(
 			req(`/constraints-invalid/${invalidId}`, { method: "GET" }),
 		);
 		expect(res.status).toBe(Status.UNPROCESSABLE_ENTITY);
@@ -134,7 +139,9 @@ describe("Request Params - Zod", () => {
 			params: uuidSchema,
 		});
 		const uuid = "123e4567-e89b-12d3-a456-426614174000";
-		const res = await s.handle(req(`/uuid/${uuid}`, { method: "GET" }));
+		const res = await testServer.handle(
+			req(`/uuid/${uuid}`, { method: "GET" }),
+		);
 		expect(res.status).toBe(200);
 		expect(await res.text()).toBe(uuid);
 	});
@@ -148,7 +155,7 @@ describe("Request Params - Zod", () => {
 			},
 		);
 		const invalidUuid = "not-a-uuid";
-		const res = await s.handle(
+		const res = await testServer.handle(
 			req(`/uuid-invalid/${invalidUuid}`, { method: "GET" }),
 		);
 		expect(res.status).toBe(Status.UNPROCESSABLE_ENTITY);
@@ -163,7 +170,7 @@ describe("Request Params - Zod", () => {
 			},
 		);
 		const email = "test@example.com";
-		const res = await s.handle(
+		const res = await testServer.handle(
 			req(`/email/${encodeURIComponent(email)}`, { method: "GET" }),
 		);
 		expect(res.status).toBe(200);
@@ -179,7 +186,7 @@ describe("Request Params - Zod", () => {
 			},
 		);
 		const invalidEmail = "not-an-email";
-		const res = await s.handle(
+		const res = await testServer.handle(
 			req(`/email-invalid/${encodeURIComponent(invalidEmail)}`, {
 				method: "GET",
 			}),
@@ -196,7 +203,9 @@ describe("Request Params - Zod", () => {
 			},
 		);
 		const validAge = 25;
-		const res = await s.handle(req(`/range/${validAge}`, { method: "GET" }));
+		const res = await testServer.handle(
+			req(`/range/${validAge}`, { method: "GET" }),
+		);
 		expect(res.status).toBe(200);
 		expect(await res.text().then(Number)).toBe(validAge);
 	});
@@ -210,7 +219,7 @@ describe("Request Params - Zod", () => {
 			},
 		);
 		const invalidAge = 200;
-		const res = await s.handle(
+		const res = await testServer.handle(
 			req(`/range-invalid/${invalidAge}`, { method: "GET" }),
 		);
 		expect(res.status).toBe(Status.UNPROCESSABLE_ENTITY);
@@ -225,7 +234,9 @@ describe("Request Params - Zod", () => {
 			},
 		);
 		const status = "active";
-		const res = await s.handle(req(`/literal/${status}`, { method: "GET" }));
+		const res = await testServer.handle(
+			req(`/literal/${status}`, { method: "GET" }),
+		);
 		expect(res.status).toBe(200);
 		expect(await res.text()).toBe(status);
 	});
@@ -239,7 +250,7 @@ describe("Request Params - Zod", () => {
 			},
 		);
 		const invalidStatus = "invalid";
-		const res = await s.handle(
+		const res = await testServer.handle(
 			req(`/literal-invalid/${invalidStatus}`, { method: "GET" }),
 		);
 		expect(res.status).toBe(Status.UNPROCESSABLE_ENTITY);
@@ -256,7 +267,7 @@ describe("Request Params - Zod", () => {
 		const category = "products";
 		const id = "123e4567-e89b-12d3-a456-426614174000";
 		const version = 2;
-		const res = await s.handle(
+		const res = await testServer.handle(
 			req(`/complex/${category}/${id}/${version}`, { method: "GET" }),
 		);
 		expect(res.status).toBe(200);
@@ -273,7 +284,9 @@ describe("Request Params - Zod", () => {
 			},
 		);
 		const date = "2024-01-01";
-		const res = await s.handle(req(`/date/${date}`, { method: "GET" }));
+		const res = await testServer.handle(
+			req(`/date/${date}`, { method: "GET" }),
+		);
 		expect(res.status).toBe(200);
 		expect(await res.text()).toBe(new Date(date).toISOString());
 	});
@@ -287,7 +300,7 @@ describe("Request Params - Zod", () => {
 			},
 		);
 		const invalidDate = "not-a-date";
-		const res = await s.handle(
+		const res = await testServer.handle(
 			req(`/date-invalid/${invalidDate}`, { method: "GET" }),
 		);
 		expect(res.status).toBe(Status.UNPROCESSABLE_ENTITY);
@@ -302,7 +315,9 @@ describe("Request Params - Zod", () => {
 			},
 		);
 		const code = "ABC-1234";
-		const res = await s.handle(req(`/regex/${code}`, { method: "GET" }));
+		const res = await testServer.handle(
+			req(`/regex/${code}`, { method: "GET" }),
+		);
 		expect(res.status).toBe(200);
 		expect(await res.text()).toBe(code);
 	});
@@ -316,7 +331,7 @@ describe("Request Params - Zod", () => {
 			},
 		);
 		const invalidCode = "abc-123";
-		const res = await s.handle(
+		const res = await testServer.handle(
 			req(`/regex-invalid/${invalidCode}`, { method: "GET" }),
 		);
 		expect(res.status).toBe(Status.UNPROCESSABLE_ENTITY);
@@ -332,7 +347,7 @@ describe("Request Params - Zod", () => {
 		);
 		const id = 42;
 		const slugValue = "my-slug-123";
-		const res = await s.handle(
+		const res = await testServer.handle(
 			req(`/custom/${id}/${slugValue}`, { method: "GET" }),
 		);
 		expect(res.status).toBe(200);
@@ -348,7 +363,7 @@ describe("Request Params - Zod", () => {
 				params: requiredSchema,
 			},
 		);
-		const res = await s.handle(req(`/missing/`, { method: "GET" }));
+		const res = await testServer.handle(req(`/missing/`, { method: "GET" }));
 		expect(res.status).toBe(Status.NOT_FOUND);
 	});
 });

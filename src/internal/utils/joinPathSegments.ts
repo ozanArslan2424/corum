@@ -1,8 +1,6 @@
-import type { Endpoint } from "@/internal/types/Endpoint";
-
 export function joinPathSegments<E extends string = string>(
 	...segments: (string | undefined)[]
-): Endpoint<E> {
+): E {
 	const joined = segments
 		.filter(
 			(segment): segment is string =>
@@ -12,5 +10,5 @@ export function joinPathSegments<E extends string = string>(
 		.filter((segment) => segment.length > 0)
 		.join("/");
 
-	return `/${joined}` as Endpoint<E>;
+	return `/${joined}` as E;
 }

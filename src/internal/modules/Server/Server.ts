@@ -1,12 +1,11 @@
-import { getRuntime } from "@/internal/global/getRuntime";
 import type { ServerInterface } from "@/internal/modules/Server/ServerInterface";
-import type { CoreumServerOptions } from "@/internal/types/CoreumServerOptions";
 import { ServerAbstract } from "@/internal/modules/Server/ServerAbstract";
 import { RuntimeOptions } from "@/internal/enums/RuntimeOptions";
 import { ServerUsingBun } from "@/internal/modules/Server/ServerUsingBun";
 import { ServerUsingNode } from "@/internal/modules/Server/ServerUsingNode";
-import type { ServeOptions } from "@/internal/types/ServeOptions";
-import { setServerInstance } from "@/internal/global/ServerInstance";
+import type { ServeOptions } from "@/internal/modules/Server/types/ServeOptions";
+import { getRuntime } from "@/internal/modules/Server/getRuntime";
+import { setServerInstance } from "@/internal/modules/Server/ServerInstance";
 
 /**
  * Server is the entrypoint to the app.
@@ -18,9 +17,9 @@ import { setServerInstance } from "@/internal/global/ServerInstance";
  * */
 
 export class Server extends ServerAbstract implements ServerInterface {
-	constructor(options: CoreumServerOptions) {
-		super(options);
-		this.instance = this.getInstance(options);
+	constructor() {
+		super();
+		this.instance = this.getInstance();
 		setServerInstance(this);
 	}
 
@@ -34,14 +33,14 @@ export class Server extends ServerAbstract implements ServerInterface {
 
 	private instance: ServerInterface;
 
-	private getInstance(options: CoreumServerOptions): ServerInterface {
+	private getInstance(): ServerInterface {
 		const runtime = getRuntime();
 
 		switch (runtime) {
 			case RuntimeOptions.bun:
-				return new ServerUsingBun(options);
+				return new ServerUsingBun();
 			case RuntimeOptions.node:
-				return new ServerUsingNode(options);
+				return new ServerUsingNode();
 			default:
 				throw new Error(`Unsupported runtime: ${runtime}`);
 		}

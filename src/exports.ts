@@ -9,30 +9,26 @@ export { ControllerAbstract as Controller } from "@/internal/modules/Controller/
 export { Cookies } from "@/internal/modules/Cookies/Cookies";
 export type { CookiesInterface } from "@/internal/modules/Cookies/CookiesInterface";
 
-export { CoreumError as Error } from "@/internal/modules/CoreumError/CoreumError";
+export { HttpError as Error } from "@/internal/modules/HttpError/HttpError";
 
-export { CoreumHeaders as Headers } from "@/internal/modules/CoreumHeaders/CoreumHeaders";
-export type { CoreumHeadersInterface as HeadersInterface } from "@/internal/modules/CoreumHeaders/CoreumHeadersInterface";
+export { HttpHeaders as Headers } from "@/internal/modules/HttpHeaders/HttpHeaders";
+export type { HttpHeadersInterface as HeadersInterface } from "@/internal/modules/HttpHeaders/HttpHeadersInterface";
 
-export { CoreumRequest as Request } from "@/internal/modules/CoreumRequest/CoreumRequest";
-export type { CoreumRequestInterface as RequestInterface } from "@/internal/modules/CoreumRequest/CoreumRequestInterface";
+export { HttpRequest as Request } from "@/internal/modules/HttpRequest/HttpRequest";
+export type { HttpRequestInterface as RequestInterface } from "@/internal/modules/HttpRequest/HttpRequestInterface";
 
-export { CoreumResponse as Response } from "@/internal/modules/CoreumResponse/CoreumResponse";
-export type { CoreumResponseInterface as ResponseInterface } from "@/internal/modules/CoreumResponse/CoreumResponseInterface";
+export { HttpResponse as Response } from "@/internal/modules/HttpResponse/HttpResponse";
+export type { HttpResponseInterface as ResponseInterface } from "@/internal/modules/HttpResponse/HttpResponseInterface";
 
 export * from "@/internal/modules/Cors/Cors";
 
-export * from "@/internal/interfaces/DatabaseClientInterface";
+export * from "@/internal/modules/Parser/types/InferSchema";
 
-export { setGlobalPrefix } from "@/internal/global/globalPrefix";
-
-export * from "@/internal/types/InferSchema";
-
-export * from "@/internal/types/InferSchema";
+export * from "@/internal/modules/Parser/types/InferSchema";
 
 export * from "@/internal/modules/Logger/Logger";
 
-export { setLogger } from "@/internal/global/LoggerClass";
+export { setLogger } from "@/internal/modules/Logger/LoggerClass";
 
 export * from "@/internal/modules/Middleware/Middleware";
 

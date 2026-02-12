@@ -1,9 +1,9 @@
-import { makeLogger } from "@/internal/global/LoggerClass";
-import { CoreumError } from "@/internal/modules/CoreumError/CoreumError";
-import type { CoreumErrorInterface } from "@/internal/modules/CoreumError/CoreumErrorInterface";
+import { makeLogger } from "@/internal/modules/Logger/LoggerClass";
+import { HttpError } from "@/internal/modules/HttpError/HttpError";
+import type { HttpErrorInterface } from "@/internal/modules/HttpError/HttpErrorInterface";
 import { Route } from "@/internal/modules/Route/Route";
 import type { RouterInterface } from "@/internal/modules/Router/RouterInterface";
-import type { AnyRoute } from "@/internal/types/AnyRoute";
+import type { AnyRoute } from "@/internal/modules/Route/types/AnyRoute";
 import { joinPathSegments } from "@/internal/utils/joinPathSegments";
 import { patternIsEqual } from "@/internal/utils/patternIsEqual";
 import { textIsDefined } from "@/internal/utils/textIsDefined";
@@ -11,6 +11,7 @@ import { textIsEqual } from "@/internal/utils/textIsEqual";
 import { textSplit } from "@/internal/utils/textSplit";
 
 export abstract class RouterAbstract implements RouterInterface {
+	globalPrefix: string = "";
 	private readonly possibles: string[] = [];
 	protected readonly logger = makeLogger("Router");
 	abstract addRoute(route: AnyRoute): void;
@@ -100,7 +101,7 @@ export abstract class RouterAbstract implements RouterInterface {
 	protected findRouteByPathname(
 		pathname: string,
 		method: string,
-	): AnyRoute | CoreumErrorInterface {
+	): AnyRoute | HttpErrorInterface {
 		const route = this.getRoutes().find((route) => {
 			if (route.path.includes(":")) {
 				return this.isPatternMatch(route, pathname);
@@ -110,13 +111,13 @@ export abstract class RouterAbstract implements RouterInterface {
 		});
 
 		if (route == undefined) {
-			return CoreumError.notFound();
+			return HttpError.notFound();
 		}
 
 		const methodMatch = this.isMethodMatch(route, method);
 
 		if (!methodMatch) {
-			return CoreumError.methodNotAllowed();
+			return HttpError.methodNotAllowed();
 		}
 
 		return route;

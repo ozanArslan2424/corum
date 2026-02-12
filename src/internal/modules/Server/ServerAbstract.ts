@@ -1,66 +1,78 @@
 import { Status } from "@/internal/enums/Status";
-import { makeLogger } from "@/internal/global/LoggerClass";
-import { getRuntime } from "@/internal/global/getRuntime";
+import { makeLogger } from "@/internal/modules/Logger/LoggerClass";
 import type { ServerInterface } from "@/internal/modules/Server/ServerInterface";
-import type { CoreumRequestInterface } from "@/internal/modules/CoreumRequest/CoreumRequestInterface";
-import type { CoreumResponseInterface } from "@/internal/modules/CoreumResponse/CoreumResponseInterface";
-import { CoreumError } from "@/internal/modules/CoreumError/CoreumError";
-import { CoreumRequest } from "@/internal/modules/CoreumRequest/CoreumRequest";
-import { CoreumResponse } from "@/internal/modules/CoreumResponse/CoreumResponse";
-import type { CoreumResponseBody } from "@/internal/types/CoreumResponseBody";
-import type { CoreumServerOptions } from "@/internal/types/CoreumServerOptions";
-import type { ErrorCallback } from "@/internal/types/ErrorCallback";
-import type { FetchCallback } from "@/internal/types/FetchCallback";
-import type { ServeOptions } from "@/internal/types/ServeOptions";
-import { getArrayByteSize } from "@/internal/utils/formatBytes";
-import { RouteContext, type DatabaseClientInterface } from "@/exports";
+import type { HttpRequestInterface } from "@/internal/modules/HttpRequest/HttpRequestInterface";
+import type { HttpResponseInterface } from "@/internal/modules/HttpResponse/HttpResponseInterface";
+import { HttpError } from "@/internal/modules/HttpError/HttpError";
+import { HttpRequest } from "@/internal/modules/HttpRequest/HttpRequest";
+import { HttpResponse } from "@/internal/modules/HttpResponse/HttpResponse";
+import type { HttpResponseBody } from "@/internal/modules/HttpResponse/types/HttpResponseBody";
+import type { RequestHandler } from "@/internal/modules/Server/types/RequestHandler";
+import type { ServeOptions } from "@/internal/modules/Server/types/ServeOptions";
 import type { CorsInterface } from "@/internal/modules/Cors/CorsInterface";
 import type { RouterInterface } from "@/internal/modules/Router/RouterInterface";
 import { Router } from "@/internal/modules/Router/Router";
+import type { ErrorHandler } from "@/internal/modules/Server/types/ErrorHandler";
+import { RouteContext } from "@/internal/modules/RouteContext/RouteContext";
+import { Cors } from "@/internal/modules/Cors/Cors";
+import type { CorsOptions } from "@/internal/modules/Cors/types/CorsOptions";
+import type { MaybePromise } from "@/internal/utils/MaybePromise";
 
 export abstract class ServerAbstract implements ServerInterface {
-	protected readonly logger = makeLogger("Coreum");
-
-	constructor(protected readonly options: CoreumServerOptions) {
-		if (options.onError) this.handleError = options.onError;
-		if (options.onNotFound) this.handleNotFound = options.onNotFound;
-	}
-
 	abstract serve(options: ServeOptions): void;
 	abstract close(): Promise<void>;
 
+	protected readonly logger = makeLogger("Http");
 	readonly router: RouterInterface = new Router();
 	protected cors: CorsInterface | undefined;
-	protected databaseClient: DatabaseClientInterface | undefined;
+	handleBeforeListen: (() => MaybePromise<void>) | undefined = undefined;
+	handleBeforeClose: (() => MaybePromise<void>) | undefined = undefined;
 
-	setCors(cors: CorsInterface) {
-		this.cors = cors;
+	setGlobalPrefix(value: string): void {
+		this.router.globalPrefix = value;
 	}
 
-	setDatabaseClient(databaseClient: DatabaseClientInterface) {
-		this.databaseClient = databaseClient;
+	setCors(cors: CorsOptions): void {
+		this.cors = new Cors(cors);
+	}
+
+	setOnError(handler: ErrorHandler): void {
+		this.handleError = handler;
+	}
+
+	setOnNotFound(handler: RequestHandler): void {
+		this.handleNotFound = handler;
+	}
+
+	setOnBeforeExit(handler: () => MaybePromise<void>): void {
+		this.handleBeforeClose = handler;
+	}
+
+	setOnBeforeListen(handler: () => MaybePromise<void>): void {
+		this.handleBeforeListen = handler;
 	}
 
 	async listen(
 		port: ServeOptions["port"],
-		hostname: ServeOptions["hostname"],
+		hostname: ServeOptions["hostname"] = "0.0.0.0",
 	): Promise<void> {
 		try {
 			await this.prepare(port, hostname);
+			await this.handleBeforeListen?.();
 			this.serve({
 				port,
 				hostname,
-				staticPages: this.options.staticPages,
 				fetch: (r) => this.handle(r),
 			});
 		} catch (err) {
 			this.logger.error("Server unable to start:", err);
+			this.handleBeforeClose?.();
 			await this.close();
 		}
 	}
 
 	async handle(request: Request): Promise<Response> {
-		const req = new CoreumRequest(request);
+		const req = new HttpRequest(request);
 		const res = await this.getResponse(req);
 		if (this.cors !== undefined) {
 			this.cors.apply(req, res);
@@ -74,54 +86,45 @@ export abstract class ServerAbstract implements ServerInterface {
 	) {
 		process.on("SIGINT", () => this.close());
 		process.on("SIGTERM", () => this.close());
-
-		const routes = this.router.getRoutes();
-		const startMessages = [
-			`Runtime: ${getRuntime()}`,
-			`Hostname: ${hostname}`,
-			`Port: ${port}`,
-			`Router size: ${getArrayByteSize(routes)}`,
-			`Routes: ${JSON.stringify(
-				routes.map(({ id }) => id),
-				null,
-				2,
-			)}`,
-		];
-
-		this.logger.log(startMessages.join("\n"));
-
-		await this.databaseClient?.connect();
+		this.logger.log(`Listening on ${hostname}:${port}`);
+		this.logger.log(
+			"\n" +
+				this.router
+					.getRoutes()
+					.map((r) => `[${r.method}]\t:\t${r.path}`)
+					.join("\n"),
+		);
 	}
 
-	private handleError: ErrorCallback = async (err) => {
-		let body: CoreumResponseBody = err;
+	private handleError: ErrorHandler = async (err) => {
+		let body: HttpResponseBody = err;
 		let status: number = Status.INTERNAL_SERVER_ERROR;
 
-		if (err instanceof CoreumError) {
+		if (err instanceof HttpError) {
 			body = err.data ?? err.message;
 			status = err.status;
 		}
 
-		return new CoreumResponse(body, { status });
+		return new HttpResponse(body, { status });
 	};
 
-	private handleNotFound: FetchCallback = async (req) => {
-		return new CoreumResponse(`${req.method} on ${req.input} does not exist.`, {
+	private handleNotFound: RequestHandler = async (req) => {
+		return new HttpResponse(`${req.method} on ${req.url} does not exist.`, {
 			status: Status.NOT_FOUND,
 		});
 	};
 
-	private handleMethodNotAllowed: FetchCallback = async (req) => {
-		return new CoreumResponse(`${req.method} does not exist.`, {
+	private handleMethodNotAllowed: RequestHandler = async (req) => {
+		return new HttpResponse(`${req.method} does not exist.`, {
 			status: Status.METHOD_NOT_ALLOWED,
 		});
 	};
 
 	private handlePreflight = async () => {
-		return new CoreumResponse("Departed");
+		return new HttpResponse("Departed");
 	};
 
-	private handleRoute: FetchCallback = async (req) => {
+	private handleRoute: RequestHandler = async (req) => {
 		const route = this.router.findRoute(req.url, req.method);
 		const ctx = await RouteContext.makeFromRequest(
 			req,
@@ -129,11 +132,11 @@ export abstract class ServerAbstract implements ServerInterface {
 			route.model,
 		);
 		const returnData = await route.handler(ctx);
-		if (returnData instanceof CoreumResponse) {
+		if (returnData instanceof HttpResponse) {
 			return returnData;
 		}
 
-		return new CoreumResponse(returnData, {
+		return new HttpResponse(returnData, {
 			status: ctx.res.status,
 			statusText: ctx.res.statusText,
 			headers: ctx.res.headers,
@@ -142,8 +145,8 @@ export abstract class ServerAbstract implements ServerInterface {
 	};
 
 	private async getResponse(
-		req: CoreumRequestInterface,
-	): Promise<CoreumResponseInterface> {
+		req: HttpRequestInterface,
+	): Promise<HttpResponseInterface> {
 		try {
 			if (req.isPreflight) {
 				return await this.handlePreflight();
@@ -151,11 +154,11 @@ export abstract class ServerAbstract implements ServerInterface {
 
 			return await this.handleRoute(req);
 		} catch (err) {
-			if (CoreumError.isStatusOf(err, Status.NOT_FOUND)) {
+			if (HttpError.isStatusOf(err, Status.NOT_FOUND)) {
 				return await this.handleNotFound(req);
 			}
 
-			if (CoreumError.isStatusOf(err, Status.METHOD_NOT_ALLOWED)) {
+			if (HttpError.isStatusOf(err, Status.METHOD_NOT_ALLOWED)) {
 				return await this.handleMethodNotAllowed(req);
 			}
 

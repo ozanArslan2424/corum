@@ -1,26 +1,21 @@
 import { Method } from "@/internal/enums/Method";
 import { ServerAbstract } from "@/internal/modules/Server/ServerAbstract";
 import type { ServerInterface } from "@/internal/modules/Server/ServerInterface";
-import type { ServerAppUsingNode } from "@/internal/types/ServerAppUsingNode";
-import type { ServeOptions } from "@/internal/types/ServeOptions";
+import type { ServerAppUsingNode } from "@/internal/modules/Server/types/ServerAppUsingNode";
+import type { ServeOptions } from "@/internal/modules/Server/types/ServeOptions";
 import http from "node:http";
 
 export class ServerUsingNode extends ServerAbstract implements ServerInterface {
 	private app: ServerAppUsingNode | undefined;
 
 	serve(options: ServeOptions): void {
-		if (options.staticPages) {
-			console.error("Static pages aren't supported in node.");
-		}
-
 		const app = this.createApp(options);
-
+		this.app = app;
 		app.listen(options.port, options.hostname);
 	}
 
 	async close(): Promise<void> {
 		this.logger.log("Shutting down...");
-		await this.databaseClient?.disconnect();
 		this.app?.close();
 		this.app?.closeAllConnections();
 		this.app?.closeIdleConnections();

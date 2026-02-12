@@ -1,6 +1,6 @@
 import { RouterAbstract } from "@/internal/modules/Router/RouterAbstract";
 import type { RouterInterface } from "@/internal/modules/Router/RouterInterface";
-import type { AnyRoute } from "@/internal/types/AnyRoute";
+import type { AnyRoute } from "@/internal/modules/Route/types/AnyRoute";
 
 export class RouterUsingMap extends RouterAbstract implements RouterInterface {
 	private map = new Map<

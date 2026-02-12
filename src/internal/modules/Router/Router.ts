@@ -5,7 +5,7 @@ import type { RouterInterface } from "@/internal/modules/Router/RouterInterface"
 import { RouterUsingArray } from "@/internal/modules/Router/RouterUsingArray";
 import { RouterUsingMap } from "@/internal/modules/Router/RouterUsingMap";
 import { RouterUsingObject } from "@/internal/modules/Router/RouterUsingObject";
-import type { AnyRoute } from "@/internal/types/AnyRoute";
+import type { AnyRoute } from "@/internal/modules/Route/types/AnyRoute";
 
 export class Router extends RouterAbstract implements RouterInterface {
 	private instance: RouterInterface;

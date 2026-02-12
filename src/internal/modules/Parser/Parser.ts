@@ -3,7 +3,7 @@ import type { ParserInterface } from "@/internal/modules/Parser/ParserInterface"
 import { ParserUsingArktype } from "@/internal/modules/Parser/ParserUsingArktype";
 import { ParserUsingZod } from "@/internal/modules/Parser/ParserUsingZod";
 
-import type { SchemaType } from "@/internal/types/SchemaType";
+import type { SchemaType } from "@/internal/modules/Parser/types/SchemaType";
 
 import { Type } from "arktype";
 import { ZodType } from "zod";

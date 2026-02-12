@@ -4,7 +4,7 @@ import { RouteAbstract } from "@/internal/modules/Route/RouteAbstract";
 /**
  * The object to define an endpoint. Can be instantiated with "new" or inside a controller
  * with {@link Controller.route}. The callback recieves the {@link RouteContext} and can
- * return {@link CoreumResponse} or any data. Route instantiation automatically registers
+ * return {@link HttpResponse} or any data. Route instantiation automatically registers
  * to the router.
  * */
 

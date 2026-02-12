@@ -1,10 +1,10 @@
 import { Middleware } from "@/internal/modules/Middleware/Middleware";
 import { describe, it, expect } from "bun:test";
-import { Controller, Server } from "@/exports";
+import { Controller } from "@/index";
 import { reqMaker } from "test/utils/reqMaker";
 import { pathMaker } from "test/utils/pathMaker";
+import { testServer } from "test/utils/testServer";
 
-const s = new Server({});
 const globalPrefix = "/middleware/use-on-controller";
 const path = pathMaker(globalPrefix);
 const req = reqMaker(globalPrefix);
@@ -29,7 +29,7 @@ describe("Middleware Data", () => {
 			};
 		});
 		mw1.use(new TestController("/use"));
-		const res = await s.handle(req("/use/one", { method: "GET" }));
+		const res = await testServer.handle(req("/use/one", { method: "GET" }));
 		expect(await res.json()).toEqual({ hello: "world" });
 	});
 
@@ -40,7 +40,7 @@ describe("Middleware Data", () => {
 			};
 		});
 		mw1.useOnController(new TestController("/one"));
-		const res = await s.handle(req("/one/one", { method: "GET" }));
+		const res = await testServer.handle(req("/one/one", { method: "GET" }));
 		expect(await res.json()).toEqual({ hello: "world" });
 	});
 
@@ -54,7 +54,7 @@ describe("Middleware Data", () => {
 			c.data.ozan = "arslan";
 		});
 		mw1.useOnController(mw2.useOnController(new TestController("/two")));
-		const res = await s.handle(req("/two/two", { method: "GET" }));
+		const res = await testServer.handle(req("/two/two", { method: "GET" }));
 		expect(await res.json()).toEqual({
 			hello: "world",
 			ozan: "arslan",
@@ -71,7 +71,9 @@ describe("Middleware Data", () => {
 			};
 		});
 		mw1.useOnController(mw2.useOnController(new TestController("/three")));
-		const res = await s.handle(req("/three/two/override", { method: "GET" }));
+		const res = await testServer.handle(
+			req("/three/two/override", { method: "GET" }),
+		);
 		expect(await res.json()).toEqual({ hello: "world" });
 	});
 });

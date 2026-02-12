@@ -1,5 +1,5 @@
 import { Status } from "@/internal/enums/Status";
-import { CoreumError } from "@/internal/modules/CoreumError/CoreumError";
+import { HttpError } from "@/internal/modules/HttpError/HttpError";
 import { ParserAbstract } from "@/internal/modules/Parser/ParserAbstract";
 import type { ParserInterface } from "@/internal/modules/Parser/ParserInterface";
 import { type, type Type } from "arktype";
@@ -11,7 +11,7 @@ export class ParserUsingArktype
 	parse<O>(data: unknown, schema: Type<O>, errorMessage: string): O {
 		const result = schema(data);
 		if (result instanceof type.errors) {
-			throw new CoreumError(
+			throw new HttpError(
 				errorMessage,
 				Status.UNPROCESSABLE_ENTITY,
 				result.toTraversalError(),

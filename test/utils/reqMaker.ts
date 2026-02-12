@@ -1,4 +1,4 @@
-import { TEST_PORT } from "../constants/TEST_PORT";
+import { TEST_PORT } from "./TEST_PORT";
 
 export function reqMaker(prefix: string) {
 	return (path: string, init?: RequestInit) =>

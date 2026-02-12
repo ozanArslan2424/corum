@@ -1,5 +1,5 @@
-import type { CookieOptions } from "@/internal/types/CookieOptions";
-import type { CookiesInit } from "@/internal/types/CookiesInit";
+import type { CookieOptions } from "@/internal/modules/Cookies/types/CookieOptions";
+import type { CookiesInit } from "@/internal/modules/Cookies/types/CookiesInit";
 
 export interface CookiesInterface {
 	set(opts: CookieOptions): void;

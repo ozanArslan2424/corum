@@ -1,15 +1,15 @@
-import { getGlobalPrefix } from "@/internal/global/globalPrefix";
 import type { ControllerInterface } from "@/internal/modules/Controller/ControllerInterface";
 import type { RouteInterface } from "@/internal/modules/Route/RouteInterface";
 import { Route } from "@/internal/modules/Route/Route";
-import type { ControllerOptions } from "@/internal/types/ControllerOptions";
-import type { RouteHandler } from "@/internal/types/RouteHandler";
-import type { RouteDefinition } from "@/internal/types/RouteDefinition";
-import type { RouteSchemas } from "@/internal/types/RouteSchemas";
+import type { ControllerOptions } from "@/internal/modules/Controller/types/ControllerOptions";
+import type { RouteHandler } from "@/internal/modules/Route/types/RouteHandler";
+import type { RouteDefinition } from "@/internal/modules/Route/types/RouteDefinition";
+import type { RouteSchemas } from "@/internal/modules/Parser/types/RouteSchemas";
 import { joinPathSegments } from "@/internal/utils/joinPathSegments";
 import { textIsDefined } from "@/internal/utils/textIsDefined";
 import { createHash } from "@/internal/utils/createHash";
-import { Method } from "@/exports";
+import { Method } from "@/internal/enums/Method";
+import { getServerInstance } from "@/internal/modules/Server/ServerInstance";
 
 // TODO: opts.beforeEach
 
@@ -27,7 +27,7 @@ export abstract class ControllerAbstract<
 	}
 
 	get prefix(): string | undefined {
-		const globalPrefix = getGlobalPrefix();
+		const globalPrefix = getServerInstance().router.globalPrefix;
 		if (textIsDefined(globalPrefix)) {
 			return joinPathSegments(globalPrefix, this.opts?.prefix);
 		}

@@ -1,7 +1,6 @@
-import { makeLogger } from "@/internal/global/LoggerClass";
-import type { LoggerInterface } from "@/internal/modules/Logger/LoggerInterface";
+import { makeLogger } from "@/internal/modules/Logger/LoggerClass";
 import type { ServiceInterface } from "@/internal/modules/Service/ServiceInterface";
 
 export class ServiceAbstract implements ServiceInterface {
-	readonly logger: LoggerInterface = makeLogger(this.constructor.name);
+	readonly logger = makeLogger(this.constructor.name);
 }

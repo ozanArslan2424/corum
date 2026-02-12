@@ -5,9 +5,8 @@ import { pathMaker } from "../utils/pathMaker";
 import { Status } from "@/internal/enums/Status";
 import { CommonHeaders } from "@/internal/enums/CommonHeaders";
 import { Route } from "@/internal/modules/Route/Route";
-import { Server } from "@/exports";
+import { testServer } from "test/utils/testServer";
 
-const s = new Server({});
 const prefix = "/request-body/arktype";
 const path = pathMaker(prefix);
 const req = reqMaker(prefix);
@@ -39,7 +38,7 @@ describe("Request Body - Arktype", () => {
 		new Route({ method: "POST", path: path("/string") }, (c) => c.body, {
 			body: stringSchema,
 		});
-		const res = await s.handle(
+		const res = await testServer.handle(
 			req("/string", {
 				method: "POST",
 				body: "world",
@@ -52,7 +51,7 @@ describe("Request Body - Arktype", () => {
 		new Route({ method: "POST", path: path("/number") }, (c) => c.body, {
 			body: numberSchema,
 		});
-		const res = await s.handle(
+		const res = await testServer.handle(
 			req("/number", {
 				method: "POST",
 				body: "8",
@@ -65,7 +64,7 @@ describe("Request Body - Arktype", () => {
 		new Route({ method: "POST", path: path("/object") }, (c) => c.body, {
 			body: objectSchema,
 		});
-		const res = await s.handle(
+		const res = await testServer.handle(
 			req("/object", {
 				method: "POST",
 				body: JSON.stringify({ name: "John", age: 30 }),
@@ -80,7 +79,7 @@ describe("Request Body - Arktype", () => {
 		new Route({ method: "POST", path: path("/array") }, (c) => c.body, {
 			body: arraySchema,
 		});
-		const res = await s.handle(
+		const res = await testServer.handle(
 			req("/array", {
 				method: "POST",
 				body: JSON.stringify(["apple", "banana", "cherry"]),
@@ -96,7 +95,7 @@ describe("Request Body - Arktype", () => {
 		new Route({ method: "POST", path: path("/boolean") }, (c) => c.body, {
 			body: booleanSchema,
 		});
-		const res = await s.handle(
+		const res = await testServer.handle(
 			req("/boolean", {
 				method: "POST",
 				body: "true",
@@ -110,7 +109,7 @@ describe("Request Body - Arktype", () => {
 		new Route({ method: "POST", path: path("/optional") }, (c) => c.body, {
 			body: optionalKeySchema,
 		});
-		const resRequired = await s.handle(
+		const resRequired = await testServer.handle(
 			req("/optional", {
 				method: "POST",
 				body: JSON.stringify({ required: "value" }),
@@ -120,7 +119,7 @@ describe("Request Body - Arktype", () => {
 		expect(resRequired.status).toBe(200);
 		const dataRequired = await resRequired.json();
 		expect(dataRequired).toEqual({ required: "value" });
-		const resOptional = await s.handle(
+		const resOptional = await testServer.handle(
 			req("/optional", {
 				method: "POST",
 				body: JSON.stringify({ required: "value", optional: "value" }),
@@ -135,7 +134,7 @@ describe("Request Body - Arktype", () => {
 		new Route({ method: "POST", path: path("/nested") }, (c) => c.body, {
 			body: nestedSchema,
 		});
-		const res = await s.handle(
+		const res = await testServer.handle(
 			req("/nested", {
 				method: "POST",
 				body: JSON.stringify({
@@ -157,7 +156,7 @@ describe("Request Body - Arktype", () => {
 		new Route({ method: "POST", path: path("/enum") }, (c) => c.body, {
 			body: enumSchema,
 		});
-		const res = await s.handle(
+		const res = await testServer.handle(
 			req("/enum", {
 				method: "POST",
 				body: JSON.stringify({ status: "active" }),
@@ -172,7 +171,7 @@ describe("Request Body - Arktype", () => {
 		new Route({ method: "POST", path: path("/default") }, (c) => c.body, {
 			body: defaultValueSchema,
 		});
-		const res = await s.handle(
+		const res = await testServer.handle(
 			req("/default", {
 				method: "POST",
 				body: JSON.stringify({ name: "test" }),
@@ -187,7 +186,7 @@ describe("Request Body - Arktype", () => {
 		new Route({ method: "POST", path: path("/invalid") }, (c) => c.body, {
 			body: stringSchema,
 		});
-		const res = await s.handle(
+		const res = await testServer.handle(
 			req("/invalid", {
 				method: "POST",
 				body: JSON.stringify({ not: "a string" }),
@@ -200,7 +199,7 @@ describe("Request Body - Arktype", () => {
 		new Route({ method: "POST", path: path("/missing") }, (c) => c.body, {
 			body: requiredStringSchema,
 		});
-		const res = await s.handle(
+		const res = await testServer.handle(
 			req("/missing", {
 				method: "POST",
 				body: JSON.stringify({ optional: "value" }),
@@ -213,7 +212,7 @@ describe("Request Body - Arktype", () => {
 		new Route({ method: "POST", path: path("/wrongtype") }, (c) => c.body, {
 			body: requiredNumberSchema,
 		});
-		const res = await s.handle(
+		const res = await testServer.handle(
 			req("/wrongtype", {
 				method: "POST",
 				body: JSON.stringify({ age: "not a number" }),
@@ -226,7 +225,7 @@ describe("Request Body - Arktype", () => {
 		new Route({ method: "POST", path: path("/empty") }, (c) => c.body, {
 			body: constraintSchema,
 		});
-		const res = await s.handle(
+		const res = await testServer.handle(
 			req("/empty", {
 				method: "POST",
 				body: "",
@@ -243,7 +242,7 @@ describe("Request Body - Arktype", () => {
 				body: optionalSchema,
 			},
 		);
-		const res = await s.handle(
+		const res = await testServer.handle(
 			req("/empty-optional", {
 				method: "POST",
 				body: "",
@@ -258,7 +257,7 @@ describe("Request Body - Arktype", () => {
 			(c) => ({ value: c.body, type: typeof c.body }),
 			{ body: numberSchema },
 		);
-		const res = await s.handle(
+		const res = await testServer.handle(
 			req("/coerce", {
 				method: "POST",
 				body: "42",
@@ -271,7 +270,7 @@ describe("Request Body - Arktype", () => {
 		new Route({ method: "POST", path: path("/regex") }, (c) => c.body, {
 			body: emailSchema,
 		});
-		const res = await s.handle(
+		const res = await testServer.handle(
 			req("/regex", {
 				method: "POST",
 				body: JSON.stringify({ email: "test@example.com" }),
@@ -286,7 +285,7 @@ describe("Request Body - Arktype", () => {
 		new Route({ method: "POST", path: path("/invalid-email") }, (c) => c.body, {
 			body: emailSchema,
 		});
-		const res = await s.handle(
+		const res = await testServer.handle(
 			req("/invalid-email", {
 				method: "POST",
 				body: JSON.stringify({ email: "not-an-email" }),
@@ -303,7 +302,7 @@ describe("Request Body - Arktype", () => {
 				body: customMessageSchema,
 			},
 		);
-		const res = await s.handle(
+		const res = await testServer.handle(
 			req("/custom-message", {
 				method: "POST",
 				body: "short",
@@ -311,7 +310,7 @@ describe("Request Body - Arktype", () => {
 			}),
 		);
 		expect(res.status).toBe(200);
-		const resFail = await s.handle(
+		const resFail = await testServer.handle(
 			req("/custom-message", {
 				method: "POST",
 				body: "hi",

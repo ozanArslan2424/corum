@@ -1,6 +1,7 @@
-import type { AnyRoute } from "@/internal/types/AnyRoute";
+import type { AnyRoute } from "@/internal/modules/Route/types/AnyRoute";
 
 export interface RouterInterface {
+	globalPrefix: string;
 	addRoute(route: AnyRoute): void;
 	findRoute(url: string, method: string): AnyRoute;
 	getRoutes(): Array<AnyRoute>;

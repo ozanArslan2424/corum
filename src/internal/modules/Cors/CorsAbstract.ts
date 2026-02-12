@@ -1,28 +1,25 @@
 import type { CorsInterface } from "@/internal/modules/Cors/CorsInterface";
-
-import { CoreumHeaders } from "@/internal/modules/CoreumHeaders/CoreumHeaders";
-import type { CoreumRequest } from "@/internal/modules/CoreumRequest/CoreumRequest";
-import type { CoreumResponse } from "@/internal/modules/CoreumResponse/CoreumResponse";
-
-import type { CorsConfig } from "@/internal/types/CorsConfig";
-
+import { HttpHeaders } from "@/internal/modules/HttpHeaders/HttpHeaders";
+import type { HttpRequest } from "@/internal/modules/HttpRequest/HttpRequest";
+import type { HttpResponse } from "@/internal/modules/HttpResponse/HttpResponse";
+import type { CorsOptions } from "@/internal/modules/Cors/types/CorsOptions";
 import { isSomeArray } from "@/internal/utils/isSomeArray";
 import { toStringBool } from "@/internal/utils/toStringBool";
 
 export abstract class CorsAbstract implements CorsInterface {
-	constructor(readonly config: CorsConfig) {}
+	constructor(readonly opts: CorsOptions) {}
 
 	private readonly originKey = "Access-Control-Allow-Origin";
 	private readonly methodsKey = "Access-Control-Allow-Methods";
 	private readonly headersKey = "Access-Control-Allow-Headers";
 	private readonly credentialsKey = "Access-Control-Allow-Credentials";
 
-	public getCorsHeaders(req: CoreumRequest, res: CoreumResponse) {
+	public getCorsHeaders(req: HttpRequest, res: HttpResponse) {
 		const reqOrigin = req.headers.get("origin") ?? "";
-		const headers = new CoreumHeaders(res.headers);
+		const headers = new HttpHeaders(res.headers);
 
 		const { allowedOrigins, allowedMethods, allowedHeaders, credentials } =
-			this.config;
+			this.opts;
 
 		if (isSomeArray(allowedOrigins) && allowedOrigins.includes(reqOrigin)) {
 			headers.set(this.originKey, reqOrigin);
@@ -41,7 +38,7 @@ export abstract class CorsAbstract implements CorsInterface {
 		return headers;
 	}
 
-	apply(req: CoreumRequest, res: CoreumResponse): void {
+	apply(req: HttpRequest, res: HttpResponse): void {
 		const headers = this.getCorsHeaders(req, res);
 		res.headers.innerCombine(headers);
 	}

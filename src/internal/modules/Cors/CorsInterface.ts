@@ -1,13 +1,13 @@
-import type { CoreumHeadersInterface } from "@/internal/modules/CoreumHeaders/CoreumHeadersInterface";
-import type { CoreumRequestInterface } from "@/internal/modules/CoreumRequest/CoreumRequestInterface";
-import type { CoreumResponseInterface } from "@/internal/modules/CoreumResponse/CoreumResponseInterface";
-import type { CorsConfig } from "@/internal/types/CorsConfig";
+import type { HttpHeadersInterface } from "@/internal/modules/HttpHeaders/HttpHeadersInterface";
+import type { HttpRequestInterface } from "@/internal/modules/HttpRequest/HttpRequestInterface";
+import type { HttpResponseInterface } from "@/internal/modules/HttpResponse/HttpResponseInterface";
+import type { CorsOptions } from "@/internal/modules/Cors/types/CorsOptions";
 
 export interface CorsInterface {
-	readonly config: CorsConfig;
+	readonly opts: CorsOptions;
 	getCorsHeaders(
-		req: CoreumRequestInterface,
-		res: CoreumResponseInterface,
-	): CoreumHeadersInterface;
-	apply(req: CoreumRequestInterface, res: CoreumResponseInterface): void;
+		req: HttpRequestInterface,
+		res: HttpResponseInterface,
+	): HttpHeadersInterface;
+	apply(req: HttpRequestInterface, res: HttpResponseInterface): void;
 }

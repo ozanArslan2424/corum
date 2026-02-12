@@ -1,7 +1,7 @@
 import type { RouteInterface } from "@/internal/modules/Route/RouteInterface";
-import type { RouteHandler } from "@/internal/types/RouteHandler";
-import type { RouteDefinition } from "@/internal/types/RouteDefinition";
-import type { RouteSchemas } from "@/internal/types/RouteSchemas";
+import type { RouteHandler } from "@/internal/modules/Route/types/RouteHandler";
+import type { RouteDefinition } from "@/internal/modules/Route/types/RouteDefinition";
+import type { RouteSchemas } from "@/internal/modules/Parser/types/RouteSchemas";
 
 export interface ControllerInterface {
 	get id(): string;

@@ -1,84 +1,82 @@
-import { CommonHeaders, Cookies, Method } from "@/exports";
-import { CoreumHeaders } from "@/internal/modules/CoreumHeaders/CoreumHeaders";
-import { CoreumRequest } from "@/internal/modules/CoreumRequest/CoreumRequest";
+import { CommonHeaders, Cookies, Method } from "@/index";
+import { HttpHeaders } from "@/internal/modules/HttpHeaders/HttpHeaders";
+import { HttpRequest } from "@/internal/modules/HttpRequest/HttpRequest";
 import { describe, expect, it } from "bun:test";
-import { TEST_URL } from "../constants/TEST_URL";
+import { TEST_URL } from "../utils/TEST_URL";
 
 const ctReq = (ct: string) =>
-	new CoreumRequest(TEST_URL, {
+	new HttpRequest(TEST_URL, {
 		method: Method.POST,
 		headers: { [CommonHeaders.ContentType]: ct },
 	});
 
 describe("Request", () => {
 	it("instances", () => {
-		const req = new CoreumRequest(TEST_URL);
+		const req = new HttpRequest(TEST_URL);
 		expect(req.cookies).toBeInstanceOf(Cookies);
-		expect(req.headers).toBeInstanceOf(CoreumHeaders);
+		expect(req.headers).toBeInstanceOf(HttpHeaders);
 		expect(req.method).toBe(Method.GET);
 	});
 
 	it("input is url", () => {
-		const req = new CoreumRequest(TEST_URL);
+		const req = new HttpRequest(TEST_URL);
 		expect(req.url).toBe(`${TEST_URL}/`);
 	});
 
 	it("input is url - Method", () => {
-		const req = new CoreumRequest(TEST_URL, { method: Method.POST });
+		const req = new HttpRequest(TEST_URL, { method: Method.POST });
 		expect(req.url).toBe(`${TEST_URL}/`);
 		expect(req.method).toBe(Method.POST);
 	});
 
 	it("input is url - Headers", () => {
-		const req = new CoreumRequest(TEST_URL, { headers: { test: "header" } });
+		const req = new HttpRequest(TEST_URL, { headers: { test: "header" } });
 		expect(req.url).toBe(`${TEST_URL}/`);
 		expect(req.headers.get("test")).toBe("header");
 	});
 
 	it("input is Request", () => {
-		const req = new CoreumRequest(new Request(TEST_URL));
+		const req = new HttpRequest(new Request(TEST_URL));
 		expect(req.url).toBe(`${TEST_URL}/`);
 	});
 
 	it("input is Request - Method", () => {
-		const req = new CoreumRequest(
-			new Request(TEST_URL, { method: Method.POST }),
-		);
+		const req = new HttpRequest(new Request(TEST_URL, { method: Method.POST }));
 		expect(req.url).toBe(`${TEST_URL}/`);
 		expect(req.method).toBe(Method.POST);
 	});
 
 	it("input is Request - Headers", () => {
-		const req = new CoreumRequest(
+		const req = new HttpRequest(
 			new Request(TEST_URL, { headers: { test: "header" } }),
 		);
 		expect(req.url).toBe(`${TEST_URL}/`);
 		expect(req.headers.get("test")).toBe("header");
 	});
 
-	it("input is CoreumRequest", () => {
-		const req = new CoreumRequest(new CoreumRequest(TEST_URL));
+	it("input is HttpRequest", () => {
+		const req = new HttpRequest(new HttpRequest(TEST_URL));
 		expect(req.url).toBe(`${TEST_URL}/`);
 	});
 
-	it("input is CoreumRequest - Method", () => {
-		const req = new CoreumRequest(
-			new CoreumRequest(TEST_URL, { method: Method.GET }),
+	it("input is HttpRequest - Method", () => {
+		const req = new HttpRequest(
+			new HttpRequest(TEST_URL, { method: Method.GET }),
 		);
 		expect(req.url).toBe(`${TEST_URL}/`);
 		expect(req.method).toBe(Method.GET);
 	});
 
-	it("input is CoreumRequest - Headers", () => {
-		const req = new CoreumRequest(
-			new CoreumRequest(TEST_URL, { headers: { test: "header" } }),
+	it("input is HttpRequest - Headers", () => {
+		const req = new HttpRequest(
+			new HttpRequest(TEST_URL, { headers: { test: "header" } }),
 		);
 		expect(req.url).toBe(`${TEST_URL}/`);
 		expect(req.headers.get("test")).toBe("header");
 	});
 
 	it("isPreflight", () => {
-		const req = new CoreumRequest(TEST_URL, {
+		const req = new HttpRequest(TEST_URL, {
 			method: Method.OPTIONS,
 			headers: {
 				[CommonHeaders.AccessControlRequestMethod]: Method.GET,
@@ -178,7 +176,7 @@ describe("Request", () => {
 	});
 
 	it("normalizedContentType - no-body-allowed", () => {
-		const noBodyAllowed = new CoreumRequest(TEST_URL, { method: Method.GET });
+		const noBodyAllowed = new HttpRequest(TEST_URL, { method: Method.GET });
 		expect(noBodyAllowed.normalizedContentType).toBe("no-body-allowed");
 		expect(noBodyAllowed.headers.get(CommonHeaders.ContentType)).toBe(null);
 	});

@@ -1,6 +1,6 @@
 import { CookiesAbstract } from "@/internal/modules/Cookies/CookiesAbstract";
 
-import type { CookieOptions } from "@/internal/types/CookieOptions";
+import type { CookieOptions } from "@/internal/modules/Cookies/types/CookieOptions";
 
 export class CookiesUsingBun extends CookiesAbstract {
 	private map = new Bun.CookieMap();

@@ -1,7 +1,7 @@
 import { Status } from "@/internal/enums/Status";
-import type { CoreumRequestInterface } from "@/internal/modules/CoreumRequest/CoreumRequestInterface";
-import { CoreumError } from "@/internal/modules/CoreumError/CoreumError";
-import type { SchemaType } from "@/internal/types/SchemaType";
+import type { HttpRequestInterface } from "@/internal/modules/HttpRequest/HttpRequestInterface";
+import { HttpError } from "@/internal/modules/HttpError/HttpError";
+import type { SchemaType } from "@/internal/modules/Parser/types/SchemaType";
 import { appendEntry } from "@/internal/utils/appendEntry";
 import { getProcessedValue } from "@/internal/utils/getProcessedValue";
 import { Parser } from "@/internal/modules/Parser/Parser";
@@ -9,11 +9,11 @@ import { Parser } from "@/internal/modules/Parser/Parser";
 export class RequestParser {
 	private readonly parser = new Parser();
 
-	async getJsonBody(req: CoreumRequestInterface): Promise<unknown> {
+	async getJsonBody(req: HttpRequestInterface): Promise<unknown> {
 		return await req.json();
 	}
 
-	async getFormUrlEncodedBody(req: CoreumRequestInterface): Promise<unknown> {
+	async getFormUrlEncodedBody(req: HttpRequestInterface): Promise<unknown> {
 		const text = await req.text();
 		if (!text || text.trim().length === 0) {
 			throw new SyntaxError("Body is empty");
@@ -29,7 +29,7 @@ export class RequestParser {
 		return body;
 	}
 
-	async getFormDataBody(req: CoreumRequestInterface): Promise<unknown> {
+	async getFormDataBody(req: HttpRequestInterface): Promise<unknown> {
 		const formData = await req.formData();
 		const entries = formData.entries() as IterableIterator<
 			[string, FormDataEntryValue]
@@ -48,7 +48,7 @@ export class RequestParser {
 		return body;
 	}
 
-	async getTextBody(req: CoreumRequestInterface): Promise<unknown> {
+	async getTextBody(req: HttpRequestInterface): Promise<unknown> {
 		const contentLength = req.headers.get("content-length");
 		const length = contentLength ? parseInt(contentLength) : 0;
 
@@ -70,7 +70,7 @@ export class RequestParser {
 	}
 
 	async getBody<ReqBody = unknown>(
-		req: CoreumRequestInterface,
+		req: HttpRequestInterface,
 		schema?: SchemaType<ReqBody>,
 	): Promise<ReqBody> {
 		let data;
@@ -97,7 +97,7 @@ export class RequestParser {
 				case "audio":
 				case "video":
 				case "unknown":
-					throw new CoreumError(
+					throw new HttpError(
 						"unprocessable.contentType",
 						Status.UNPROCESSABLE_ENTITY,
 					);

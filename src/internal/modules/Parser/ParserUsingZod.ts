@@ -1,5 +1,5 @@
 import { Status } from "@/internal/enums/Status";
-import { CoreumError } from "@/internal/modules/CoreumError/CoreumError";
+import { HttpError } from "@/internal/modules/HttpError/HttpError";
 import { ParserAbstract } from "@/internal/modules/Parser/ParserAbstract";
 import type { ParserInterface } from "@/internal/modules/Parser/ParserInterface";
 import { ZodType } from "zod";
@@ -8,7 +8,7 @@ export class ParserUsingZod extends ParserAbstract implements ParserInterface {
 	parse<O>(data: unknown, schema: ZodType<O>, errorMessage: string): O {
 		const result = schema.safeParse(data);
 		if (!result.success) {
-			throw new CoreumError(
+			throw new HttpError(
 				errorMessage,
 				Status.UNPROCESSABLE_ENTITY,
 				result.error,

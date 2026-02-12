@@ -1,6 +1,6 @@
 import type { ControllerInterface } from "@/internal/modules/Controller/ControllerInterface";
 
-import type { AnyRoute } from "@/internal/types/AnyRoute";
+import type { AnyRoute } from "@/internal/modules/Route/types/AnyRoute";
 
 type UseInput = ControllerInterface | AnyRoute;
 type UseReturn = ControllerInterface | AnyRoute | void;

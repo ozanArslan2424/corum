@@ -1,6 +1,6 @@
-import { makeLogger } from "@/internal/global/LoggerClass";
+import { makeLogger } from "@/internal/modules/Logger/LoggerClass";
 import type { ParserInterface } from "@/internal/modules/Parser/ParserInterface";
-import type { SchemaType } from "@/internal/types/SchemaType";
+import type { SchemaType } from "@/internal/modules/Parser/types/SchemaType";
 
 export abstract class ParserAbstract implements ParserInterface {
 	protected readonly logger = makeLogger("Parser");

@@ -2,12 +2,12 @@ import type { ControllerInterface } from "@/internal/modules/Controller/Controll
 import type { MiddlewareInterface } from "@/internal/modules/Middleware/MiddlewareInterface";
 import { Route } from "@/internal/modules/Route/Route";
 import { ControllerAbstract } from "@/internal/modules/Controller/ControllerAbstract";
-import type { MiddlewareCallback } from "@/internal/types/MiddlewareCallback";
-import type { AnyRoute } from "@/internal/types/AnyRoute";
-import { getServerInstance } from "@/internal/global/ServerInstance";
+import type { MiddlewareHandler } from "@/internal/modules/Middleware/types/MiddlewareHandler";
+import type { AnyRoute } from "@/internal/modules/Route/types/AnyRoute";
+import { getServerInstance } from "@/internal/modules/Server/ServerInstance";
 
 export abstract class MiddlewareAbstract implements MiddlewareInterface {
-	constructor(private readonly callback: MiddlewareCallback) {}
+	constructor(private readonly callback: MiddlewareHandler) {}
 
 	use(): void;
 	use(controller: ControllerInterface): ControllerInterface;

@@ -1,11 +1,10 @@
-import { CoreumRequest } from "@/internal/modules/CoreumRequest/CoreumRequest";
-import type { CoreumRequestInterface } from "@/internal/modules/CoreumRequest/CoreumRequestInterface";
-import { CoreumResponse } from "@/internal/modules/CoreumResponse/CoreumResponse";
+import { HttpRequest } from "@/internal/modules/HttpRequest/HttpRequest";
+import type { HttpRequestInterface } from "@/internal/modules/HttpRequest/HttpRequestInterface";
+import { HttpResponse } from "@/internal/modules/HttpResponse/HttpResponse";
 import { RequestParser } from "@/internal/modules/Parser/RequestParser";
 import { RouteContextAbstract } from "@/internal/modules/RouteContext/RouteContextAbstract";
 import type { RouteContextInterface } from "@/internal/modules/RouteContext/RouteContextInterface";
-import type { Endpoint } from "@/internal/types/Endpoint";
-import type { RouteSchemas } from "@/internal/types/RouteSchemas";
+import type { RouteSchemas } from "@/internal/modules/Parser/types/RouteSchemas";
 
 /**
  * The context object used in Route "callback" parameter.
@@ -41,13 +40,13 @@ export class RouteContext<B = unknown, S = unknown, P = unknown>
 		S = unknown,
 		P = unknown,
 	>(
-		request: CoreumRequestInterface,
-		path: Endpoint<Path>,
+		request: HttpRequestInterface,
+		path: Path,
 		model?: RouteSchemas<R, B, S, P>,
 	): Promise<RouteContextInterface<B, S, P>> {
 		const requestParser = new RequestParser();
 
-		const req = new CoreumRequest(request);
+		const req = new HttpRequest(request);
 		const url = new URL(req.url);
 		const headers = req.headers;
 		const cookies = req.cookies;
@@ -55,7 +54,7 @@ export class RouteContext<B = unknown, S = unknown, P = unknown>
 		const search = requestParser.getSearch(url, model?.search);
 		const params = requestParser.getParams(path, url, model?.params);
 
-		const res = new CoreumResponse();
+		const res = new HttpResponse();
 
 		return new RouteContext(
 			req,

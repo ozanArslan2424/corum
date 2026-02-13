@@ -10,7 +10,7 @@ export class ServerUsingBun extends ServerAbstract implements ServerInterface {
 		this.app = this.createApp(options);
 	}
 
-	async close(): Promise<void> {
+	async exit(): Promise<void> {
 		this.logger.log("Shutting down...");
 		this.app?.stop();
 		process.exit(0);

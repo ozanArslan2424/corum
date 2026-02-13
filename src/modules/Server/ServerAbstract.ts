@@ -20,13 +20,13 @@ import type { MaybePromise } from "@/utils/MaybePromise";
 
 export abstract class ServerAbstract implements ServerInterface {
 	abstract serve(options: ServeOptions): void;
-	abstract close(): Promise<void>;
+	abstract exit(): Promise<void>;
 
 	protected readonly logger = makeLogger("Http");
 	readonly router: RouterInterface = new Router();
 	protected cors: CorsInterface | undefined;
-	handleBeforeListen: (() => MaybePromise<void>) | undefined = undefined;
-	handleBeforeClose: (() => MaybePromise<void>) | undefined = undefined;
+	protected handleBeforeListen: (() => MaybePromise<void>) | undefined;
+	protected handleBeforeExit: (() => MaybePromise<void>) | undefined;
 
 	setGlobalPrefix(value: string): void {
 		this.router.globalPrefix = value;
@@ -45,7 +45,7 @@ export abstract class ServerAbstract implements ServerInterface {
 	}
 
 	setOnBeforeExit(handler: () => MaybePromise<void>): void {
-		this.handleBeforeClose = handler;
+		this.handleBeforeExit = handler;
 	}
 
 	setOnBeforeListen(handler: () => MaybePromise<void>): void {
@@ -66,8 +66,7 @@ export abstract class ServerAbstract implements ServerInterface {
 			});
 		} catch (err) {
 			this.logger.error("Server unable to start:", err);
-			this.handleBeforeClose?.();
-			await this.close();
+			await this.exit();
 		}
 	}
 
@@ -84,16 +83,13 @@ export abstract class ServerAbstract implements ServerInterface {
 		port: ServeOptions["port"],
 		hostname: ServeOptions["hostname"],
 	) {
-		process.on("SIGINT", () => this.close());
-		process.on("SIGTERM", () => this.close());
-		this.logger.log(`Listening on ${hostname}:${port}`);
-		this.logger.log(
-			"\n" +
-				this.router
-					.getRoutes()
-					.map((r) => `[${r.method}]\t:\t${r.path}`)
-					.join("\n"),
-		);
+		process.on("SIGINT", () => this.exit());
+		process.on("SIGTERM", () => this.exit());
+		const routes = this.router
+			.getRoutes()
+			.map((r) => `[${r.method}]\t:\t${r.path}`)
+			.join("\n");
+		this.logger.log(`Listening on ${hostname}:${port}\n${routes}`);
 	}
 
 	private handleError: ErrorHandler = async (err) => {

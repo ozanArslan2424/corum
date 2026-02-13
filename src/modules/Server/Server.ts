@@ -27,8 +27,9 @@ export class Server extends ServerAbstract implements ServerInterface {
 		return this.instance.serve(options);
 	}
 
-	async close(): Promise<void> {
-		return await this.instance.close();
+	async exit(): Promise<void> {
+		await this.handleBeforeExit?.();
+		return await this.instance.exit();
 	}
 
 	private instance: ServerInterface;

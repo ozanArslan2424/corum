@@ -18,7 +18,7 @@
 		"url": "https://github.com/ozanArslan2424/coreum.git"
 	},
 	"keywords": [
-		"bun server",
+		"bun serve",
 		"backend framework",
 		"simple"
 	],

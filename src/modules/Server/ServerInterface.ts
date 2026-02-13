@@ -18,6 +18,6 @@ export interface ServerInterface {
 		port: ServeOptions["port"],
 		hostname: ServeOptions["hostname"],
 	): Promise<void>;
-	close(): Promise<void>;
+	exit(): Promise<void>;
 	handle(request: Request): Promise<Response>;
 }

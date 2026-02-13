@@ -43,12 +43,12 @@ export class RouteContext<R = unknown, B = unknown, S = unknown, P = unknown>
 		path: Path,
 		schemas?: RouteSchemas<R, B, S, P>,
 	): Promise<RouteContextInterface<R, B, S, P>> {
-		const requestParser = new RequestParser();
-
 		const req = new HttpRequest(request);
 		const url = new URL(req.url);
 		const headers = req.headers;
 		const cookies = req.cookies;
+
+		const requestParser = new RequestParser<B, S, P>();
 		const body = await requestParser.getBody(req, schemas?.body);
 		const search = requestParser.getSearch(url, schemas?.search);
 		const params = requestParser.getParams(path, url, schemas?.params);

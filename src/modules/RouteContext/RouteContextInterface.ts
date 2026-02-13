@@ -2,7 +2,6 @@ import type { HttpHeadersInterface } from "@/modules/HttpHeaders/HttpHeadersInte
 import type { HttpRequestInterface } from "@/modules/HttpRequest/HttpRequestInterface";
 import type { CookiesInterface } from "@/modules/Cookies/CookiesInterface";
 import type { HttpResponseInterface } from "@/modules/HttpResponse/HttpResponseInterface";
-import type { Type } from "arktype";
 
 export interface RouteContextInterface<
 	R = unknown,
@@ -14,9 +13,9 @@ export interface RouteContextInterface<
 	readonly url: URL;
 	readonly headers: HttpHeadersInterface;
 	readonly cookies: CookiesInterface;
-	readonly body: Type<B>["inferOut"];
-	readonly search: Type<S>["inferOut"];
-	readonly params: Type<P>["inferOut"];
-	res: HttpResponseInterface<Type<R>["inferOut"]>;
+	readonly body: B;
+	readonly search: S;
+	readonly params: P;
+	res: HttpResponseInterface<R>;
 	data: Record<string, unknown>;
 }

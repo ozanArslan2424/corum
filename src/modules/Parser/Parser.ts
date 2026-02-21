@@ -157,7 +157,7 @@ export class Parser {
 		const body: Record<string, any> = {};
 
 		for (const [key, value] of params.entries()) {
-			appendEntry(body, key, value);
+			appendEntry(body, key, getProcessedValue(value));
 		}
 
 		return body;
@@ -175,7 +175,7 @@ export class Parser {
 			if (value instanceof File) {
 				body[key] = value;
 			} else {
-				appendEntry(body, key, value);
+				appendEntry(body, key, getProcessedValue(value));
 			}
 		}
 

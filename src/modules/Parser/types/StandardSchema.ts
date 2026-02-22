@@ -44,6 +44,7 @@ export declare namespace StandardSchemaV1 {
 		/** Validates unknown input values. */
 		readonly validate: (
 			value: unknown,
+			// oxlint-disable-next-line typescript/no-duplicate-type-constituents
 			options?: StandardSchemaV1.Options | undefined,
 		) => Result<Output> | Promise<Result<Output>>;
 	}

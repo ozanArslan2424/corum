@@ -11,6 +11,7 @@ import { testServer } from "../utils/testServer";
 import { joinPathSegments } from "@/utils/joinPathSegments";
 import { getRouterInstance } from "@/modules/Router/RouterInstance";
 import { TEST_URL } from "../utils/TEST_URL";
+import type { InferModel } from "@/modules/Parser/types/InferModel";
 
 const successData = { hello: 1 };
 const failData = { unknown: "object" };
@@ -70,6 +71,8 @@ class Model {
 		body: this.arkRoute.body,
 	};
 }
+
+type ModelType = InferModel<typeof Model>;
 
 class Controller extends ControllerAbstract {
 	constructor() {

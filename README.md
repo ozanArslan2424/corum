@@ -162,11 +162,13 @@ Very much inspired from the core ideas behind [Elysia](https://github.com/elysia
 
 # Roadmap
 
+- [ ] Better and more memory efficient router
+- [ ] Reduce dist size
 - [ ] Support ArrayBuffer in custom Response wrapper object
 - [ ] Support Blob in custom Response wrapper object
 - [ ] Support FormData in custom Response wrapper object
 - [ ] Support URLSearchParams in custom Response wrapper object
 - [ ] Support ReadableStream in custom Response wrapper object
 - [ ] Support WebSocket
-- [ ] Compress images and other binary files in StaticRoute for caching and stuff maybe?
+- [ ] Compress static files in StaticRoute for caching and stuff maybe?
 - [ ] Better everything

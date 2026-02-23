@@ -1,5 +1,5 @@
-import { Config } from "@/modules/Config/Config";
-import { FileWalker } from "@/modules/FileWalker/FileWalker";
+import { Config } from "@/modules/Config";
+import { FileWalker } from "@/modules/FileWalker";
 import ts from "typescript";
 // import esbuild from "esbuild";
 

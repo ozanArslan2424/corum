@@ -1,9 +1,13 @@
+import { _globalPrefixEnvKey } from "@/constants/_globalPrefixEnvKey";
 import { joinPathSegments } from "@/utils/joinPathSegments";
-import { TEST_PORT } from "../utils/TEST_PORT";
-import { getRouterInstance } from "@/index";
+import { Config } from "../../dist";
 
-export const req = (path: string, init?: RequestInit) =>
-	new Request(
-		`http://localhost:${TEST_PORT}${joinPathSegments(getRouterInstance().globalPrefix, path)}`,
+export function req(addr: string, init?: RequestInit) {
+	return new Request(
+		`http://localhost:4444${joinPathSegments(
+			Config.get(_globalPrefixEnvKey, { fallback: "" }),
+			addr,
+		)}`,
 		init,
 	);
+}

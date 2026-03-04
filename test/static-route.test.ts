@@ -129,14 +129,14 @@ describe("C.StaticRoute", () => {
 	// ─── custom handler ───────────────────────────────────────────
 
 	it("CUSTOM HANDLER RECEIVES CONTENT AND CAN MODIFY IT", async () => {
-		new C.StaticRoute("/sr-custom", f("sample.txt"), (_, content) => {
+		new C.StaticRoute("/sr-custom", f("sample.txt"), (c, content) => {
 			// trim for trailing \n
-			return content.trim() + " modified";
+			return content.trim() + " " + (c.search as any).hello;
 		});
-		const res = await s.handle(req("/sr-custom"));
+		const res = await s.handle(req("/sr-custom?hello=world"));
 		expect(res.status).toBe(200);
 		const body = await res.text();
-		expect(body).toContain("hello world modified");
+		expect(body).toContain("hello world world");
 	});
 
 	it("CUSTOM HANDLER CAN SET RESPONSE STATUS", async () => {

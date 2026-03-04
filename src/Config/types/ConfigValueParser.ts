@@ -1,1 +1,3 @@
-export type ConfigValueParser<T> = (value: string) => T;
+import type { Func } from "@/utils/types/Func";
+
+export type ConfigValueParser<T> = Func<[string], T>;

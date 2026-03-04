@@ -6,6 +6,7 @@ import type { RouteModel } from "@/Model/types/RouteModel";
 import type { RouteDefinition } from "@/Route/types/RouteDefinition";
 import type { RouteHandler } from "@/Route/types/RouteHandler";
 import type { RouteId } from "@/Route/types/RouteId";
+import type { OrString } from "@/utils/types/OrString";
 
 /**
  * The object to define an endpoint. Can be instantiated with "new" or inside a controller
@@ -43,13 +44,13 @@ export class Route<
 
 	variant: RouteVariant;
 	endpoint: Path;
-	method: Method;
+	method: OrString<Method>;
 	pattern: RegExp;
 	id: RouteId;
 	handler: RouteHandler<B, S, P, R>;
 	model?: RouteModel<B, S, P, R> | undefined;
 
 	static makeRouteId(method: string, endpoint: string): RouteId {
-		return `[${method.toUpperCase()}]:[${endpoint}]`;
+		return `${method.toUpperCase()} ${endpoint}`;
 	}
 }

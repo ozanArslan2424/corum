@@ -1,4 +1,5 @@
 import type { Context } from "@/Context/Context";
+import type { Func } from "@/utils/types/Func";
 import type { MaybePromise } from "@/utils/types/MaybePromise";
 
-export type MiddlewareHandler = (context: Context) => MaybePromise<void>;
+export type MiddlewareHandler = Func<[Context], MaybePromise<void>>;

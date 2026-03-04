@@ -4,7 +4,7 @@ import type { HttpRequest } from "@/Request/HttpRequest";
 import { HttpResponse } from "@/Response/HttpResponse";
 import { Parser } from "@/Model/Parser";
 import type { ContextDataInterface } from "@/types.d.ts";
-import type { ModelRegistryData } from "@/Model/types/ModelRegistryData";
+import type { RouterModelData } from "@/Router/types/RouterModelData";
 
 /**
  * The context object used in Route "callback" parameter.
@@ -68,7 +68,7 @@ export class Context<B = unknown, S = unknown, P = unknown, R = unknown> {
 		ctx: Context<B, S, P, R>,
 		req: HttpRequest,
 		endpoint: Path,
-		model?: ModelRegistryData<B, S, P>,
+		model?: RouterModelData<B, S, P>,
 	) {
 		ctx.body = await Parser.getBody(req, model?.body);
 		ctx.search = await Parser.getSearch(ctx.url, model?.search);

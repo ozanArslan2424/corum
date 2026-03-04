@@ -1,1 +1,1 @@
-export type RouteId = `[${string}:${string}]`;
+export type RouteId = `${string} ${string}`;

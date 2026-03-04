@@ -8,6 +8,7 @@ import type { RouteId } from "@/Route/types/RouteId";
 import type { RouteModel } from "@/Model/types/RouteModel";
 import { joinPathSegments } from "@/utils/joinPathSegments";
 import { _globalPrefixEnvKey } from "@/Config/constants/_globalPrefixEnvKey";
+import type { OrString } from "@/utils/types/OrString";
 
 export abstract class RouteAbstract<
 	Path extends string = string,
@@ -18,7 +19,7 @@ export abstract class RouteAbstract<
 > {
 	abstract variant: RouteVariant;
 	abstract endpoint: Path;
-	abstract method: Method;
+	abstract method: OrString<Method>;
 	abstract pattern: RegExp;
 	abstract id: RouteId;
 	abstract handler: RouteHandler<B, S, P, R>;
@@ -52,7 +53,7 @@ export abstract class RouteAbstract<
 		return new RegExp(`^${regex}$`);
 	}
 
-	resolveId(method: Method, endpoint: Path): RouteId {
+	resolveId(method: string, endpoint: Path): RouteId {
 		return Route.makeRouteId(method, endpoint);
 	}
 }

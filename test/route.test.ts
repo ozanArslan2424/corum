@@ -11,10 +11,10 @@ describe("C.Route", () => {
 
 	it("MAKE ROUTE ID", () => {
 		expect(C.Route.makeRouteId("GET", "/test-route-id")).toBe(
-			"[GET]:[/test-route-id]",
+			"GET /test-route-id",
 		);
 		expect(C.Route.makeRouteId("post", "/users-route-id")).toBe(
-			"[POST]:[/users-route-id]",
+			"POST /users-route-id",
 		);
 	});
 

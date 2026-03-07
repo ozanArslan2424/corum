@@ -69,9 +69,13 @@ export class Context<B = unknown, S = unknown, P = unknown, R = unknown> {
 		req: HttpRequest,
 		endpoint: Path,
 		model?: RouterModelData<B, S, P>,
+		parsedParams?: Record<string, unknown>,
 	) {
 		ctx.body = await Parser.getBody(req, model?.body);
 		ctx.search = await Parser.getSearch(ctx.url, model?.search);
-		ctx.params = await Parser.getParams(endpoint, ctx.url, model?.params);
+		ctx.params =
+			parsedParams !== undefined
+				? await Parser.parse(parsedParams, model?.params)
+				: await Parser.getParams(endpoint, ctx.url, model?.params);
 	}
 }

@@ -1,12 +1,16 @@
 import C from "@/index";
-import { describe, expect, it } from "bun:test";
+import { describe, expect, it, spyOn } from "bun:test";
 import { createTestServer } from "./utils/createTestServer";
 import { createTestController } from "./utils/createTestController";
 import { req } from "./utils/req";
+import { beforeEach } from "node:test";
 
 const s = createTestServer();
 const middlewareData = "Hello";
 const overrideData = "world";
+const logSpy = spyOn(console, "log");
+beforeEach(() => logSpy.mockClear());
+
 const r1 = new C.Route("/r1", (c) => c.data);
 new C.Route("r2", (c) => c.data);
 const c1 = createTestController("c1");
@@ -40,29 +44,40 @@ new C.Middleware({
 	},
 });
 
+new C.Middleware({
+	useOn: "*",
+	handler: (c) => {
+		console.log(c.url.pathname);
+	},
+});
+
 describe("C.Middleware", () => {
 	it("ROUTE - APPLIES TO REGISTERED ROUTE", async () => {
 		const res = await s.handle(req("/r1"));
 		const data = await C.Parser.getBody<string>(res);
 		expect(data).toBe(middlewareData);
+		expect(logSpy).toBeCalled();
 	});
 
 	it("ROUTE - DOES NOT APPLY TO UNREGISTERED ROUTE", async () => {
 		const res = await s.handle(req("/r2"));
 		const data = await C.Parser.getBody(res);
 		expect(data).toBeEmptyObject();
+		expect(logSpy).toBeCalled();
 	});
 
 	it("CONTROLLER - APPLIES TO REGISTERED CONTROLLER ROUTE", async () => {
 		const res = await s.handle(req("/c1/cr1"));
 		const data = await C.Parser.getBody<string>(res);
 		expect(data).toBe(middlewareData);
+		expect(logSpy).toBeCalled();
 	});
 
 	it("CONTROLLER - DOES NOT APPLY TO UNREGISTERED CONTROLLER ROUTE", async () => {
 		const res = await s.handle(req("/c1/cr2"));
 		const data = await C.Parser.getBody(res);
 		expect(data).toBeEmptyObject();
+		expect(logSpy).toBeCalled();
 	});
 
 	it("ROUTE - OVERRIDES PREVIOUS MIDDLEWARE DATA", async () => {
@@ -75,12 +90,14 @@ describe("C.Middleware", () => {
 		const res = await s.handle(req("/r1"));
 		const data = await C.Parser.getBody<string>(res);
 		expect(data).toBe(overrideData);
+		expect(logSpy).toBeCalled();
 	});
 
 	it("ROUTE - SETS OBJECT DATA", async () => {
 		const res = await s.handle(req("/r3"));
 		const data = await C.Parser.getBody<Record<string, unknown>>(res);
 		expect(data).toEqual({ user: "john", role: "admin", count: 1 });
+		expect(logSpy).toBeCalled();
 	});
 
 	it("ROUTE - MUTATES OBJECT DATA KEYS IN SUBSEQUENT MIDDLEWARE", async () => {
@@ -89,5 +106,6 @@ describe("C.Middleware", () => {
 		expect(data.user).toBe("john");
 		expect(data.role).toBe("superadmin");
 		expect(data.count).toBe(2);
+		expect(logSpy).toBeCalled();
 	});
 });

@@ -4,6 +4,7 @@ import { HttpError } from "@/Error/HttpError";
 import { isRegexMatch } from "@/utils/isRegexMatch";
 import { strIsEqual } from "@/utils/strIsEqual";
 import type { RouteId } from "@/Route/types/RouteId";
+import { Route } from "@/index";
 
 export class CorpusAdapter implements RouterAdapterInterface {
 	// RouteId -> RouteRegistryData
@@ -58,68 +59,79 @@ export class CorpusAdapter implements RouterAdapterInterface {
 		return { route };
 	}
 
-	list(): Array<[string, string]> {
-		return Array.from(this.routes.values()).map((r) => [r.method, r.endpoint]);
+	list(): Array<RouterRouteData> {
+		return Array.from(this.routes.values());
 	}
 
-	private checkPossibleCollision(data: RouterRouteData) {
-		const existing = this.routes.get(data.id);
-		if (existing) {
+	checkPossibleCollision(n: RouterRouteData): boolean {
+		// Collision 1 — exact duplicate route id (same method + same endpoint)
+		const dupeMsg = (nId: string) =>
 			console.error(
-				`⚠️  Collision: ${data.method} ${data.endpoint} clashes with ${existing.method} ${existing.endpoint}`,
+				`Duplicate route detected. ${nId} has already been registered.`,
 			);
+
+		// Collision 2 — two param routes match the same URL space
+		const dynamicPatternMsg = (nId: string, oId: string) =>
+			console.error(
+				`Ambiguous dynamic routes. ${nId} and ${oId} match the same URL patterns.`,
+			);
+
+		// Collision 3 — new param route's base matches an existing route
+		const baseDupeMsg = (nId: string, oId: string) =>
+			console.error(
+				`Dynamic route overlaps existing route. ${nId} — dropping the last param segment matches ${oId}.`,
+			);
+
+		// Collision 4 — new route falls within an existing param route's URL space
+		const shadowMsg = (nId: string, oId: string) =>
+			console.error(
+				`Route shadowed by existing dynamic route. ${nId} will be unreachable — ${oId} captures the same URL space.`,
+			);
+
+		const existing = this.routes.get(n.id);
+		if (existing) {
+			dupeMsg(n.id);
+			return true;
 		}
 
-		for (const route of this.routes.values()) {
-			// Different methods can't clash
-			if (route.method !== data.method) continue;
+		const nHasAnyParam = this.hasAnyParam(n.endpoint);
+		const nHasLastPartParam = this.hasLastPartParam(n.endpoint);
 
-			if (this.hasAnyParam(data.endpoint)) {
-				// Has params, pattern shouldn't match existing
-				if (isRegexMatch(data.endpoint, route.pattern)) {
-					console.error(
-						`⚠️  Collision: ${data.method} ${data.endpoint} clashes with ${route.method} ${route.endpoint}`,
-					);
-				}
+		for (const o of this.routes.values()) {
+			if (o.method !== n.method) continue;
 
-				// Param route vs static route with same base
-				if (!this.hasAnyParam(route.endpoint)) {
-					if (
-						strIsEqual(
-							this.removeLastParam(data.endpoint),
-							route.endpoint,
-							"lower",
-						)
-					) {
-						console.error(
-							`⚠️  Param route ${data.method} ${data.endpoint} may conflict with static ${route.method} ${route.endpoint}`,
-						);
-					}
+			if (nHasAnyParam) {
+				if (
+					isRegexMatch(n.endpoint, o.pattern) ||
+					isRegexMatch(o.endpoint, n.pattern)
+				) {
+					dynamicPatternMsg(n.id, o.id);
+					return true;
 				}
-			} else {
-				// No params, endpoint string shouldn't already exist
-				if (strIsEqual(data.endpoint, route.endpoint, "lower")) {
-					console.error(
-						`⚠️  Collision: ${data.method} ${data.endpoint} already exists`,
-					);
-				}
+			}
 
-				// No params but existing has last part param
-				if (this.hasLastPartParam(route.endpoint)) {
-					if (
-						strIsEqual(
-							this.removeLastParam(data.endpoint),
-							this.removeLastParam(route.endpoint),
-							"lower",
-						)
-					) {
-						console.error(
-							`⚠️  Static route ${data.method} ${data.endpoint} may be shadowed by param route ${route.method} ${route.endpoint}`,
-						);
-					}
+			if (nHasLastPartParam) {
+				if (isRegexMatch(this.removeLastParam(n.endpoint), o.pattern)) {
+					baseDupeMsg(n.id, o.id);
+					return true;
+				}
+			}
+
+			const oHasLastPartParam = this.hasLastPartParam(o.endpoint);
+			if (oHasLastPartParam) {
+				if (
+					isRegexMatch(
+						n.endpoint,
+						Route.makeRoutePattern(this.removeLastParam(o.endpoint)),
+					)
+				) {
+					shadowMsg(n.id, o.id);
+					return true;
 				}
 			}
 		}
+
+		return false;
 	}
 
 	private hasLastPartParam(endpoint: string): boolean {
@@ -133,6 +145,9 @@ export class CorpusAdapter implements RouterAdapterInterface {
 	}
 
 	private hasAnyParam(endpoint: string): boolean {
-		return endpoint.includes(":");
+		if (endpoint.includes("/:")) return true;
+		// fallback for super unlikely stuff
+		if (!endpoint.includes(":")) return false;
+		return endpoint.split("/").some((p) => p.startsWith(":"));
 	}
 }

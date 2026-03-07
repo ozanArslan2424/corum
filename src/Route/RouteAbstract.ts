@@ -24,7 +24,7 @@ export abstract class RouteAbstract<
 	abstract handler: RouteHandler<B, S, P, R>;
 	abstract model?: RouteModel<B, S, P, R>;
 
-	resolveEndpoint(
+	protected resolveEndpoint(
 		definition: RouteDefinition<Path>,
 		variant: RouteVariant,
 	): Path {
@@ -36,20 +36,15 @@ export abstract class RouteAbstract<
 		return endpoint;
 	}
 
-	resolveMethod(definition: RouteDefinition<Path>): Method {
+	protected resolveMethod(definition: RouteDefinition<Path>): Method {
 		return typeof definition === "string" ? Method.GET : definition.method;
 	}
 
-	resolvePattern(endpoint: Path): RegExp {
-		// Convert route pattern to regex: "/users/:id" -> /^\/users\/([^\/]+)$/
-		const regex = endpoint
-			.split("/")
-			.map((part) => (part.startsWith(":") ? "([^\\/]+)" : part))
-			.join("/");
-		return new RegExp(`^${regex}$`);
+	protected resolvePattern(endpoint: Path): RegExp {
+		return Route.makeRoutePattern(endpoint);
 	}
 
-	resolveId(method: string, endpoint: Path): RouteId {
+	protected resolveId(method: string, endpoint: Path): RouteId {
 		return Route.makeRouteId(method, endpoint);
 	}
 }

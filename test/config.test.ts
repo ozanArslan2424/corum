@@ -1,5 +1,5 @@
 import C from "@/index";
-import { describe, expect, it } from "bun:test";
+import { describe, expect, it, spyOn } from "bun:test";
 import { RuntimeOptions } from "@/Config/enums/RuntimeOptions";
 
 describe("C.Config", () => {
@@ -46,7 +46,9 @@ describe("C.Config", () => {
 	});
 
 	it("GET - UNDEFINED", () => {
+		const errorSpy = spyOn(console, "error");
 		expect(C.Config.get(undefinedKey)).toBeUndefined();
+		expect(errorSpy).toBeCalled();
 	});
 
 	it("GET - UNDEFINED WITH FALLBACK", () => {

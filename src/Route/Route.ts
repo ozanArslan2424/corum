@@ -53,4 +53,13 @@ export class Route<
 	static makeRouteId(method: string, endpoint: string): RouteId {
 		return `${method.toUpperCase()} ${endpoint}`;
 	}
+
+	static makeRoutePattern(endpoint: string): RegExp {
+		// Convert route pattern to regex: "/users/:id" -> /^\/users\/([^\/]+)$/
+		const regex = endpoint
+			.split("/")
+			.map((part) => (part.startsWith(":") ? "([^\\/]+)" : part))
+			.join("/");
+		return new RegExp(`^${regex}$`);
+	}
 }

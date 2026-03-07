@@ -2,6 +2,8 @@ import Memoirist from "memoirist";
 import type { RouterAdapterInterface } from "@/Router/RouterAdapterInterface";
 import type { RouterRouteData } from "@/Router/types/RouterRouteData";
 
+/** Router Adapter for the "memoirist" package. */
+
 export class MemoiristAdapter implements RouterAdapterInterface {
 	private router = new Memoirist<RouterRouteData>();
 
@@ -18,7 +20,7 @@ export class MemoiristAdapter implements RouterAdapterInterface {
 		return { route: result.store, params: result.params };
 	}
 
-	list(): Array<[string, string]> {
-		return this.router.history.map(([method, path]) => [method, path]);
+	list(): Array<RouterRouteData> {
+		return this.router.history.map((v) => v[2]);
 	}
 }

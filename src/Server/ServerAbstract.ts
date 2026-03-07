@@ -147,7 +147,7 @@ export abstract class ServerAbstract implements ServerInterface {
 		this.defaultMethodNotFoundHandler(req);
 	defaultMethodNotFoundHandler: RequestHandler = (req) => {
 		return new HttpResponse(
-			{ error: `${req.method} does not exist.` },
+			{ error: `${req.method} ${req.url} does not exist.` },
 			{ status: Status.METHOD_NOT_ALLOWED },
 		);
 	};

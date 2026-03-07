@@ -6,5 +6,5 @@ export interface RouterAdapterInterface {
 		method: string,
 		path: string,
 	): { route: RouterRouteData; params?: Record<string, unknown> } | null;
-	list(): Array<[string, string]>;
+	list(): Array<RouterRouteData>;
 }

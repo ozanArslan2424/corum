@@ -15,6 +15,7 @@ import type { Middleware } from "@/Middleware/Middleware";
 import type { RouterAdapterInterface } from "@/Router/RouterAdapterInterface";
 import { CorpusAdapter } from "@/Router/adapters/CorpusAdapter";
 import { LazyMap } from "@/Store/LazyMap";
+import type { RouterRouteData } from "@/Router/types/RouterRouteData";
 
 export class Router {
 	constructor(adapter?: RouterAdapterInterface) {
@@ -28,6 +29,13 @@ export class Router {
 	private middlewares = new LazyMap<string, RouterMiddlewareData>();
 	// RouteId -> ModelRegistryData
 	private models = new LazyMap<RouteId, RouterModelData>();
+
+	checkPossibleCollision(n: RouterRouteData): boolean {
+		if (this._adapter instanceof CorpusAdapter) {
+			return this._adapter.checkPossibleCollision(n);
+		}
+		return false;
+	}
 
 	addModel(routeId: RouteId, model: AnyRouteModel): void {
 		const entry: RouterModelData = {};
@@ -51,13 +59,11 @@ export class Router {
 
 	addMiddleware(m: Middleware): void {
 		const useOn = m.useOn;
-		const handler = this.intern(m.handler, "middleware", m.handler.toString());
+		const handler = m.handler;
 
 		if (useOn === "*") {
-			this.middlewares.set(
-				"*",
-				this.compile([this.middlewares.get("*"), handler]),
-			);
+			const existing = this.middlewares.get("*") ?? [];
+			this.middlewares.set("*", [...existing, handler]);
 			return;
 		}
 
@@ -70,29 +76,24 @@ export class Router {
 						: [];
 
 			for (const routeId of routeIds) {
-				this.middlewares.set(
-					routeId,
-					this.compile([
-						this.middlewares.get("*"),
-						this.middlewares.get(routeId),
-						handler,
-					]),
-				);
+				const existing = this.middlewares.get(routeId) ?? [];
+				this.middlewares.set(routeId, [...existing, handler]);
 			}
 		}
 	}
 
-	private findMiddleware(routeId: RouteId): RouterMiddlewareData | undefined {
-		return this.middlewares.get(routeId);
+	private findMiddleware(routeId: RouteId): Func<[Context]> {
+		const globals = this.middlewares.get("*") ?? [];
+		const locals = this.middlewares.get(routeId) ?? [];
+		return this.compile([...globals, ...locals]);
 	}
 
 	addRoute(r: AnyRoute): void {
-		const handler = this.intern(r.handler, "route", r.id);
 		this._adapter.add({
 			id: r.id,
 			endpoint: r.endpoint,
 			method: r.method,
-			handler,
+			handler: r.handler,
 			pattern: r.pattern,
 		});
 	}
@@ -101,21 +102,26 @@ export class Router {
 		const cached = this.cache.get(req);
 		if (cached) return cached;
 
-		const result = this._adapter.find(req.method, req.urlObject.pathname);
-		if (!result) throw HttpError.notFound();
+		const match = this._adapter.find(req.method, req.urlObject.pathname);
+		if (!match) throw HttpError.notFound();
 
-		const route = result.route;
 		const ctx = Context.makeFromRequest(req);
-		const middleware = this.findMiddleware(route.id);
-		const model = this.findModel(route.id);
+		const mwHandler = this.findMiddleware(match.route.id);
+		const model = this.findModel(match.route.id);
 
 		const handler = async () => {
-			await middleware?.(ctx);
-			await Context.appendParsedData(ctx, req, route.endpoint, model);
-			const result = await route.handler(ctx);
-			return result instanceof HttpResponse
-				? result
-				: new HttpResponse(result, {
+			await mwHandler(ctx);
+			await Context.appendParsedData(
+				ctx,
+				req,
+				match.route.endpoint,
+				model,
+				match.params,
+			);
+			const res = await match.route.handler(ctx);
+			return res instanceof HttpResponse
+				? res
+				: new HttpResponse(res, {
 						cookies: ctx.res.cookies,
 						headers: ctx.res.headers,
 						status: ctx.res.status,
@@ -128,7 +134,7 @@ export class Router {
 	}
 
 	getRouteList(): Array<[string, string]> {
-		return this._adapter.list();
+		return this._adapter.list().map((v) => [v.method, v.endpoint]);
 	}
 
 	private compile<F extends Func>(

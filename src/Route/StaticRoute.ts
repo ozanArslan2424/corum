@@ -58,22 +58,7 @@ export class StaticRoute<
 	handler: RouteHandler<B, S, P, string>;
 
 	private defaultHandler: RouteHandler<B, S, P, string> = async (c) => {
-		let content = "";
-
-		switch (this.extension) {
-			case "html":
-				content = await this.handleHtml();
-				break;
-			case "css":
-				content = await this.handleCss();
-				break;
-			case "js":
-				content = await this.handleJs();
-				break;
-			default:
-				content = await this.handleFile();
-				break;
-		}
+		const content = await this.getContent();
 
 		c.res.headers.set(
 			CommonHeaders.ContentType,
@@ -123,21 +108,4 @@ export class StaticRoute<
 		woff2: "font/woff2",
 		ttf: "font/ttf",
 	};
-
-	private async handleHtml() {
-		return await this.getContent();
-	}
-
-	private async handleCss() {
-		return await this.getContent();
-	}
-
-	private async handleJs() {
-		return await this.getContent();
-	}
-
-	// TODO: Compress images and other binary files
-	private async handleFile() {
-		return await this.getContent();
-	}
 }

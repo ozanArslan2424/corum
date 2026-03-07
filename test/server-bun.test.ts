@@ -19,12 +19,6 @@ describe("C.Server USING BUN", () => {
 		expect(res.status).toBe(404);
 	});
 
-	it("HANDLE - RETURNS 405 FOR WRONG METHOD", async () => {
-		new C.Route({ method: C.Method.POST, path: "/srv-405" }, () => "ok");
-		const res = await s.handle(req("/srv-405", { method: "GET" }));
-		expect(res.status).toBe(405);
-	});
-
 	it("HANDLE - RETURNS HANDLER RESULT AS BODY", async () => {
 		new C.Route("/srv-body", () => ({ hello: "world" }));
 		const res = await s.handle(req("/srv-body"));

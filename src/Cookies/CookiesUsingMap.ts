@@ -6,8 +6,6 @@ import { strAfterMark } from "@/utils/strAfterMark";
 import { strBeforeMark } from "@/utils/strBeforeMark";
 import { strCapitalize } from "@/utils/strCapitalize";
 import { strSplit } from "@/utils/strSplit";
-import type { UnknownObject } from "@/utils/types/UnknownObject";
-import { X } from "@/index";
 
 export class CookiesUsingMap extends CookiesAbstract {
 	constructor(init?: CookiesInit) {
@@ -78,7 +76,7 @@ export class CookiesUsingMap extends CookiesAbstract {
 	}
 
 	private extractOptions(cookieString: string): CookieOptions {
-		const keyMap: Record<string, string> = {
+		const keyMap: Record<string, keyof CookieOptions> = {
 			Domain: "domain",
 			Path: "path",
 			Expires: "expires",
@@ -89,7 +87,9 @@ export class CookiesUsingMap extends CookiesAbstract {
 			"Max-Age": "maxAge",
 		};
 
-		const opts: UnknownObject = {};
+		const opts: Partial<
+			Record<keyof CookieOptions, string | boolean | undefined>
+		> = {};
 
 		const first = strBeforeMark(";", cookieString).trim();
 		const rest = strAfterMark(";", cookieString).trim();
@@ -105,7 +105,7 @@ export class CookiesUsingMap extends CookiesAbstract {
 					console.warn(`cookie extracting and ${key} is not a cookie key`);
 					continue;
 				}
-				opts[keyMap[key]] = val ? X.Parser.processString(val) : undefined;
+				opts[keyMap[key]] = val;
 			} else {
 				if (!keyMap[part]) {
 					console.warn(`cookie extracting and ${part} is not a cookie key`);

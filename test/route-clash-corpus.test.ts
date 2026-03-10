@@ -2,9 +2,13 @@ import { _routerStore, type RouteDefinition } from "@/index";
 import { createTestServer } from "./utils/createTestServer";
 import C from "@/index";
 import { beforeEach, describe, expect, it, spyOn } from "bun:test";
+import { CorpusAdapter } from "@/Router/adapters/CorpusAdapter";
 
 describe("CorpusAdapter - Route Collision Detection", () => {
-	createTestServer();
+	createTestServer({
+		// optional
+		adapter: new CorpusAdapter(),
+	});
 	const errorSpy = spyOn(console, "error");
 	beforeEach(() => errorSpy.mockReset());
 

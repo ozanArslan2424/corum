@@ -1,46 +1,64 @@
-import type { RouterAdapterInterface } from "@/Router/RouterAdapterInterface";
+import type { RouterAdapterInterface } from "@/Router/adapters/RouterAdapterInterface";
 import type { RouterRouteData } from "@/Router/types/RouterRouteData";
 import { HttpError } from "@/Error/HttpError";
 import { isRegexMatch } from "@/utils/isRegexMatch";
 import { strIsEqual } from "@/utils/strIsEqual";
 import type { RouteId } from "@/Route/types/RouteId";
-import { Route } from "@/index";
+import { Middleware, Route } from "@/index";
+import { ModelRegistry } from "@/Router/registries/ModelRegistry";
+import type { RouterReturnData } from "@/Router/types/RouterReturnData";
+import type { AnyRouteModel } from "@/Model/types/AnyRouteModel";
+import { MiddlewareRegistry } from "@/Router/registries/MiddlewareRegistry";
+import type { HttpRequest } from "@/Request/HttpRequest";
+import type { AnyRoute } from "@/Route/types/AnyRoute";
 
 export class CorpusAdapter implements RouterAdapterInterface {
 	// RouteId -> RouteRegistryData
 	private routes = new Map<RouteId, RouterRouteData>();
+	private modelRegistry = new ModelRegistry();
+	private middlewareRegistry = new MiddlewareRegistry();
 
-	add(data: RouterRouteData): void {
+	addRoute(data: RouterRouteData): void {
 		this.checkPossibleCollision(data);
 		this.routes.set(data.id, data);
 	}
 
-	find(
-		method: string,
-		path: string,
-	): { route: RouterRouteData; params?: Record<string, unknown> } | null {
+	addModel(route: AnyRoute, model: AnyRouteModel): void {
+		this.modelRegistry.add(route.method, route.endpoint, model);
+	}
+
+	addMiddleware(middleware: Middleware): void {
+		this.middlewareRegistry.add(middleware);
+	}
+
+	find(req: HttpRequest): RouterReturnData | null {
+		const method = req.method;
+		const pathname = req.urlObject.pathname;
+		const searchParams = req.urlObject.searchParams;
+
 		let route: RouterRouteData | null = null;
 
 		for (const data of this.routes.values()) {
-			const endpoint = data.endpoint;
-
 			// Check for pattern match for parameterized routes
-			if (this.hasAnyParam(endpoint) && isRegexMatch(path, data.pattern)) {
+			if (
+				this.hasAnyParam(data.endpoint) &&
+				isRegexMatch(pathname, data.pattern)
+			) {
 				route = data;
 				break;
 			}
 
 			// If pattern doesn't match check for missing last part param
 			if (
-				this.hasLastPartParam(endpoint) &&
-				strIsEqual(this.removeLastParam(endpoint), path, "lower")
+				this.hasLastPartParam(data.endpoint) &&
+				strIsEqual(this.removeLastParam(data.endpoint), pathname, "lower")
 			) {
 				route = data;
 				break;
 			}
 
 			// Check for simple pathname match for static routes
-			if (strIsEqual(endpoint, path)) {
+			if (strIsEqual(data.endpoint, pathname)) {
 				// Found exact match
 				route = data;
 				break;
@@ -56,7 +74,13 @@ export class CorpusAdapter implements RouterAdapterInterface {
 			throw HttpError.methodNotAllowed();
 		}
 
-		return { route };
+		return {
+			route,
+			model: this.modelRegistry.find(route.id),
+			middleware: this.middlewareRegistry.find(route.id),
+			params: this.extractParams(pathname, route.endpoint),
+			search: Object.fromEntries(searchParams),
+		};
 	}
 
 	list(): Array<RouterRouteData> {
@@ -132,6 +156,23 @@ export class CorpusAdapter implements RouterAdapterInterface {
 		}
 
 		return false;
+	}
+
+	extractParams(pathname: string, endpoint: string): Record<string, string> {
+		const data: Record<string, string> = {};
+		if (!this.hasAnyParam(endpoint)) return data;
+
+		const defParts = endpoint.split("/");
+		const reqParts = pathname.split("/");
+
+		for (const [i, defPart] of defParts.entries()) {
+			const reqPart = reqParts[i];
+			if (defPart.startsWith(":") && reqPart !== undefined) {
+				data[defPart.slice(1)] = decodeURIComponent(reqPart);
+			}
+		}
+
+		return data;
 	}
 
 	private hasLastPartParam(endpoint: string): boolean {

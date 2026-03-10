@@ -22,7 +22,7 @@ describe("C.Server USING BUN", () => {
 	it("HANDLE - RETURNS HANDLER RESULT AS BODY", async () => {
 		new C.Route("/srv-body", () => ({ hello: "world" }));
 		const res = await s.handle(req("/srv-body"));
-		const data = await X.Parser.getBody<{ hello: string }>(res);
+		const data = await X.Parser.parseBody<{ hello: string }>(res);
 		expect(data.hello).toBe("world");
 	});
 
@@ -54,7 +54,7 @@ describe("C.Server USING BUN", () => {
 		});
 		const res = await s.handle(req("/srv-error"));
 		expect(res.status).toBe(500);
-		const data = await X.Parser.getBody<{ message: string }>(res);
+		const data = await X.Parser.parseBody<{ message: string }>(res);
 		expect(data.message).toBe("custom error");
 
 		s.setOnError(s.defaultErrorHandler);
@@ -74,7 +74,7 @@ describe("C.Server USING BUN", () => {
 		});
 		const res = await s.handle(req("/srv-httperror"));
 		expect(res.status).toBe(400);
-		const data = await X.Parser.getBody<{ message: string }>(res);
+		const data = await X.Parser.parseBody<{ message: string }>(res);
 		expect(data.message).toBe("bad input");
 	});
 
@@ -89,7 +89,7 @@ describe("C.Server USING BUN", () => {
 		});
 		const res = await s.handle(req("/srv-custom-404"));
 		expect(res.status).toBe(404);
-		const data = await X.Parser.getBody<{ message: string }>(res);
+		const data = await X.Parser.parseBody<{ message: string }>(res);
 		expect(data.message).toBe("custom not found");
 
 		s.setOnNotFound(s.defaultNotFoundHandler);
@@ -98,7 +98,7 @@ describe("C.Server USING BUN", () => {
 	it("SET ON NOT FOUND - DEFAULT HANDLER INCLUDES METHOD AND URL", async () => {
 		const res = await s.handle(req("/srv-default-404"));
 		expect(res.status).toBe(404);
-		const data = await X.Parser.getBody<{ message: string }>(res);
+		const data = await X.Parser.parseBody<{ message: string }>(res);
 		expect(data.message).toContain("GET");
 		expect(data.message).toContain("/srv-default-404");
 	});

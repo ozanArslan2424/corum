@@ -10,10 +10,8 @@ import type { SchemaValidator } from "@/Model/types/SchemaValidator";
 import { arrIncludes } from "@/utils/arrIncludes";
 import { isObjectWith } from "@/utils/isObjectWith";
 import { objAppendEntry } from "@/utils/objAppendEntry";
-import { strIsDefined } from "@/utils/strIsDefined";
 
 export class Parser {
-	// TODO: .pipe method doesn't infer correctly because arktype generics are hard
 	static async parse<T = UnknownObject>(
 		data: unknown,
 		validate?: SchemaValidator<T>,
@@ -51,20 +49,19 @@ export class Parser {
 			.join("\n");
 	}
 
-	static async getSearch<S = UnknownObject>(
-		url: URL,
-		validate?: SchemaValidator<S>,
-	): Promise<S> {
+	static async parseUrlData<P = UnknownObject>(
+		params: Record<string, string>,
+		validate?: SchemaValidator<P>,
+	): Promise<P> {
 		const data: UnknownObject = {};
-
-		for (const [key, value] of url.searchParams ?? {}) {
-			data[key] = this.processString(value);
+		for (const [key, value] of Object.entries(params)) {
+			data[key] = decodeURIComponent(value);
 		}
-
 		return await this.parse(data, validate);
 	}
 
-	static async getBody<B = UnknownObject>(
+	/** This can be used for both request and response bodies */
+	static async parseBody<B = UnknownObject>(
 		r: HttpRequest | HttpResponse | Response,
 		validate?: SchemaValidator<B>,
 	): Promise<B> {
@@ -112,33 +109,6 @@ export class Parser {
 		}
 	}
 
-	static async getParams<P = UnknownObject>(
-		endpoint: string,
-		url: URL,
-		validate?: SchemaValidator<P>,
-	): Promise<P> {
-		const data: UnknownObject = {};
-
-		if (!endpoint.includes(":")) {
-			return data as P;
-		}
-
-		const defParts = endpoint.split("/");
-		const reqParts = url.pathname.split("/");
-
-		for (const [i, defPart] of defParts.entries()) {
-			const reqPart = reqParts[i];
-
-			if (defPart.startsWith(":") && reqPart !== undefined) {
-				const key = defPart.slice(1);
-				const value = this.processString(decodeURIComponent(reqPart));
-				data[key] = value;
-			}
-		}
-
-		return await this.parse(data, validate);
-	}
-
 	private static async getUnknownBody<B = UnknownObject>(
 		input: Request | Response,
 		validate?: SchemaValidator<B>,
@@ -169,7 +139,7 @@ export class Parser {
 		const body: Record<string, any> = {};
 
 		for (const [key, value] of params.entries()) {
-			objAppendEntry(body, key, this.processString(value));
+			objAppendEntry(body, key, value);
 		}
 
 		return body;
@@ -189,7 +159,7 @@ export class Parser {
 			if (value instanceof File) {
 				body[key] = value;
 			} else {
-				objAppendEntry(body, key, this.processString(value));
+				objAppendEntry(body, key, value);
 			}
 		}
 
@@ -204,8 +174,7 @@ export class Parser {
 
 		// 1MB threshold
 		if (length > 0 && length < 1024 * 1024) {
-			const text = await input.text();
-			return this.processString(text);
+			return await input.text();
 		}
 
 		const buffer = await input.arrayBuffer();
@@ -214,9 +183,7 @@ export class Parser {
 		const charset = match?.[1] ? match[1].trim() : null;
 
 		const decoder = new TextDecoder(charset || "utf-8");
-		const text = decoder.decode(buffer);
-
-		return this.processString(text);
+		return decoder.decode(buffer);
 	}
 
 	static getNormalizedContentType(input: Request | Response): string {
@@ -265,19 +232,23 @@ export class Parser {
 		return "unknown";
 	}
 
-	static processString(value: string): string | boolean | number {
-		let processedValue: string | boolean | number = value;
-		if (!strIsDefined(value)) return "";
-
-		if (/^-?\d+(\.\d+)?$/.test(value)) {
-			processedValue = Number(value);
-		} else if (
-			value.toLowerCase() === "true" ||
-			value.toLowerCase() === "false"
-		) {
-			processedValue = value.toLowerCase() === "true";
-		}
-
-		return processedValue;
-	}
+	// NOTE: This seems like a good approach to write simpler schemas however,
+	// it might not be the best idea since it's fragile and not ver intuitive
+	// with encoded params
+	//
+	// static processString(value: string): string | boolean | number {
+	// 	let processedValue: string | boolean | number = value;
+	// 	if (!strIsDefined(value)) return "";
+	//
+	// 	if (/^-?\d+(\.\d+)?$/.test(value)) {
+	// 		processedValue = Number(value);
+	// 	} else if (
+	// 		value.toLowerCase() === "true" ||
+	// 		value.toLowerCase() === "false"
+	// 	) {
+	// 		processedValue = value.toLowerCase() === "true";
+	// 	}
+	//
+	// 	return processedValue;
+	// }
 }

@@ -54,28 +54,28 @@ new C.Middleware({
 describe("C.Middleware", () => {
 	it("ROUTE - APPLIES TO REGISTERED ROUTE", async () => {
 		const res = await s.handle(req("/r1"));
-		const data = await X.Parser.getBody<string>(res);
+		const data = await X.Parser.parseBody<string>(res);
 		expect(data).toBe(middlewareData);
 		expect(logSpy).toBeCalled();
 	});
 
 	it("ROUTE - DOES NOT APPLY TO UNREGISTERED ROUTE", async () => {
 		const res = await s.handle(req("/r2"));
-		const data = await X.Parser.getBody(res);
+		const data = await X.Parser.parseBody(res);
 		expect(data).toBeEmptyObject();
 		expect(logSpy).toBeCalled();
 	});
 
 	it("CONTROLLER - APPLIES TO REGISTERED CONTROLLER ROUTE", async () => {
 		const res = await s.handle(req("/c1/cr1"));
-		const data = await X.Parser.getBody<string>(res);
+		const data = await X.Parser.parseBody<string>(res);
 		expect(data).toBe(middlewareData);
 		expect(logSpy).toBeCalled();
 	});
 
 	it("CONTROLLER - DOES NOT APPLY TO UNREGISTERED CONTROLLER ROUTE", async () => {
 		const res = await s.handle(req("/c1/cr2"));
-		const data = await X.Parser.getBody(res);
+		const data = await X.Parser.parseBody(res);
 		expect(data).toBeEmptyObject();
 		expect(logSpy).toBeCalled();
 	});
@@ -88,21 +88,21 @@ describe("C.Middleware", () => {
 			},
 		});
 		const res = await s.handle(req("/r1"));
-		const data = await X.Parser.getBody<string>(res);
+		const data = await X.Parser.parseBody<string>(res);
 		expect(data).toBe(overrideData);
 		expect(logSpy).toBeCalled();
 	});
 
 	it("ROUTE - SETS OBJECT DATA", async () => {
 		const res = await s.handle(req("/r3"));
-		const data = await X.Parser.getBody<Record<string, unknown>>(res);
+		const data = await X.Parser.parseBody<Record<string, unknown>>(res);
 		expect(data).toEqual({ user: "john", role: "admin", count: 1 });
 		expect(logSpy).toBeCalled();
 	});
 
 	it("ROUTE - MUTATES OBJECT DATA KEYS IN SUBSEQUENT MIDDLEWARE", async () => {
 		const res = await s.handle(req("/r4"));
-		const data = await X.Parser.getBody<Record<string, unknown>>(res);
+		const data = await X.Parser.parseBody<Record<string, unknown>>(res);
 		expect(data.user).toBe("john");
 		expect(data.role).toBe("superadmin");
 		expect(data.count).toBe(2);

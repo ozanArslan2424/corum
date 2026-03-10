@@ -38,7 +38,7 @@ export class Route<
 
 		_routerStore.get().addRoute(this);
 		if (model) {
-			_routerStore.get().addModel(this.id, model);
+			_routerStore.get().addModel(this, model);
 		}
 	}
 

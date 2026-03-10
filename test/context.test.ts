@@ -2,6 +2,7 @@ import C from "@/index";
 import { describe, expect, it } from "bun:test";
 import { createTestServer } from "./utils/createTestServer";
 import { req } from "./utils/req";
+import { type } from "arktype";
 
 const s = createTestServer();
 
@@ -40,10 +41,19 @@ describe("C.Context", () => {
 	});
 
 	it("BODY - FORM URLENCODED", async () => {
-		new C.Route({ method: C.Method.POST, path: "/ctx-body-form" }, (c) => {
-			expect(c.body).toEqual({ name: "john", age: 30 });
-			return "ok";
-		});
+		new C.Route(
+			{ method: C.Method.POST, path: "/ctx-body-form" },
+			(c) => {
+				expect(c.body).toEqual({ name: "john", age: 30 });
+				return "ok";
+			},
+			{
+				body: type({
+					name: "string",
+					age: type("string").pipe(Number),
+				}),
+			},
+		);
 
 		const res = await s.handle(
 			req("/ctx-body-form", {
@@ -75,25 +85,40 @@ describe("C.Context", () => {
 		expect(res.status).toBe(C.Status.OK);
 	});
 
-	it("SEARCH - COERCES NUMBER", async () => {
-		new C.Route("/ctx-search-number", (c) => {
-			expect(c.search).toEqual({ page: 1 });
-			return "ok";
-		});
-
-		const res = await s.handle(req("/ctx-search-number?page=1"));
-		expect(res.status).toBe(C.Status.OK);
-	});
-
-	it("SEARCH - COERCES BOOLEAN", async () => {
-		new C.Route("/ctx-search-bool", (c) => {
-			expect(c.search).toEqual({ active: true });
-			return "ok";
-		});
-
-		const res = await s.handle(req("/ctx-search-bool?active=true"));
-		expect(res.status).toBe(C.Status.OK);
-	});
+	// NOTE:
+	// These used to be possible by processing raw string,
+	// i removed that because it wasn't a good idea to process raw string.
+	// Consumer should do that in the schema
+	//
+	// it("SEARCH - COERCES NUMBER", async () => {
+	// 	new C.Route("/ctx-search-number", (c) => {
+	// 		expect(c.search).toEqual({ page: 1 });
+	// 		return "ok";
+	// 	});
+	//
+	// 	const res = await s.handle(req("/ctx-search-number?page=1"));
+	// 	expect(res.status).toBe(C.Status.OK);
+	// });
+	//
+	// it("SEARCH - COERCES BOOLEAN", async () => {
+	// 	new C.Route("/ctx-search-bool", (c) => {
+	// 		expect(c.search).toEqual({ active: true });
+	// 		return "ok";
+	// 	});
+	//
+	// 	const res = await s.handle(req("/ctx-search-bool?active=true"));
+	// 	expect(res.status).toBe(C.Status.OK);
+	// });
+	//
+	// it("PARAMS - COERCES NUMBER", async () => {
+	// 	new C.Route("/ctx-params-num/:id", (c) => {
+	// 		expect(c.params).toEqual({ id: 42 });
+	// 		return "ok";
+	// 	});
+	//
+	// 	const res = await s.handle(req("/ctx-params-num/42"));
+	// 	expect(res.status).toBe(C.Status.OK);
+	// });
 
 	it("SEARCH - EMPTY WHEN NO PARAMS", async () => {
 		new C.Route("/ctx-search-empty", (c) => {
@@ -107,7 +132,7 @@ describe("C.Context", () => {
 
 	it("PARAMS - SINGLE PARAM", async () => {
 		new C.Route("/ctx-params/:id", (c) => {
-			expect(c.params).toEqual({ id: 123 });
+			expect(c.params).toEqual({ id: "123" });
 			return "ok";
 		});
 
@@ -116,22 +141,12 @@ describe("C.Context", () => {
 	});
 
 	it("PARAMS - MULTIPLE PARAMS", async () => {
-		new C.Route("/ctx-params/:org/:repo", (c) => {
+		new C.Route("/ctx-many-params/:org/:repo", (c) => {
 			expect(c.params).toEqual({ org: "acme", repo: "web" });
 			return "ok";
 		});
 
-		const res = await s.handle(req("/ctx-params/acme/web"));
-		expect(res.status).toBe(C.Status.OK);
-	});
-
-	it("PARAMS - COERCES NUMBER", async () => {
-		new C.Route("/ctx-params-num/:id", (c) => {
-			expect(c.params).toEqual({ id: 42 });
-			return "ok";
-		});
-
-		const res = await s.handle(req("/ctx-params-num/42"));
+		const res = await s.handle(req("/ctx-many-params/acme/web"));
 		expect(res.status).toBe(C.Status.OK);
 	});
 

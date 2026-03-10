@@ -24,34 +24,39 @@ const failRouteData = {
 
 type ST = typeof successRouteData;
 
-const arkBasic = type({ hello: "number" });
+const arkNumber = type("string")
+	.pipe((v) => parseInt(v))
+	.or("number");
+const zodNumber = z.union([z.coerce.number(), z.number()]);
 
-const zodBasic = z.object({ hello: z.number() });
+const arkBasic = type({ hello: arkNumber });
+
+const zodBasic = z.object({ hello: zodNumber });
 
 class Model {
-	static arkModelBasic = type({ hello: "number" });
+	static arkModelBasic = type({ hello: arkNumber });
 
-	static zodModelBasic = z.object({ hello: z.number() });
+	static zodModelBasic = z.object({ hello: zodNumber });
 
 	static arkReferenced = arkBasic;
 
 	static zodReferenced = zodBasic;
 
 	static arkRoute = {
-		params: type({ hello: "number" }),
-		search: type({ hello: "number" }),
-		body: type({ hello: "number" }),
+		params: type({ hello: arkNumber }),
+		search: type({ hello: arkNumber }),
+		body: type({ hello: arkNumber }),
 		response: type({
-			params: type({ hello: "number" }),
-			search: type({ hello: "number" }),
-			body: type({ hello: "number" }),
+			params: type({ hello: arkNumber }),
+			search: type({ hello: arkNumber }),
+			body: type({ hello: arkNumber }),
 		}),
 	};
 
 	static zodRoute = {
-		params: z.object({ hello: z.number() }),
-		search: z.object({ hello: z.number() }),
-		body: z.object({ hello: z.number() }),
+		params: z.object({ hello: zodNumber }),
+		search: z.object({ hello: zodNumber }),
+		body: z.object({ hello: zodNumber }),
 	};
 
 	static arkRouteReferenced = {
@@ -67,8 +72,8 @@ class Model {
 	};
 
 	static combined = {
-		params: type({ hello: "number" }),
-		search: z.object({ hello: z.number() }),
+		params: type({ hello: arkNumber }),
+		search: z.object({ hello: zodNumber }),
 		body: this.arkRoute.body,
 	};
 }
@@ -105,7 +110,9 @@ class Controller extends C.Controller {
 	);
 
 	optional = this.route("/optional", (c) => c.search, {
-		search: type({ "groupId?": "number | undefined" }),
+		search: type({
+			"groupId?": type("string | undefined").pipe((v) => (v ? Number(v) : v)),
+		}),
 	});
 
 	missing = this.route("/missing/:param", (c) => c.params.param, {
@@ -248,7 +255,7 @@ describe("adaptive parsing based on library and schema definition", () => {
 				headers: { [C.CommonHeaders.ContentType]: "application/json" },
 			}),
 		);
-		expect(await X.Parser.getBody<ST>(res)).toEqual(successRouteData);
+		expect(await X.Parser.parseBody<ST>(res)).toEqual(successRouteData);
 	});
 	it("zodRoute - Real Request - success", async () => {
 		new C.Route(
@@ -267,7 +274,7 @@ describe("adaptive parsing based on library and schema definition", () => {
 				headers: { [C.CommonHeaders.ContentType]: "application/json" },
 			}),
 		);
-		expect(await X.Parser.getBody<ST>(res)).toEqual(successRouteData);
+		expect(await X.Parser.parseBody<ST>(res)).toEqual(successRouteData);
 	});
 	it("arkRouteReferenced - Real Request - success", async () => {
 		new C.Route(
@@ -291,7 +298,7 @@ describe("adaptive parsing based on library and schema definition", () => {
 				headers: { [C.CommonHeaders.ContentType]: "application/json" },
 			}),
 		);
-		expect(await X.Parser.getBody<ST>(res)).toEqual(successRouteData);
+		expect(await X.Parser.parseBody<ST>(res)).toEqual(successRouteData);
 	});
 	it("zodRouteReferenced - Real Request - success", async () => {
 		new C.Route(
@@ -315,7 +322,7 @@ describe("adaptive parsing based on library and schema definition", () => {
 				headers: { [C.CommonHeaders.ContentType]: "application/json" },
 			}),
 		);
-		expect(await X.Parser.getBody<ST>(res)).toEqual(successRouteData);
+		expect(await X.Parser.parseBody<ST>(res)).toEqual(successRouteData);
 	});
 	it("combined - Real Request - success", async () => {
 		new C.Route(
@@ -334,7 +341,7 @@ describe("adaptive parsing based on library and schema definition", () => {
 				headers: { [C.CommonHeaders.ContentType]: "application/json" },
 			}),
 		);
-		expect(await X.Parser.getBody<ST>(res)).toEqual(successRouteData);
+		expect(await X.Parser.parseBody<ST>(res)).toEqual(successRouteData);
 	});
 	it("Controller - Real Request - success", async () => {
 		const url = new URL(
@@ -348,7 +355,7 @@ describe("adaptive parsing based on library and schema definition", () => {
 				headers: { [C.CommonHeaders.ContentType]: "application/json" },
 			}),
 		);
-		expect(await X.Parser.getBody<ST>(res)).toEqual(successRouteData);
+		expect(await X.Parser.parseBody<ST>(res)).toEqual(successRouteData);
 	});
 
 	it("arkBasic - fail", () => {
@@ -582,7 +589,7 @@ describe("adaptive parsing based on library and schema definition", () => {
 		const url = new URL(path("controller", "optional"));
 		url.searchParams.set("groupId", "8");
 		const res = await s.handle(new Request(url));
-		expect(await X.Parser.getBody<{ groupId: number }>(res)).toEqual({
+		expect(await X.Parser.parseBody<{ groupId: number }>(res)).toEqual({
 			groupId: 8,
 		});
 	});
@@ -590,7 +597,7 @@ describe("adaptive parsing based on library and schema definition", () => {
 	it("optional - missing", async () => {
 		const url = new URL(path("controller", "optional"));
 		const res = await s.handle(new Request(url));
-		const body = await X.Parser.getBody<{}>(res);
+		const body = await X.Parser.parseBody<{}>(res);
 		expect(body).toBeEmptyObject();
 	});
 

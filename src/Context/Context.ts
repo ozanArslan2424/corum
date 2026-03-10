@@ -59,7 +59,6 @@ export class Context<B = unknown, S = unknown, P = unknown, R = unknown> {
 	}
 
 	static async appendParsedData<
-		Path extends string = string,
 		B = unknown,
 		S = unknown,
 		P = unknown,
@@ -67,15 +66,12 @@ export class Context<B = unknown, S = unknown, P = unknown, R = unknown> {
 	>(
 		ctx: Context<B, S, P, R>,
 		req: HttpRequest,
-		endpoint: Path,
+		params: Record<string, string>,
+		search: Record<string, string>,
 		model?: RouterModelData<B, S, P>,
-		parsedParams?: Record<string, unknown>,
 	) {
-		ctx.body = await Parser.getBody(req, model?.body);
-		ctx.search = await Parser.getSearch(ctx.url, model?.search);
-		ctx.params =
-			parsedParams !== undefined
-				? await Parser.parse(parsedParams, model?.params)
-				: await Parser.getParams(endpoint, ctx.url, model?.params);
+		ctx.body = await Parser.parseBody(req, model?.body);
+		ctx.params = await Parser.parseUrlData(params, model?.params);
+		ctx.search = await Parser.parseUrlData(search, model?.search);
 	}
 }

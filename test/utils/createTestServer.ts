@@ -1,9 +1,11 @@
-import C, { type ServerOptions } from "@/index";
+import C from "@/index";
 
 export function createTestServer(
-	opts?: ServerOptions & { withLogging?: boolean },
+	opts?: C.ServerOptions & { withLogging?: boolean },
 ) {
-	const { withLogging, ...serverOpts } = opts ?? { withLogging: false };
+	const { withLogging, ...serverOpts } = opts ?? {
+		withLogging: false,
+	};
 	const s = new C.Server(serverOpts);
 
 	if (withLogging === true) {

@@ -15,7 +15,7 @@ export class ServerUsingBun extends ServerAbstract {
 		await this.handleBeforeClose?.();
 		console.log("Closing...");
 
-		await this.app?.stop();
+		await this.app?.stop(true);
 
 		if (Config.nodeEnv !== "test") {
 			process.exit(0);

@@ -170,4 +170,204 @@ describe("C.Response", () => {
 			expectedStatus: C.Status.SEE_OTHER,
 		});
 	});
+
+	it("SSE - RETURNS STREAM WITH CORRECT HEADERS", async () => {
+		const res = C.Response.sse((send) => {
+			send({ event: "ping", data: { time: 1 } });
+		});
+		const response = res.response;
+
+		expect(res.status).toBe(C.Status.OK);
+		expect(res.body).toBeInstanceOf(ReadableStream);
+		expect(res.headers.get(C.CommonHeaders.ContentType)).toBe(
+			"text/event-stream",
+		);
+		expect(res.headers.get(C.CommonHeaders.CacheControl)).toBe("no-cache");
+		expect(res.headers.get(C.CommonHeaders.Connection)).toBe("keep-alive");
+		expect(response.headers.get(C.CommonHeaders.ContentType)).toBe(
+			"text/event-stream",
+		);
+	});
+
+	it("SSE - STREAM EMITS CORRECT CHUNKS", async () => {
+		const res = C.Response.sse((send) => {
+			send({ event: "ping", data: { time: 1 } });
+			send({ id: "2", event: "pong", data: { time: 2 } });
+		});
+
+		const text = await res.response.text();
+		expect(text).toContain("event: ping\n");
+		expect(text).toContain('data: {"time":1}\n\n');
+		expect(text).toContain("id: 2\n");
+		expect(text).toContain("event: pong\n");
+		expect(text).toContain('data: {"time":2}\n\n');
+	});
+
+	it("SSE - RETRY FIELD IS INCLUDED WHEN SET", async () => {
+		const res = C.Response.sse(
+			(send) => {
+				send({ data: "ok" });
+			},
+			undefined,
+			3000,
+		);
+
+		const text = await res.response.text();
+		expect(text).toContain("retry: 3000\n");
+	});
+
+	it("SSE - CLEANUP IS CALLED ON CANCEL", async () => {
+		let cleaned = false;
+		const res = C.Response.sse(() => {
+			return () => {
+				cleaned = true;
+			};
+		});
+
+		const reader = res.response.body!.getReader();
+		await reader.cancel();
+		expect(cleaned).toBe(true);
+	});
+
+	it("ARRAYBUFFER BODY", async () => {
+		const buffer = new TextEncoder().encode("hello").buffer;
+		const res = new C.Response(buffer);
+		const response = res.response;
+
+		expect(res.body).toBeInstanceOf(ArrayBuffer);
+		expect(res.headers.get(ctHeader)).toBe("application/octet-stream");
+		expect(res.status).toBe(C.Status.OK);
+		const text = await response.text();
+		expect(text).toBe("hello");
+	});
+
+	it("BLOB BODY", async () => {
+		const blob = new Blob(["hello"], { type: "text/html" });
+		const res = new C.Response(blob);
+		const response = res.response;
+
+		expect(res.body).toBeInstanceOf(Blob);
+		expect(res.status).toBe(C.Status.OK);
+		const text = await response.text();
+		expect(text).toBe("hello");
+		expect(response.headers.get(ctHeader)).toContain("text/html");
+	});
+
+	it("FORMDATA BODY", async () => {
+		const form = new FormData();
+		form.append("name", "corpus");
+		const res = new C.Response(form);
+		const response = res.response;
+
+		expect(res.body).toBeInstanceOf(FormData);
+		expect(res.status).toBe(C.Status.OK);
+		const text = await response.text();
+		expect(text).toContain("corpus");
+		expect(response.headers.get(ctHeader)).toContain("multipart/form-data");
+	});
+
+	it("URLSEARCHPARAMS BODY", async () => {
+		const params = new URLSearchParams({ name: "corpus" });
+		const res = new C.Response(params);
+		const response = res.response;
+
+		expect(res.body).toBeInstanceOf(URLSearchParams);
+		expect(res.status).toBe(C.Status.OK);
+		const text = await response.text();
+		expect(text).toBe("name=corpus");
+		expect(response.headers.get(ctHeader)).toContain(
+			"application/x-www-form-urlencoded",
+		);
+	});
+
+	it("NDJSON - RETURNS STREAM WITH CORRECT HEADERS", async () => {
+		const res = C.Response.ndjson((send) => {
+			send({ id: 1 });
+		});
+		const response = res.response;
+
+		expect(res.status).toBe(C.Status.OK);
+		expect(res.body).toBeInstanceOf(ReadableStream);
+		expect(res.headers.get(ctHeader)).toBe("application/x-ndjson");
+		expect(response.headers.get(ctHeader)).toBe("application/x-ndjson");
+	});
+
+	it("NDJSON - STREAM EMITS CORRECT CHUNKS", async () => {
+		const res = C.Response.ndjson((send) => {
+			send({ id: 1, name: "alice" });
+			send({ id: 2, name: "bob" });
+		});
+
+		const text = await res.response.text();
+		const lines = text.trim().split("\n");
+		expect(lines).toHaveLength(2);
+		expect(lines[0]).toBeDefined();
+		expect(lines[1]).toBeDefined();
+
+		expect(JSON.parse(lines[0]!)).toEqual({ id: 1, name: "alice" });
+		expect(JSON.parse(lines[1]!)).toEqual({ id: 2, name: "bob" });
+	});
+
+	it("NDJSON - CLEANUP IS CALLED ON CANCEL", async () => {
+		let cleaned = false;
+		const res = C.Response.ndjson(() => {
+			return () => {
+				cleaned = true;
+			};
+		});
+
+		const reader = res.response.body!.getReader();
+		await reader.cancel();
+		expect(cleaned).toBe(true);
+	});
+
+	// ─── streamFile ───────────────────────────────────────────────────────────────
+
+	it("STREAM FILE - RETURNS STREAM WITH CORRECT HEADERS FOR TXT", async () => {
+		const res = await C.Response.streamFile("test/fixtures/sample.txt");
+
+		expect(res.status).toBe(C.Status.OK);
+		expect(res.body).toBeInstanceOf(ReadableStream);
+		expect(res.headers.get(ctHeader)).toBe("text/plain");
+		expect(res.headers.get(C.CommonHeaders.ContentDisposition)).toBe(
+			'attachment; filename="sample.txt"',
+		);
+	});
+
+	it("STREAM FILE - INFERS CORRECT MIME TYPE", async () => {
+		const cases: [string, string][] = [
+			["test/fixtures/sample.html", "text/html"],
+			["test/fixtures/sample.css", "text/css"],
+			["test/fixtures/sample.js", "application/javascript"],
+			["test/fixtures/sample.json", "application/json"],
+			["test/fixtures/sample.xyz", "application/octet-stream"],
+		];
+
+		for (const [path, expectedMime] of cases) {
+			const res = await C.Response.streamFile(path);
+			expect(res.headers.get(ctHeader)).toBe(expectedMime);
+		}
+	});
+
+	it("STREAM FILE - INLINE DISPOSITION", async () => {
+		const res = await C.Response.streamFile(
+			"test/fixtures/sample.txt",
+			"inline",
+		);
+		expect(res.headers.get(C.CommonHeaders.ContentDisposition)).toBe(
+			'inline; filename="sample.txt"',
+		);
+	});
+
+	it("STREAM FILE - THROWS NOT FOUND FOR MISSING FILE", async () => {
+		expect(
+			C.Response.streamFile("test/fixtures/does-not-exist.txt"),
+		).rejects.toThrow();
+	});
+
+	it("STREAM FILE - BODY CONTAINS FILE CONTENT", async () => {
+		const res = await C.Response.streamFile("test/fixtures/sample.txt");
+		const text = await res.response.text();
+		expect(text.length).toBeGreaterThan(0);
+	});
 });

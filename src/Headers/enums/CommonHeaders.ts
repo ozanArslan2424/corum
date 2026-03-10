@@ -9,6 +9,8 @@ export const CommonHeaders = {
 	ContentType: "Content-Type",
 	/** Indicates the size of the entity-body in bytes */
 	ContentLength: "Content-Length",
+	/** Whether to display payload inline within the page or prompt the user to download it as an attachment. */
+	ContentDisposition: "Content-Disposition",
 	/** Specifies the character encodings that are acceptable */
 	AcceptEncoding: "Accept-Encoding",
 	/** Informs the server about the types of data that can be sent back */

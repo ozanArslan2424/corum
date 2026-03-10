@@ -1,4 +1,4 @@
-import { type Method } from "@/Request/enums/Method";
+import { type Method } from "@/CRequest/enums/Method";
 import { RouteVariant } from "@/Route/enums/RouteVariant";
 import { _routerStore } from "@/index";
 import { RouteAbstract } from "@/Route/RouteAbstract";

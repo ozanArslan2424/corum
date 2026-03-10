@@ -1,4 +1,4 @@
-import type { SseData } from "@/Response/types/SseData";
+import type { SseData } from "@/CResponse/types/SseData";
 import type { Func } from "@/utils/types/Func";
 
 export type SseSource = Func<

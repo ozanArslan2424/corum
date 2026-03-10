@@ -9,7 +9,7 @@ import type { Middleware, MiddlewareHandler } from "@/Middleware";
 import type { RouteId } from "@/Route/types/RouteId";
 import { compile } from "@/utils/compile";
 import { MiddlewareRegistry } from "@/Router/registries/MiddlewareRegistry";
-import type { CRequest } from "@/Request/CRequest";
+import type { CRequest } from "@/CRequest/CRequest";
 import type { AnyRoute } from "@/Route/types/AnyRoute";
 
 type MemoiristData = {

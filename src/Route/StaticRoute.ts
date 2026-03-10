@@ -1,13 +1,13 @@
-import { Method } from "@/Request/enums/Method";
+import { Method } from "@/CRequest/enums/Method";
 import { RouteVariant } from "@/Route/enums/RouteVariant";
 import { FileWalker } from "@/FileWalker/FileWalker";
-import { CError } from "@/Error/CError";
-import { CResponse } from "@/Response/CResponse";
+import { CError } from "@/CError/CError";
+import { CResponse } from "@/CResponse/CResponse";
 import { RouteAbstract } from "@/Route/RouteAbstract";
 import type { RouteHandler } from "@/Route/types/RouteHandler";
 import type { RouteId } from "@/Route/types/RouteId";
 import type { RouteModel } from "@/Model/types/RouteModel";
-import { CommonHeaders } from "@/Headers/enums/CommonHeaders";
+import { CommonHeaders } from "@/CHeaders/enums/CommonHeaders";
 import type { StaticRouteHandler } from "@/Route/types/StaticRouteHandler";
 import type { StaticRouteDefinition } from "@/Route/types/StaticRouteDefinition";
 import { _routerStore } from "@/index";

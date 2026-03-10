@@ -1,6 +1,6 @@
 import type { RouterAdapterInterface } from "@/Router/adapters/RouterAdapterInterface";
 import type { RouterRouteData } from "@/Router/types/RouterRouteData";
-import { CError } from "@/Error/CError";
+import { CError } from "@/CError/CError";
 import { isRegexMatch } from "@/utils/isRegexMatch";
 import { strIsEqual } from "@/utils/strIsEqual";
 import type { RouteId } from "@/Route/types/RouteId";
@@ -9,7 +9,7 @@ import { ModelRegistry } from "@/Router/registries/ModelRegistry";
 import type { RouterReturnData } from "@/Router/types/RouterReturnData";
 import type { AnyRouteModel } from "@/Model/types/AnyRouteModel";
 import { MiddlewareRegistry } from "@/Router/registries/MiddlewareRegistry";
-import type { CRequest } from "@/Request/CRequest";
+import type { CRequest } from "@/CRequest/CRequest";
 import type { AnyRoute } from "@/Route/types/AnyRoute";
 
 export class CorpusAdapter implements RouterAdapterInterface {

@@ -1,17 +1,17 @@
-import { DefaultStatusTexts } from "@/Response/enums/DefaultStatusTexts";
-import { Status } from "@/Response/enums/Status";
-import { CommonHeaders } from "@/Headers/enums/CommonHeaders";
+import { DefaultStatusTexts } from "@/CResponse/enums/DefaultStatusTexts";
+import { Status } from "@/CResponse/enums/Status";
+import { CommonHeaders } from "@/CHeaders/enums/CommonHeaders";
 import { Cookies } from "@/Cookies/Cookies";
-import { CHeaders } from "@/Headers/CHeaders";
-import type { CResponseBody } from "@/Response/types/CResponseBody";
-import type { CResponseInit } from "@/Response/types/CResponseInit";
+import { CHeaders } from "@/CHeaders/CHeaders";
+import type { CResponseBody } from "@/CResponse/types/CResponseBody";
+import type { CResponseInit } from "@/CResponse/types/CResponseInit";
 import { isNil } from "@/utils/isNil";
 import { isPrimitive } from "@/utils/isPrimitive";
 import { isPlainObject } from "@/utils/isPlainObject";
-import type { SseSource } from "@/Response/types/SseSource";
-import type { NdjsonSource } from "@/Response/types/NdjsonSource";
+import type { SseSource } from "@/CResponse/types/SseSource";
+import type { NdjsonSource } from "@/CResponse/types/NdjsonSource";
 import { FileWalker } from "@/FileWalker";
-import { CError } from "@/Error/CError";
+import { CError } from "@/CError/CError";
 
 /**
  * Represents an HTTP response. Pass it a body and optional init to construct a response,

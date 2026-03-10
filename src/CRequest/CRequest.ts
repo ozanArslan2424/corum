@@ -1,9 +1,9 @@
-import { Method } from "@/Request/enums/Method";
-import { CommonHeaders } from "@/Headers/enums/CommonHeaders";
+import { Method } from "@/CRequest/enums/Method";
+import { CommonHeaders } from "@/CHeaders/enums/CommonHeaders";
 import { Cookies } from "@/Cookies/Cookies";
-import { CHeaders } from "@/Headers/CHeaders";
-import type { CRequestInfo } from "@/Request/types/CRequestInfo";
-import type { CRequestInit } from "@/Request/types/CRequestInit";
+import { CHeaders } from "@/CHeaders/CHeaders";
+import type { CRequestInfo } from "@/CRequest/types/CRequestInfo";
+import type { CRequestInit } from "@/CRequest/types/CRequestInit";
 import { strSplit } from "@/utils/strSplit";
 
 /** CRequest includes a cookie jar, better headers, and some utilities. */

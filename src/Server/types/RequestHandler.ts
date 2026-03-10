@@ -1,5 +1,5 @@
-import type { CRequest } from "@/Request/CRequest";
-import type { CResponse } from "@/Response/CResponse";
+import type { CRequest } from "@/CRequest/CRequest";
+import type { CResponse } from "@/CResponse/CResponse";
 import type { Func } from "@/utils/types/Func";
 import type { MaybePromise } from "@/utils/types/MaybePromise";
 

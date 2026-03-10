@@ -1,5 +1,5 @@
-import { Status } from "@/Response/enums/Status";
-import { CResponse } from "@/Response/CResponse";
+import { Status } from "@/CResponse/enums/Status";
+import { CResponse } from "@/CResponse/CResponse";
 
 export class CError extends Error {
 	constructor(

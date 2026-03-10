@@ -1,7 +1,7 @@
 import type { Cookies } from "@/Cookies/Cookies";
-import type { CHeaders } from "@/Headers/CHeaders";
-import type { CRequest } from "@/Request/CRequest";
-import { CResponse } from "@/Response/CResponse";
+import type { CHeaders } from "@/CHeaders/CHeaders";
+import type { CRequest } from "@/CRequest/CRequest";
+import { CResponse } from "@/CResponse/CResponse";
 import { Parser } from "@/Model/Parser";
 import type { ContextDataInterface } from "@/types.d.ts";
 import type { RouterModelData } from "@/Router/types/RouterModelData";

@@ -1,8 +1,8 @@
 import { Context } from "@/Context/Context";
-import type { CRequest } from "@/Request/CRequest";
-import { CResponse } from "@/Response/CResponse";
+import type { CRequest } from "@/CRequest/CRequest";
+import { CResponse } from "@/CResponse/CResponse";
 import type { AnyRoute } from "@/Route/types/AnyRoute";
-import { CError } from "@/Error/CError";
+import { CError } from "@/CError/CError";
 import type { Func } from "@/utils/types/Func";
 import type { RouterAdapterInterface } from "@/Router/adapters/RouterAdapterInterface";
 import { CorpusAdapter } from "@/Router/adapters/CorpusAdapter";

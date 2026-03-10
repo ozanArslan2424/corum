@@ -1,5 +1,5 @@
 import { Config } from "@/Config/Config";
-import { Method } from "@/Request/enums/Method";
+import { Method } from "@/CRequest/enums/Method";
 import { ServerAbstract } from "@/Server/ServerAbstract";
 import type { ServeArgs } from "@/Server/types/ServeArgs";
 import http from "node:http";

@@ -1,5 +1,5 @@
-import type { HeaderKey } from "@/Headers/types/HeaderKey";
-import type { CHeadersInit } from "@/Headers/types/CHeadersInit";
+import type { HeaderKey } from "@/CHeaders/types/HeaderKey";
+import type { CHeadersInit } from "@/CHeaders/types/CHeadersInit";
 import { strIsDefined } from "@/utils/strIsDefined";
 
 /** Headers is extended to include helpers and intellisense for common header names. */

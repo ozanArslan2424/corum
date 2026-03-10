@@ -1,9 +1,9 @@
-import { Status } from "@/Response/enums/Status";
-import { Method } from "@/Request/enums/Method";
-import { CommonHeaders } from "@/Headers/enums/CommonHeaders";
-import { CError } from "@/Error/CError";
-import type { CRequest } from "@/Request/CRequest";
-import type { CResponse } from "@/Response/CResponse";
+import { Status } from "@/CResponse/enums/Status";
+import { Method } from "@/CRequest/enums/Method";
+import { CommonHeaders } from "@/CHeaders/enums/CommonHeaders";
+import { CError } from "@/CError/CError";
+import type { CRequest } from "@/CRequest/CRequest";
+import type { CResponse } from "@/CResponse/CResponse";
 import type { StandardSchemaV1 } from "@/Model/types/StandardSchema";
 import type { UnknownObject } from "@/utils/types/UnknownObject";
 import type { SchemaValidator } from "@/Model/types/SchemaValidator";

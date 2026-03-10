@@ -1,6 +1,6 @@
 import type { Middleware } from "@/Middleware";
 import type { AnyRouteModel } from "@/Model/types/AnyRouteModel";
-import type { CRequest } from "@/Request/CRequest";
+import type { CRequest } from "@/CRequest/CRequest";
 import type { AnyRoute } from "@/Route/types/AnyRoute";
 import type { RouterReturnData } from "@/Router/types/RouterReturnData";
 import type { RouterRouteData } from "@/Router/types/RouterRouteData";

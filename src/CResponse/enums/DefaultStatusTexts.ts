@@ -1,4 +1,4 @@
-import { Status } from "@/Response/enums/Status";
+import { Status } from "@/CResponse/enums/Status";
 import type { ValueOf } from "@/utils/types/ValueOf";
 
 export const DefaultStatusTexts = {

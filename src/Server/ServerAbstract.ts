@@ -1,8 +1,8 @@
-import { Status } from "@/Response/enums/Status";
+import { Status } from "@/CResponse/enums/Status";
 import { _corsStore, _prefixStore, _routerStore } from "@/index";
-import { CError } from "@/Error/CError";
-import { CRequest } from "@/Request/CRequest";
-import { CResponse } from "@/Response/CResponse";
+import { CError } from "@/CError/CError";
+import { CRequest } from "@/CRequest/CRequest";
+import { CResponse } from "@/CResponse/CResponse";
 import type { ErrorHandler } from "@/Server/types/ErrorHandler";
 import type { MaybePromise } from "@/utils/types/MaybePromise";
 import type { RequestHandler } from "@/Server/types/RequestHandler";

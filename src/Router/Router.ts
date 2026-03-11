@@ -15,6 +15,7 @@ export class Router {
 		this._adapter = adapter ?? new CorpusAdapter();
 	}
 
+	models: AnyRouteModel[] = [];
 	private _adapter: RouterAdapterInterface;
 	private cache = new WeakMap<CRequest, Func<[], Promise<CResponse>>>();
 
@@ -26,6 +27,7 @@ export class Router {
 	}
 
 	addModel(route: AnyRoute, model: AnyRouteModel): void {
+		this.models.push(model);
 		this._adapter.addModel(route, model);
 	}
 

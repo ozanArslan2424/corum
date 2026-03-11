@@ -1,6 +1,6 @@
 # Corpus
 
-A very simple typescript backend framework package to use for personal projects or simple crud applications.
+A simple typescript backend framework package to use for personal projects or simple crud applications.
 This package is by no means a replacement for full fledged backend frameworks commonly used in production.
 
 ## Quick Start
@@ -160,7 +160,7 @@ declare module "@ozanarslan/corpus" {
 
 # Closing thoughts
 
-As I mentioned multiple times, this is not for production. It's also my first ever personal project at this scale. I am very open to suggestions (maybe even pull requests). Thank you for being here.
+As I mentioned multiple times, this is not for production. It's also my first ever personal project at this scale. I am open to suggestions (maybe even pull requests). Thank you for being here.
 
 Very much inspired from the core ideas behind [Elysia](https://github.com/elysiajs/elysia)
 
@@ -168,6 +168,6 @@ Very much inspired from the core ideas behind [Elysia](https://github.com/elysia
 
 - [x] Better and more memory efficient router
 - [x] Reduce dist size
-- [ ] Support additional response body types (ArrayBuffer, Blob, FormData, etc.) in the custom Response object.
+- [x] Support additional response body types (ArrayBuffer, Blob, FormData, etc.) in the custom Response object.
 - [ ] Support WebSocket
 - [ ] Compress static files in StaticRoute for caching and stuff maybe?

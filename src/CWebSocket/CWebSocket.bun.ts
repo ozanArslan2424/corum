@@ -1,8 +1,7 @@
 import type { CWebSocketInterface } from "@/CWebSocket/CWebSocketInterface";
 
-export class CWebSocket implements CWebSocketInterface {
+export class CWebSocketBun implements CWebSocketInterface {
 	constructor(ws: Bun.ServerWebSocket<any>) {
-		ws.binaryType = "arraybuffer";
 		this.ws = ws;
 		this.subscriptions = this.ws.subscriptions;
 		this.remoteAddress = this.ws.remoteAddress;

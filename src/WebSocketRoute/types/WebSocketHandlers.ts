@@ -9,7 +9,7 @@ export interface WebSocketHandlers {
 		MaybePromise<void>
 	>;
 	onMessage: Func<
-		[ws: CWebSocketInterface, message: string | Buffer<ArrayBuffer>],
+		[ws: CWebSocketInterface, message: string | Buffer],
 		MaybePromise<void>
 	>;
 }

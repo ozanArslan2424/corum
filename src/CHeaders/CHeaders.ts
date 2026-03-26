@@ -1,4 +1,4 @@
-import type { HeaderKey } from "@/CHeaders/types/HeaderKey";
+import type { CHeaderKey } from "@/CHeaders/types/CHeaderKey";
 import type { CHeadersInit } from "@/CHeaders/types/CHeadersInit";
 import { strIsDefined } from "@/utils/strIsDefined";
 
@@ -9,7 +9,7 @@ export class CHeaders extends Headers {
 		super(init);
 	}
 
-	override append(name: HeaderKey, value: string | string[]): void {
+	override append(name: CHeaderKey, value: string | string[]): void {
 		if (Array.isArray(value)) {
 			for (const v of value) {
 				super.append(name, v);
@@ -19,19 +19,19 @@ export class CHeaders extends Headers {
 		}
 	}
 
-	override set(name: HeaderKey, value: string): void {
+	override set(name: CHeaderKey, value: string): void {
 		super.set(name, value);
 	}
 
-	override get(name: HeaderKey): string | null {
+	override get(name: CHeaderKey): string | null {
 		return super.get(name) || super.get(name.toLowerCase());
 	}
 
-	override has(name: HeaderKey): boolean {
+	override has(name: CHeaderKey): boolean {
 		return super.has(name) || super.has(name.toLowerCase());
 	}
 
-	override delete(name: HeaderKey): void {
+	override delete(name: CHeaderKey): void {
 		return super.delete(name);
 	}
 
@@ -54,7 +54,7 @@ export class CHeaders extends Headers {
 	setMany(
 		init:
 			| [string, string][]
-			| (Record<string, string> & Partial<Record<HeaderKey, string>>),
+			| (Record<string, string> & Partial<Record<CHeaderKey, string>>),
 	): void {
 		const entries = Array.isArray(init) ? init : Object.entries(init);
 		for (const [key, value] of entries) {
@@ -64,7 +64,7 @@ export class CHeaders extends Headers {
 	}
 
 	/** @deprecated */
-	static findHeaderInInit(init: CHeadersInit, name: HeaderKey): string | null {
+	static findHeaderInInit(init: CHeadersInit, name: CHeaderKey): string | null {
 		if (init instanceof CHeaders || init instanceof Headers) {
 			return init.get(name);
 		} else if (Array.isArray(init)) {

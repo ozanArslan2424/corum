@@ -11,7 +11,7 @@ export { Cookies } from "./Cookies/Cookies";
 
 export { CError as Error } from "./CError/CError";
 
-export type { HeaderKey } from "./CHeaders/types/HeaderKey";
+export type { CHeaderKey as HeaderKey } from "./CHeaders/types/CHeaderKey";
 export type { CHeadersInit as HeadersInit } from "./CHeaders/types/CHeadersInit";
 export * from "./CHeaders/enums/CommonHeaders";
 export { CHeaders as Headers } from "./CHeaders/CHeaders";

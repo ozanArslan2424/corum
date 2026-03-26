@@ -1,8 +1,8 @@
 import type { CHeaders } from "@/CHeaders/CHeaders";
-import type { HeaderKey } from "@/CHeaders/types/HeaderKey";
+import type { CHeaderKey } from "@/CHeaders/types/CHeaderKey";
 
 export type CHeadersInit =
 	| Headers
 	| CHeaders
 	| [string, string][]
-	| (Record<string, string> & Partial<Record<HeaderKey, string>>);
+	| (Record<string, string> & Partial<Record<CHeaderKey, string>>);

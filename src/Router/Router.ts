@@ -1,5 +1,4 @@
 import type { CRequest } from "@/CRequest/CRequest";
-import type { AnyRoute } from "@/Route/types/AnyRoute";
 import type { RouterAdapterInterface } from "@/Router/adapters/RouterAdapterInterface";
 import { CorpusAdapter } from "@/Router/adapters/CorpusAdapter";
 import { MiddlewareRegistry } from "@/Router/registries/MiddlewareRegistry";
@@ -13,6 +12,8 @@ import type { RouterRouteData } from "@/Router/types/RouterRouteData";
 import type { RouteModel } from "@/Model/types/RouteModel";
 import type { MiddlewareHandler } from "@/Middleware/types/MiddlewareHandler";
 import type { Middleware } from "@/Middleware/Middleware";
+import type { RouteInterface } from "@/index";
+import { objGetKeys } from "@/utils/objGetKeys";
 
 export class Router {
 	constructor(private adapter: RouterAdapterInterface = new CorpusAdapter()) {}
@@ -32,7 +33,7 @@ export class Router {
 		return this.middlewareRegistry.find(id);
 	}
 
-	addRoute(route: AnyRoute): void {
+	addRoute(route: RouteInterface<string, any, any, any, any>): void {
 		const data: RouterRouteData = {
 			id: route.id,
 			endpoint: route.endpoint,
@@ -43,14 +44,13 @@ export class Router {
 		};
 		if (route.model) {
 			const modelData: RouterRouteData["model"] = {};
-			for (const k of Object.keys(route.model)) {
-				const key = k as keyof Omit<RouteModel, "response">;
+			for (const key of objGetKeys<keyof RouteModel>(route.model)) {
+				if (key === "response") continue;
 				const schema = route.model[key];
 				if (!schema) continue;
-				const handler = schema["~standard"].validate;
 				modelData[key] = internFunc(
 					this.internFuncMap,
-					handler,
+					schema["~standard"].validate,
 					"model",
 					strRemoveWhitespace(JSON.stringify(schema)),
 				);
@@ -66,29 +66,6 @@ export class Router {
 		if (!match) return null;
 		this.cache.set(req, match);
 		return match;
-		//
-		//
-		// const model = this.modelRegistry.find(match.route.id);
-		// const middleware = this.middlewareRegistry.find(match.route.id);
-		//
-		// return async (ctx) => {
-		// 	await middleware.inbound(ctx);
-		// 	await Context.appendParsedData(
-		// 		ctx,
-		// 		req,
-		// 		match.params,
-		// 		match.search,
-		// 		model,
-		// 	);
-		// 	const result = await match.route.handler(ctx);
-		// 	if (result instanceof WebSocketRoute) {
-		// 		return result;
-		// 	}
-		// 	if (result instanceof CResponse) {
-		// 		return result;
-		// 	}
-		// 	return new CResponse(result, ctx.res);
-		// };
 	}
 
 	getRouteList(): Array<[string, string]> {

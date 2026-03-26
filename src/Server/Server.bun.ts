@@ -4,7 +4,7 @@ import { Status } from "@/CResponse/enums/Status";
 import { ServerAbstract } from "@/Server/ServerAbstract";
 import type { ServeArgs } from "@/Server/types/ServeArgs";
 import { log } from "@/utils/internalLogger";
-import { WebSocketRoute } from "@/WebSocketRoute/WebSocketRoute";
+import { WebSocketRoute } from "@/Route/WebSocketRoute";
 import { CError } from "@/CError/CError";
 
 type App = Bun.Server<WebSocketRoute>;

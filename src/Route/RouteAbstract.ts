@@ -7,25 +7,25 @@ import type { OrString } from "@/utils/types/OrString";
 import type { RouteInterface } from "@/Route/RouteInterface";
 
 export abstract class RouteAbstract<
-	Path extends string = string,
+	E extends string = string,
 	B = unknown,
 	S = unknown,
 	P = unknown,
 	R = unknown,
-> implements RouteInterface<Path, B, S, P, R> {
+> implements RouteInterface<E, B, S, P, R> {
 	abstract variant: RouteVariant;
-	abstract endpoint: Path;
+	abstract endpoint: E;
 	abstract method: OrString<Method>;
 	abstract pattern: RegExp;
 	abstract id: RouteId;
 	abstract handler: RouteHandler<B, S, P, R>;
 	abstract model?: RouteModel<B, S, P, R>;
 
-	protected resolvePattern(endpoint: Path): RegExp {
+	protected resolvePattern(endpoint: E): RegExp {
 		return RouteAbstract.makeRoutePattern(endpoint);
 	}
 
-	protected resolveId(method: string, endpoint: Path): RouteId {
+	protected resolveId(method: string, endpoint: E): RouteId {
 		return RouteAbstract.makeRouteId(method, endpoint);
 	}
 

@@ -1,5 +1,5 @@
 import { Controller } from "@/Controller/Controller";
-import { DynamicRoute } from "@/DynamicRoute/DynamicRoute";
+import { DynamicRoute } from "@/Route/DynamicRoute";
 import type { RouteId } from "@/Route/types/RouteId";
 import type { RouterMiddlewareData } from "@/Router/types/RouterMiddlewareData";
 import { LazyMap } from "@/utils/LazyMap";

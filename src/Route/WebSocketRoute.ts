@@ -4,20 +4,34 @@ import type { RouteHandler } from "@/Route/types/RouteHandler";
 import { RouteAbstract } from "@/Route/RouteAbstract";
 import type { RouteId } from "@/Route/types/RouteId";
 import type { OrString } from "@/utils/types/OrString";
-import type { WebSocketHandlers } from "@/WebSocketRoute/types/WebSocketHandlers";
 import { Method } from "@/CRequest/enums/Method";
 import { RouteVariant } from "@/Route/enums/RouteVariant";
 import type { Func } from "@/utils/types/Func";
 import type { MaybePromise } from "@/utils/types/MaybePromise";
 import type { CWebSocketInterface } from "@/CWebSocket/CWebSocketInterface";
 
+type R = WebSocketRoute;
+
 export class WebSocketRoute<
-	Path extends string = string,
+	E extends string = string,
 	B = unknown,
 	S = unknown,
 	P = unknown,
-> extends RouteAbstract<Path, B, S, P, WebSocketRoute> {
-	constructor(path: Path, handlers: WebSocketHandlers) {
+> extends RouteAbstract<E, B, S, P, R> {
+	constructor(
+		path: E,
+		handlers: {
+			onOpen?: Func<[ws: CWebSocketInterface], MaybePromise<void>>;
+			onClose?: Func<
+				[ws: CWebSocketInterface, code?: number, reason?: string],
+				MaybePromise<void>
+			>;
+			onMessage: Func<
+				[ws: CWebSocketInterface, message: string | Buffer],
+				MaybePromise<void>
+			>;
+		},
+	) {
 		super();
 		this.endpoint = path;
 		this.method = Method.GET;
@@ -31,10 +45,10 @@ export class WebSocketRoute<
 
 	id: RouteId;
 	method: OrString<Method>;
-	endpoint: Path;
+	endpoint: E;
 	pattern: RegExp;
-	model?: RouteModel<B, S, P, WebSocketRoute>;
-	handler: RouteHandler<B, S, P, WebSocketRoute> = () => this as WebSocketRoute;
+	model?: RouteModel<B, S, P, R>;
+	handler: RouteHandler<B, S, P, R> = () => this as R;
 	variant: RouteVariant = RouteVariant.websocket;
 
 	readonly onOpen?: Func<[ws: CWebSocketInterface], MaybePromise<void>>;

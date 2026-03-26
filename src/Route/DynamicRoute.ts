@@ -1,11 +1,13 @@
 import { Method } from "@/CRequest/enums/Method";
-import { $routerStore } from "@/index";
+import { $prefixStore, $routerStore } from "@/index";
 import type { RouteModel } from "@/Model/types/RouteModel";
-import type { DynamicRouteDefinition } from "@/DynamicRoute/types/DynamicRouteDefinition";
+import type { DynamicRouteDefinition } from "@/Route/types/DynamicRouteDefinition";
 import type { RouteHandler } from "@/Route/types/RouteHandler";
 import type { RouteId } from "@/Route/types/RouteId";
 import type { OrString } from "@/utils/types/OrString";
-import { DynamicRouteAbstract } from "@/DynamicRoute/DynamicRouteAbstract";
+import { RouteVariant } from "@/Route/enums/RouteVariant";
+import { RouteAbstract } from "@/Route/RouteAbstract";
+import { joinPathSegments } from "@/utils/joinPathSegments";
 
 /**
  * Defines an HTTP endpoint. Accepts a {@link DynamicRouteDefinition} which can either be a plain
@@ -32,14 +34,14 @@ import { DynamicRouteAbstract } from "@/DynamicRoute/DynamicRouteAbstract";
  */
 
 export class DynamicRoute<
-	Path extends string = string,
+	E extends string = string,
 	B = unknown,
 	S = unknown,
 	P = unknown,
 	R = unknown,
-> extends DynamicRouteAbstract<Path, B, S, P, R> {
+> extends RouteAbstract<E, B, S, P, R> {
 	constructor(
-		definition: DynamicRouteDefinition<Path>,
+		definition: DynamicRouteDefinition<E>,
 		handler: RouteHandler<B, S, P, R>,
 		model?: RouteModel<B, S, P, R>,
 	) {
@@ -55,8 +57,20 @@ export class DynamicRoute<
 
 	id: RouteId;
 	method: OrString<Method>;
-	endpoint: Path;
+	endpoint: E;
 	pattern: RegExp;
 	handler: RouteHandler<B, S, P, R>;
 	model?: RouteModel<B, S, P, R>;
+	variant: RouteVariant = RouteVariant.dynamic;
+
+	protected resolveEndpoint(definition: DynamicRouteDefinition<E>): E {
+		return joinPathSegments(
+			$prefixStore.get(),
+			typeof definition === "string" ? definition : definition.path,
+		);
+	}
+
+	protected resolveMethod(definition: DynamicRouteDefinition<E>): Method {
+		return typeof definition === "string" ? Method.GET : definition.method;
+	}
 }

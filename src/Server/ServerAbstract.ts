@@ -13,7 +13,7 @@ import { Router } from "@/Router/Router";
 import type { Func } from "@/utils/types/Func";
 import type { ServerOptions } from "@/Server/types/ServerOptions";
 import { log, logFatal } from "@/utils/internalLogger";
-import { WebSocketRoute } from "@/WebSocketRoute/WebSocketRoute";
+import { WebSocketRoute } from "@/Route/WebSocketRoute";
 import type { RouteId } from "@/Route/types/RouteId";
 
 export abstract class ServerAbstract implements ServerInterface {

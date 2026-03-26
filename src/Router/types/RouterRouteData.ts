@@ -1,8 +1,8 @@
+import type { RouteInterface } from "@/index";
 import type { SchemaValidator } from "@/Model/types/SchemaValidator";
-import type { AnyRoute } from "@/Route/types/AnyRoute";
 
 export type RouterRouteData<B = unknown, S = unknown, P = unknown> = Pick<
-	AnyRoute,
+	RouteInterface<string, B, S, P>,
 	"id" | "endpoint" | "method" | "pattern" | "handler" | "variant"
 > & {
 	model?: {

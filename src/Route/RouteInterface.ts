@@ -6,7 +6,7 @@ import type { RouteId } from "@/Route/types/RouteId";
 import type { OrString } from "@/utils/types/OrString";
 
 export interface RouteInterface<
-	Path extends string = string,
+	E extends string = string,
 	B = unknown,
 	S = unknown,
 	P = unknown,
@@ -15,7 +15,7 @@ export interface RouteInterface<
 	variant: RouteVariant;
 	id: RouteId;
 	method: OrString<Method>;
-	endpoint: Path;
+	endpoint: E;
 	pattern: RegExp;
 	handler: RouteHandler<B, S, P, R>;
 	model?: RouteModel<B, S, P, R>;

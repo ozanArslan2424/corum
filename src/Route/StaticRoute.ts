@@ -2,12 +2,17 @@ import { Method } from "@/CRequest/enums/Method";
 import { CResponse } from "@/CResponse/CResponse";
 import type { RouteId } from "@/Route/types/RouteId";
 import type { RouteModel } from "@/Model/types/RouteModel";
-import type { StaticRouteHandler } from "@/StaticRoute/types/StaticRouteHandler";
-import type { StaticRouteDefinition } from "@/StaticRoute/types/StaticRouteDefinition";
+import type { StaticRouteHandler } from "@/Route/types/StaticRouteHandler";
+import type { StaticRouteDefinition } from "@/Route/types/StaticRouteDefinition";
 import { $routerStore } from "@/index";
-import { StaticRouteAbstract } from "@/StaticRoute/StaticRouteAbstract";
 import type { RouteHandler } from "@/Route/types/RouteHandler";
 import type { OrString } from "@/utils/types/OrString";
+import { CError } from "@/CError/CError";
+import { RouteVariant } from "@/Route/enums/RouteVariant";
+import { RouteAbstract } from "@/Route/RouteAbstract";
+import { XFile } from "@/XFile/XFile";
+import { Status } from "@/CResponse/enums/Status";
+import { CommonHeaders } from "@/CHeaders/enums/CommonHeaders";
 
 /**
  * Defines a route that serves a static file. Accepts a path and a {@link StaticRouteDefinition}
@@ -33,18 +38,18 @@ import type { OrString } from "@/utils/types/OrString";
  * });
  */
 
-type R = string | CResponse;
+type R = CResponse | string;
 
 export class StaticRoute<
-	Path extends string = string,
+	E extends string = string,
 	B = unknown,
 	S = unknown,
 	P = unknown,
-> extends StaticRouteAbstract<Path, B, S, P> {
+> extends RouteAbstract<E, B, S, P, R> {
 	constructor(
-		path: Path,
+		path: E,
 		definition: StaticRouteDefinition,
-		handler?: StaticRouteHandler<B, S, P>,
+		handler?: StaticRouteHandler<B, S, P, R>,
 		model?: RouteModel<B, S, P, R>,
 	) {
 		super();
@@ -60,9 +65,39 @@ export class StaticRoute<
 
 	id: RouteId;
 	method: OrString<Method>;
-	endpoint: Path;
+	endpoint: E;
 	pattern: RegExp;
 	handler: RouteHandler<B, S, P, R>;
 	model?: RouteModel<B, S, P, R>;
 	protected filePath: string;
+	variant: RouteVariant = RouteVariant.static;
+
+	protected resolveFilePath(definition: StaticRouteDefinition): string {
+		return typeof definition === "string" ? definition : definition.filePath;
+	}
+
+	protected resolveHandler(
+		definition: StaticRouteDefinition,
+		customHandler?: StaticRouteHandler<B, S, P, R>,
+	): RouteHandler<B, S, P, R> {
+		if (customHandler !== undefined) {
+			return async (c) => {
+				const file = new XFile(this.filePath);
+				const exists = await file.exists();
+				if (!exists) {
+					throw new CError(Status.NOT_FOUND.toString(), Status.NOT_FOUND);
+				}
+				const content = await file.text();
+				c.res.headers.setMany({
+					[CommonHeaders.ContentType]: file.mimeType,
+					[CommonHeaders.ContentLength]: content.length.toString(),
+				});
+				return customHandler(c, content);
+			};
+		} else if (typeof definition === "string") {
+			return async () => await CResponse.file(this.filePath);
+		} else {
+			return async () => await CResponse.streamFile(this.filePath);
+		}
+	}
 }

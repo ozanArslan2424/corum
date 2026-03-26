@@ -176,7 +176,7 @@ export class CResponse<R = unknown> {
 		filePath: string,
 		disposition: "attachment" | "inline" = "attachment",
 		init?: Omit<CResponseInit, "status">,
-	): Promise<CResponse> {
+	): Promise<CResponse<ReadableStream>> {
 		const file = new XFile(filePath);
 		const exists = await file.exists();
 		if (!exists) {
@@ -198,7 +198,7 @@ export class CResponse<R = unknown> {
 	static async file(
 		filePath: string,
 		init?: CResponseInit,
-	): Promise<CResponse> {
+	): Promise<CResponse<string>> {
 		const file = new XFile(filePath);
 		const exists = await file.exists();
 		if (!exists) {

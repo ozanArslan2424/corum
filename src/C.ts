@@ -39,16 +39,14 @@ export { CResponse as Response } from "./CResponse/CResponse";
 export type { RouteHandler } from "./Route/types/RouteHandler";
 export type { RouteInterface } from "./Route/RouteInterface";
 
-export type { DynamicRouteDefinition } from "./DynamicRoute/types/DynamicRouteDefinition";
-export { DynamicRouteAbstract } from "./DynamicRoute/DynamicRouteAbstract";
-export { DynamicRoute as Route } from "./DynamicRoute/DynamicRoute";
+export type { DynamicRouteDefinition } from "./Route/types/DynamicRouteDefinition";
+export { DynamicRoute as Route } from "./Route/DynamicRoute";
 
-export type { StaticRouteDefinition } from "./StaticRoute/types/StaticRouteDefinition";
-export type { StaticRouteHandler } from "./StaticRoute/types/StaticRouteHandler";
-export { StaticRouteAbstract } from "./StaticRoute/StaticRouteAbstract";
-export { StaticRoute } from "./StaticRoute/StaticRoute";
+export type { StaticRouteDefinition } from "./Route/types/StaticRouteDefinition";
+export type { StaticRouteHandler } from "./Route/types/StaticRouteHandler";
+export { StaticRoute } from "./Route/StaticRoute";
 
-export { WebSocketRoute } from "./WebSocketRoute/WebSocketRoute";
+export { WebSocketRoute } from "./Route/WebSocketRoute";
 
 export type { ServerOptions } from "./Server/types/ServerOptions";
 export type { ServeArgs } from "./Server/types/ServeArgs";

@@ -1,8 +1,8 @@
 import type { Controller } from "@/Controller/Controller";
-import type { AnyRoute } from "@/Route/types/AnyRoute";
+import type { RouteInterface } from "@/index";
 
 export type MiddlewareUseOn =
-	| Array<AnyRoute | Controller>
-	| AnyRoute
+	| Array<RouteInterface | Controller>
+	| RouteInterface
 	| Controller
 	| "*";

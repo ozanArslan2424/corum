@@ -5,7 +5,7 @@ import { strIsEqual } from "@/utils/strIsEqual";
 import type { RouteId } from "@/Route/types/RouteId";
 import type { RouterReturnData } from "@/Router/types/RouterReturnData";
 import type { CRequest } from "@/CRequest/CRequest";
-import { DynamicRoute } from "@/DynamicRoute/DynamicRoute";
+import { DynamicRoute } from "@/Route/DynamicRoute";
 import { log } from "@/utils/internalLogger";
 
 export class CorpusAdapter implements RouterAdapterInterface {

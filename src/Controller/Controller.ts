@@ -1,11 +1,11 @@
-import { DynamicRoute } from "@/DynamicRoute/DynamicRoute";
-import { StaticRoute } from "@/StaticRoute/StaticRoute";
+import { DynamicRoute } from "@/Route/DynamicRoute";
+import { StaticRoute } from "@/Route/StaticRoute";
 import type { ControllerOptions } from "@/Controller/types/ControllerOptions";
 import type { RouteId } from "@/Route/types/RouteId";
 import { joinPathSegments } from "@/utils/joinPathSegments";
-import type { DynamicRouteDefinition } from "@/DynamicRoute/types/DynamicRouteDefinition";
+import type { DynamicRouteDefinition } from "@/Route/types/DynamicRouteDefinition";
 import type { Func } from "@/utils/types/Func";
-import type { Context } from "@/C";
+import type { Context } from "@/Context/Context";
 import type { MaybePromise } from "@/utils/types/MaybePromise";
 
 /**
@@ -46,14 +46,14 @@ export abstract class Controller {
 	 * but automatically prepends the controller prefix and runs `beforeEach` before the handler.
 	 */
 	protected route<
-		Path extends string = string,
+		E extends string = string,
 		B = unknown,
 		S = unknown,
 		P = unknown,
 		R = unknown,
 	>(
-		...args: ConstructorParameters<typeof DynamicRoute<Path, B, S, P, R>>
-	): DynamicRoute<Path, B, S, P, R> {
+		...args: ConstructorParameters<typeof DynamicRoute<E, B, S, P, R>>
+	): DynamicRoute<E, B, S, P, R> {
 		const [definition, handler, model] = args;
 
 		const route = new DynamicRoute(
@@ -73,16 +73,16 @@ export abstract class Controller {
 	 * but automatically prepends the controller prefix.
 	 */
 	protected staticRoute<
-		Path extends string = string,
+		E extends string = string,
 		B = unknown,
 		S = unknown,
 		P = unknown,
 	>(
-		...args: ConstructorParameters<typeof StaticRoute<Path, B, S, P>>
-	): StaticRoute<Path, B, S, P> {
+		...args: ConstructorParameters<typeof StaticRoute<E, B, S, P>>
+	): StaticRoute<E, B, S, P> {
 		const [path, filePath, handler, model] = args;
 		const route = new StaticRoute(
-			joinPathSegments<Path>(this.prefix, path),
+			joinPathSegments<E>(this.prefix, path),
 			filePath,
 			handler,
 			model,
@@ -91,11 +91,11 @@ export abstract class Controller {
 		return route;
 	}
 
-	private resolveRouteDefinition<Path extends string = string>(
-		definition: DynamicRouteDefinition<Path>,
-	): DynamicRouteDefinition<Path> {
+	private resolveRouteDefinition<E extends string = string>(
+		definition: DynamicRouteDefinition<E>,
+	): DynamicRouteDefinition<E> {
 		if (typeof definition === "string") {
-			return joinPathSegments<Path>(this.prefix, definition);
+			return joinPathSegments<E>(this.prefix, definition);
 		}
 
 		return {

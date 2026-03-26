@@ -6,8 +6,6 @@ import type { ServeArgs } from "@/Server/types/ServeArgs";
 import { log } from "@/utils/internalLogger";
 import { WebSocketRoute } from "@/WebSocketRoute/WebSocketRoute";
 import { CError } from "@/CError/CError";
-import { CWebSocketBun } from "@/CWebSocket/CWebSocket.bun";
-import type { WebSocketHandler } from "bun";
 
 type App = Bun.Server<WebSocketRoute>;
 
@@ -45,24 +43,25 @@ export default class ServerUsingBun extends ServerAbstract {
 		server: App,
 	): Promise<Response | undefined> {
 		const req = new CRequest(request);
-		return await this.handleRequest(req, (wsRoute) => {
+		const res = await this.handleRequest(req, (wsRoute) => {
 			const upgraded = server.upgrade(request, { data: wsRoute });
 			if (!upgraded) {
 				throw new CError("Upgrade failed", Status.UPGRADE_REQUIRED);
 			}
 			return undefined;
 		});
+		return res?.response;
 	}
 
-	private websocket: WebSocketHandler<WebSocketRoute> = {
+	private websocket: Bun.WebSocketHandler<WebSocketRoute> = {
 		async open(ws) {
-			await ws.data.onOpen?.(new CWebSocketBun(ws));
+			await ws.data.onOpen?.(ws);
 		},
 		async message(ws, message) {
-			await ws.data.onMessage(new CWebSocketBun(ws), message);
+			await ws.data.onMessage(ws, message);
 		},
 		async close(ws, code, reason) {
-			await ws.data.onClose?.(new CWebSocketBun(ws), code, reason);
+			await ws.data.onClose?.(ws, code, reason);
 		},
 	};
 }

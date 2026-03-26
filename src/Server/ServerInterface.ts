@@ -2,7 +2,6 @@ import type { ErrorHandler } from "@/Server/types/ErrorHandler";
 import type { MaybePromise } from "@/utils/types/MaybePromise";
 import type { RequestHandler } from "@/Server/types/RequestHandler";
 import type { ServeArgs } from "@/Server/types/ServeArgs";
-import type { AfterResponseHandler } from "@/Server/types/AfterResponseHandler";
 import type { Func } from "@/utils/types/Func";
 
 export interface ServerInterface {
@@ -55,9 +54,6 @@ export interface ServerInterface {
 
 	setOnBeforeClose(handler: () => MaybePromise<void>): void;
 	defaultOnBeforeClose: Func<[], MaybePromise<void>> | undefined;
-
-	setOnAfterResponse(handler: AfterResponseHandler | undefined): void;
-	defaultOnAfterResponse: AfterResponseHandler | undefined;
 
 	setOnPreflight(handler: RequestHandler): void;
 	defaultPreflightHandler: RequestHandler;

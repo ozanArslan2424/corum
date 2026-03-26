@@ -1,10 +1,12 @@
 import { DynamicRoute } from "@/DynamicRoute/DynamicRoute";
 import { StaticRoute } from "@/StaticRoute/StaticRoute";
 import type { ControllerOptions } from "@/Controller/types/ControllerOptions";
-import type { MiddlewareHandler } from "@/Middleware/types/MiddlewareHandler";
 import type { RouteId } from "@/Route/types/RouteId";
 import { joinPathSegments } from "@/utils/joinPathSegments";
 import type { DynamicRouteDefinition } from "@/DynamicRoute/types/DynamicRouteDefinition";
+import type { Func } from "@/utils/types/Func";
+import type { Context } from "@/C";
+import type { MaybePromise } from "@/utils/types/MaybePromise";
 
 /**
  * Base class for grouping related routes under a shared prefix and optional middleware.
@@ -37,7 +39,7 @@ export abstract class Controller {
 
 	routeIds: Set<RouteId> = new Set<RouteId>();
 	protected prefix?: string;
-	protected beforeEach?: MiddlewareHandler;
+	protected beforeEach?: Func<[context: Context], MaybePromise<void>>;
 
 	/**
 	 * Registers a dynamic route under this controller. Behaves identically to {@link DynamicRoute}

@@ -7,7 +7,6 @@ import { RouteAbstract } from "@/Route/RouteAbstract";
 import type { RouteHandler } from "@/Route/types/RouteHandler";
 import type { StaticRouteDefinition } from "@/StaticRoute/types/StaticRouteDefinition";
 import type { StaticRouteHandler } from "@/StaticRoute/types/StaticRouteHandler";
-import { log } from "@/utils/internalLogger";
 import { XFile } from "@/XFile/XFile";
 
 type R = string | CResponse;
@@ -34,7 +33,6 @@ export abstract class StaticRouteAbstract<
 				const file = new XFile(this.filePath);
 				const exists = await file.exists();
 				if (!exists) {
-					log.error("File not found at:", this.filePath);
 					throw new CError(Status.NOT_FOUND.toString(), Status.NOT_FOUND);
 				}
 				const content = await file.text();

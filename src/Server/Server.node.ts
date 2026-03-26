@@ -5,7 +5,6 @@ import { CWebSocketNode } from "@/CWebSocket/CWebSocket.node";
 import { ServerAbstract } from "@/Server/ServerAbstract";
 import type { ServeArgs } from "@/Server/types/ServeArgs";
 import { log } from "@/utils/internalLogger";
-import type { WebSocketRoute } from "@/WebSocketRoute/WebSocketRoute";
 import http from "node:http";
 import https from "node:https";
 import type Stream from "node:stream";
@@ -36,14 +35,14 @@ export default class ServerUsingNode extends ServerAbstract {
 				const headers = this.getHeaders(incomingMessage);
 				const request = this.getRequest(url, method, headers, body);
 				const req = new CRequest(request);
-				const response = await this.handleRequest(req, () => undefined);
-				if (!response) {
+				const res = await this.handleRequest(req, () => undefined);
+				if (!res) {
 					return undefined;
 				}
 
-				const data = await this.getData(response);
-				serverResponse.statusCode = response.status;
-				serverResponse.setHeaders(response.headers);
+				const data = await this.getData(res.response);
+				serverResponse.statusCode = res.response.status;
+				serverResponse.setHeaders(res.response.headers);
 				serverResponse.end(Buffer.from(data));
 			},
 		);

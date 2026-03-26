@@ -4,12 +4,10 @@ import type { RouterRouteData } from "@/Router/types/RouterRouteData";
 import type { RouterReturnData } from "@/Router/types/RouterReturnData";
 import type { CRequest } from "@/CRequest/CRequest";
 
-type MemoiristData = RouterRouteData;
-
 /** Router Adapter for the "memoirist" package. */
 
 export class MemoiristAdapter implements RouterAdapterInterface {
-	private router = new Memoirist<MemoiristData>();
+	private router = new Memoirist<RouterRouteData>();
 
 	find(req: CRequest): RouterReturnData | null {
 		const method = req.method;

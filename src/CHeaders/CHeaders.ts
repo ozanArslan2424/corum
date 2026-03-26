@@ -9,8 +9,14 @@ export class CHeaders extends Headers {
 		super(init);
 	}
 
-	override append(name: HeaderKey, value: string): void {
-		super.append(name, value);
+	override append(name: HeaderKey, value: string | string[]): void {
+		if (Array.isArray(value)) {
+			for (const v of value) {
+				super.append(name, v);
+			}
+		} else {
+			super.append(name, value);
+		}
 	}
 
 	override set(name: HeaderKey, value: string): void {

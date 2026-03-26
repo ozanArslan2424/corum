@@ -1,3 +1,3 @@
-import type { MiddlewareHandler } from "@/Middleware/types/MiddlewareHandler";
+import type { MiddlewareInterface } from "@/Middleware/MiddlwareInterface";
 
-export type RouterMiddlewareData = MiddlewareHandler[];
+export type RouterMiddlewareData = Array<MiddlewareInterface>;

@@ -11,8 +11,6 @@ import { RateLimiterMemoryStore } from "@/XRateLimiter/stores/RateLimiterMemoryS
 import { Status } from "@/CResponse/enums/Status";
 import { CommonHeaders } from "@/CHeaders/enums/CommonHeaders";
 import { Middleware } from "@/Middleware/Middleware";
-import { XCors } from "@/XCors/XCors";
-import { $corsStore } from "@/index";
 import { logFatal } from "@/utils/internalLogger";
 
 export class XRateLimiter {
@@ -212,19 +210,16 @@ export class XRateLimiter {
 	}
 
 	private registerMiddleware() {
-		const exposedHeaders = Object.values(this.config.headerNames);
-		const cors = $corsStore.get();
-		if (cors) {
-			cors.updateOptions({ exposedHeaders });
-		} else {
-			new XCors({ exposedHeaders });
-		}
-
 		new Middleware({
 			useOn: "*",
 			handler: async (c) => {
 				const result = await this.getResult(c.headers);
 				c.res.headers.innerCombine(result.headers);
+				const exposedHeaders = Object.values(this.config.headerNames);
+				c.res.headers.append(
+					CommonHeaders.AccessControlExposeHeaders,
+					exposedHeaders,
+				);
 
 				if (!result.success) {
 					throw new CError(

@@ -1,32 +1,32 @@
-import type { CRequest } from "@/CRequest/CRequest";
-import type { CResponse } from "@/CResponse/CResponse";
 import type { CorsOptions } from "@/XCors/types/CorsOptions";
 import { boolToString } from "@/utils/boolToString";
 import { isSomeArray } from "@/utils/isSomeArray";
-import { $corsStore } from "@/index";
-import { arrMerge } from "@/utils/arrMerge";
-import type { CHeaders } from "@/CHeaders/CHeaders";
+import { MiddlewareVariant } from "@/Middleware/enums/MiddlewareVariant";
+import type { MiddlewareHandler } from "@/Middleware/types/MiddlewareHandler";
+import { MiddlewareAbstract } from "@/Middleware/MiddlewareAbstract";
+import { CommonHeaders } from "@/CHeaders/enums/CommonHeaders";
+import type { MiddlewareUseOn } from "@/Middleware/types/MiddlewareUseOn";
+import { $routerStore } from "@/index";
 
 /** Simple cors helper object to set cors headers */
 
-export class XCors {
-	constructor(public opts: CorsOptions | undefined) {
-		if (opts === undefined) {
-			$corsStore.set(null);
-		} else {
-			$corsStore.set(this);
-		}
+export class XCors extends MiddlewareAbstract {
+	constructor(private readonly opts: CorsOptions | undefined) {
+		super();
+		$routerStore.get().addMiddleware(this);
 	}
 
-	private readonly originKey = "Access-Control-Allow-Origin";
-	private readonly methodsKey = "Access-Control-Allow-Methods";
-	private readonly headersKey = "Access-Control-Allow-Headers";
-	private readonly credentialsKey = "Access-Control-Allow-Credentials";
-	private readonly exposedHeadersKey = "Access-Control-Expose-Headers";
+	private readonly originKey = CommonHeaders.AccessControlAllowOrigin;
+	private readonly methodsKey = CommonHeaders.AccessControlAllowMethods;
+	private readonly headersKey = CommonHeaders.AccessControlAllowHeaders;
+	private readonly credentialsKey = CommonHeaders.AccessControlAllowCredentials;
+	private readonly exposedHeadersKey = CommonHeaders.AccessControlExposeHeaders;
 
-	private getCorsHeaders(req: CRequest, res: CResponse): CHeaders {
-		const reqOrigin = req.headers.get("origin") ?? "";
-
+	useOn: MiddlewareUseOn = "*";
+	variant: MiddlewareVariant = MiddlewareVariant.outbound;
+	handler: MiddlewareHandler = async (c) => {
+		console.log(c.headers.toJSON());
+		const reqOrigin = c.headers.get("origin") ?? "";
 		const {
 			allowedOrigins,
 			allowedMethods,
@@ -36,53 +36,21 @@ export class XCors {
 		} = this.opts ?? {};
 
 		if (isSomeArray(allowedOrigins) && allowedOrigins.includes(reqOrigin)) {
-			res.headers.set(this.originKey, reqOrigin);
+			c.res.headers.set(this.originKey, reqOrigin);
 		}
 
 		if (isSomeArray(allowedMethods)) {
-			res.headers.set(this.methodsKey, allowedMethods.join(", "));
+			c.res.headers.append(this.methodsKey, allowedMethods);
 		}
 
 		if (isSomeArray(allowedHeaders)) {
-			res.headers.set(this.headersKey, allowedHeaders.join(", "));
+			c.res.headers.append(this.headersKey, allowedHeaders);
 		}
 
 		if (isSomeArray(exposedHeaders)) {
-			res.headers.set(this.exposedHeadersKey, exposedHeaders.join(", "));
+			c.res.headers.append(this.exposedHeadersKey, exposedHeaders);
 		}
 
-		res.headers.set(this.credentialsKey, boolToString(credentials));
-
-		return res.headers;
-	}
-
-	apply(req: CRequest, res: CResponse): void {
-		const headers = this.getCorsHeaders(req, res);
-		res.headers.innerCombine(headers);
-	}
-
-	updateOptions(newOpts: CorsOptions) {
-		this.opts = {
-			...this.opts,
-			...newOpts,
-			allowedHeaders: arrMerge(
-				this.opts?.allowedHeaders,
-				newOpts.allowedHeaders,
-			),
-			allowedMethods: arrMerge(
-				this.opts?.allowedMethods,
-				newOpts.allowedMethods,
-			),
-			allowedOrigins: arrMerge(
-				this.opts?.allowedOrigins,
-				newOpts.allowedOrigins,
-			),
-			exposedHeaders: arrMerge(
-				this.opts?.exposedHeaders,
-				newOpts.exposedHeaders,
-			),
-		};
-
-		$corsStore.set(this);
-	}
+		c.res.headers.set(this.credentialsKey, boolToString(credentials));
+	};
 }

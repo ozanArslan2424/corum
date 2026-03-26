@@ -44,13 +44,15 @@ export const CommonHeaders = {
 	Location: "Location",
 	/** Defines the authentication method that should be used */
 	WWWAuthenticate: "WWW-Authenticate",
-	/** Allows the server to indicate its origin */
-	AccessControlAllowOrigin: "Access-Control-Allow-Origin",
 	/** Determines how long the results of a preflight request can be cached */
 	AccessControlMaxAge: "Access-Control-Max-Age",
 	/** Indicates whether the response can be shared with resources with credentials */
 	AccessControlAllowCredentials: "Access-Control-Allow-Credentials",
 	AccessControlRequestMethod: "Access-Control-Request-Method",
+	AccessControlExposeHeaders: "Access-Control-Expose-Headers",
+	AccessControlAllowOrigin: "Access-Control-Allow-Origin",
+	AccessControlAllowMethods: "Access-Control-Allow-Methods",
+	AccessControlAllowHeaders: "Access-Control-Allow-Headers",
 	SetCookie: "Set-Cookie",
 	Cookie: "Cookie",
 } as const;

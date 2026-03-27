@@ -67,7 +67,7 @@ export class Router {
 		return match;
 	}
 
-	getRouteList(): Array<[string, string]> {
-		return this.adapter.list().map((v) => [v.method, v.endpoint]);
+	getRouteList(): Array<RouterRouteData> {
+		return this.adapter.list();
 	}
 }

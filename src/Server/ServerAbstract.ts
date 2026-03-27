@@ -14,6 +14,7 @@ import type { Func } from "@/utils/types/Func";
 import type { ServerOptions } from "@/Server/types/ServerOptions";
 import { log, logFatal } from "@/utils/internalLogger";
 import { WebSocketRoute } from "@/Route/WebSocketRoute";
+import type { RouterRouteData } from "@/Router/types/RouterRouteData";
 
 export abstract class ServerAbstract implements ServerInterface {
 	protected abstract serve(options: ServeArgs): void;
@@ -23,7 +24,7 @@ export abstract class ServerAbstract implements ServerInterface {
 		$routerStore.set(new Router(opts?.adapter));
 	}
 
-	get routes(): Array<[string, string]> {
+	get routes(): Array<RouterRouteData> {
 		return $routerStore.get().getRouteList();
 	}
 

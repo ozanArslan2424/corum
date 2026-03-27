@@ -2,51 +2,238 @@
 	<h1>Server</h1>
 
 	<p>
-		<code>Server</code> is usually your first module in Corpus. It should be
-		instantiated before any <code>Route</code>, <code>Middleware</code>, or
-		<code>Controller</code> object is created. This is because Server's
-		constructor creates and registers the global routing for your app. It is
-		part of the C (Corpus) module which is the main module that holds all
-		necessary parts of an HTTP server.
+		The <code>Server</code> class is typically the first module you'll interact
+		with in Corpus. It must be instantiated before any <code>Route</code>,
+		<code>Middleware</code>, or <code>Controller</code> objects are created, as
+		its constructor establishes and registers the global routing for your
+		application. The <code>Server</code> class is part of the
+		<code>C</code> (Corpus) module, which serves as the core container for all
+		essential components of an HTTP server.
 	</p>
 
-	<h2>Public Methods</h2>
+	<section class="table-of-contents">
+		<h4>Contents</h4>
+		<ol>
+			<li><a href="#constructor-parameters">Constructor Parameters</a></li>
+			<li><a href="#public-methods">Public Methods</a></li>
+		</ol>
+	</section>
 
-	<h3>.listen</h3>
+	<h2 id="constructor-parameters">Constructor Parameters</h2>
 
 	<p>
-		Expose a port and start listening. This is pretty straightforward. The
-		method takes a required <code>port</code> and an optional
-		<code>hostname</code> arguments. This is an async method to allow async
-		operations in <code>handleBeforeListen</code> however, there is no return
-		value.
-
-		<br />
-
-		Example:
+		When instantiating a new <code>Server</code>, you may optionally provide a
+		configuration object with the following properties:
 	</p>
-	<pre><code>import { C } from "@ozanarslan/corpus";
+
+	<section>
+		<h3><code>adapter</code></h3>
+
+		<p>
+			Allows you to specify a custom router adapter implementation. This is
+			useful when you need to integrate with alternative routing mechanisms or
+			extend the default routing behavior. For detailed information on creating
+			and using router adapters, please refer to the
+			<a href="/docs/router">Router module</a>
+			documentation.
+		</p>
+	</section>
+
+	<section>
+		<h3><code>idleTimeout</code></h3>
+
+		<p>
+			Sets the maximum time (in milliseconds) that an idle connection will be
+			kept open before being automatically closed. This helps manage server
+			resources by cleaning up connections that are no longer active.
+		</p>
+	</section>
+
+	<section>
+		<h3><code>tls</code></h3>
+
+		<p>
+			Configures Transport Layer Security (TLS/SSL) for the server, enabling
+			HTTPS support. The object accepts the following properties:
+		</p>
+	</section>
+
+	<ul>
+		<li>
+			<strong><code>cert</code></strong> (required): The certificate for the
+			server, provided as a string or Buffer.
+		</li>
+		<li>
+			<strong><code>key</code></strong> (required): The private key
+			corresponding to the certificate, provided as a string or Buffer.
+		</li>
+		<li>
+			<strong><code>ca</code></strong> (optional): The certificate authority
+			chain, provided as a string or Buffer.
+		</li>
+	</ul>
+
+	<p>Example:</p>
+	<pre><code>const server = new C.Server({
+	idleTimeout: 30000,
+	tls: {
+		cert: readFileSync("./cert.pem"),
+		key: readFileSync("./key.pem")
+	}
+});</code></pre>
+
+	<h2 id="public-methods">Public Methods</h2>
+
+	<section>
+		<h3><code>.routes</code></h3>
+
+		<p>
+			A getter that returns an array of all registered route data. This provides
+			visibility into the current routing table and can be useful for debugging
+			or introspection.
+		</p>
+	</section>
+
+	<section>
+		<h3><code>.listen</code></h3>
+
+		<p>
+			Instructs the server to begin listening for connections on a specified
+			port and optional hostname. This method accepts a required
+			<code>port</code> argument and an optional <code>hostname</code>. It is
+			asynchronous to support operations defined in
+			<code>handleBeforeListen</code>, though it does not return a value.
+			<br /><br />
+			Example:
+		</p>
+
+		<pre><code>import { C } from "@ozanarslan/corpus";
 
 const server = new C.Server();
-// Since this is async, you might want to satisfy 
-// the linter by using void or await.
+// As the method is asynchronous, consider using await or void to satisfy linter expectations.
 void server.listen(3000, "0.0.0.0");</code></pre>
+	</section>
 
-	<h3>.close</h3>
+	<section>
+		<h3><code>.close</code></h3>
 
-	<p>
-		The counterpart of listen is close. This method stops the underlying serve
-		function to prevent new connections from being accepted. Takes
-		<code>closeActiveConnections</code> boolean argument. This is also async to
-		allow async operations in <code>handleBeforeClose</code>.
+		<p>
+			The counterpart to <code>.listen</code>, this method stops the underlying
+			server from accepting new connections. It accepts a boolean argument,
+			<code>closeActiveConnections</code>, to determine whether active
+			connections should be terminated. This method is also asynchronous to
+			accommodate operations in <code>handleBeforeClose</code>. Unless the
+			<code>NODE_ENV</code> is set to <code>"test"</code>, the process will exit
+			with a status code of <code>0</code>. <br /><br />
+			Note: By default, <code>closeActiveConnections</code> is
+			<code>true</code>, which differs from Bun’s default behavior
+			(<code>false</code>). <br /><br />
+			Example:
+		</p>
 
-		<br />
-		Note: By default, closeActiveConnections is true. Bun's default is false.
-
-		<br />
-
-		Example:
-	</p>
-	<pre><code>void server.listen(3000, "0.0.0.0");
+		<pre><code>void server.listen(3000, "0.0.0.0");
 void server.close();</code></pre>
+	</section>
+
+	<section>
+		<h3><code>.handle</code></h3>
+
+		<p>
+			The <code>.handle</code> method is intended for scenarios where you want
+			to process requests without starting a network listener—most commonly in
+			unit tests. It accepts a <code>Request</code> object and returns a
+			<code>Promise&lt;Response&gt;</code>. <br /><br />
+			Note: This method does not support WebSocket upgrades, and the process
+			will exit if such an upgrade is attempted.
+			<br /><br />
+			Example:
+		</p>
+
+		<pre><code>const server = new C.Server();
+new C.Route("/hello", () =&gt; "world"); // see the Route (dynamic) module
+// The port is arbitrary; Request requires a complete URL.
+const req = new Request("http://localhost:1234/hello");
+const res = await server.handle(req); // resolves successfully
+const data = await res.text(); // returns "world"</code></pre>
+	</section>
+
+	<section>
+		<h3><code>.setOnError</code></h3>
+
+		<p>
+			Registers a custom error handler for the server. When an unhandled error
+			occurs during request processing, this handler will be invoked. The
+			default error handler responds with a status of
+			<code>C.Error</code> (or <code>500</code>) and returns JSON in the
+			following format:
+		</p>
+
+		<pre><code>{ error: unknown | true, message: string }</code></pre>
+
+		<p>
+			If a non-<code>Error</code> instance is thrown, the default response will
+			still return a <code>500</code> status with:
+		</p>
+
+		<pre><code>{ error: Instance, message: "Unknown" }</code></pre>
+
+		<p>
+			The default error handler is also accessible via the
+			<code>.defaultErrorHandler</code> property.
+		</p>
+	</section>
+
+	<section>
+		<h3><code>.setOnNotFound</code></h3>
+
+		<p>
+			Sets a custom handler for requests that do not match any registered route.
+			The default not-found handler responds with a <code>404</code> status and
+			returns JSON in the following format:
+		</p>
+
+		<pre><code>{ error: true, message: `${req.method} on ${req.url} does not exist.` }</code></pre>
+
+		<p>
+			The default not-found handler is also accessible via the
+			<code>.defaultNotFoundHandler</code> property.
+		</p>
+	</section>
+
+	<section>
+		<h3><code>.setOnBeforeListen</code></h3>
+
+		<p>
+			Defines an asynchronous or synchronous function to be executed just before
+			the server begins listening. This is useful for performing preparatory
+			tasks such as database connection validation or logging. The default value
+			is
+			<code>undefined</code>, which can be accessed via
+			<code>.defaultOnBeforeListen</code>.
+		</p>
+	</section>
+
+	<section>
+		<h3><code>.setOnBeforeClose</code></h3>
+
+		<p>
+			Defines an asynchronous or synchronous function to be executed just before
+			the server closes. This allows for graceful cleanup operations such as
+			closing database connections or flushing logs. The default value is
+			<code>undefined</code>, which can be accessed via
+			<code>.defaultOnBeforeClose</code>.
+		</p>
+	</section>
+
+	<section>
+		<h3><code>.setOnPreflight</code></h3>
+
+		<p>
+			Sets a custom handler for CORS preflight (<code>OPTIONS</code>) requests.
+			This handler will be invoked when a preflight request is received,
+			allowing you to configure CORS headers and validation logic. The default
+			preflight handler is accessible via
+			<code>.defaultPreflightHandler</code>.
+		</p>
+	</section>
 </main>

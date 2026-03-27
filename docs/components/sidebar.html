@@ -31,7 +31,7 @@
 	<nav>
 		<h3>Extra Modules - X</h3>
 		<ul>
-			<li><a href="/docs/intro">Introduction</a></li>
+			<li><a href="/docs/xintro">Introduction</a></li>
 			<li><a href="/docs/xinfermodel">XInferModel</a></li>
 			<li><a href="/docs/xfile">XFile</a></li>
 			<li><a href="/docs/xcors">XCors</a></li>
@@ -40,3 +40,20 @@
 		</ul>
 	</nav>
 </aside>
+
+<script>
+	document.addEventListener("DOMContentLoaded", () => {
+		const currentPath = window.location.pathname;
+		const navLinks = document.querySelectorAll("aside nav a");
+
+		navLinks.forEach((link) => {
+			const href = link.getAttribute("href");
+
+			if (href && href !== "#" && !link.hasAttribute("aria-disabled")) {
+				if (href === currentPath) {
+					link.setAttribute("aria-current", "page");
+				}
+			}
+		});
+	});
+</script>

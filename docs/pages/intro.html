@@ -29,7 +29,21 @@
 		path parameters automatically using the RegExp-based router.
 	</p>
 
-	<pre><code id="routes-controllers"></code></pre>
+	<pre><code id="routes-controllers">// Simple route
+new C.Route("/health", () =&gt; "ok");
+
+// Or in a Controller with prefix
+export class ItemController extends C.Controller {
+	constructor(private itemService: ItemService) {
+		super({ prefix: "/item" });
+	}
+
+	create = this.route(
+		{ method: "POST", path: "/create" },
+		(c) =&gt; this.itemService.create(c.body),
+		ItemModel.create, // schema validation
+	);
+}</code></pre>
 
 	<h3>Schema Validation</h3>
 	<p>
@@ -37,7 +51,19 @@
 		once and Corpus validates requests automatically.
 	</p>
 
-	<pre><code id="schema-validation"></code></pre>
+	<pre><code id="schema-validation">import { type } from "arktype";
+
+export class ItemModel {
+	static entity = type({
+		id: "number",
+		createdAt: "string.date.iso",
+		name: "string",
+	});
+
+	static create = {
+		body: this.entity.omit("id", "createdAt"),
+	};
+}</code></pre>
 
 	<h3>Context (c)</h3>
 	<p>
@@ -45,7 +71,16 @@
 		a data object for storing request-scoped values.
 	</p>
 
-	<pre><code id="context"></code></pre>
+	<pre><code id="context">create = this.route(
+	{ method: "POST", path: "/create" },
+	async (c) =&gt; {
+		// c.body is already validated
+		// c.params has path parameters
+		// c.data is a plain object you can use
+		return this.itemService.create(c.body);
+	},
+	ItemModel.create,
+);</code></pre>
 
 	<h3>Middleware</h3>
 	<p>
@@ -53,7 +88,13 @@
 		authenticate, or modify the context.
 	</p>
 
-	<pre><code id="middleware"></code></pre>
+	<pre><code id="middleware">export class AuthMiddleware extends C.Middleware {
+	override handler: C.MiddlewareHandler = async (c) =&gt; {
+		const token = c.headers.authorization;
+		if (!token) throw new C.CError(401, "no token");
+		c.data.user = await verifyToken(token);
+	};
+}</code></pre>
 
 	<h2>The Recommended Pattern</h2>
 	<p>Corpus works best when you follow this structure:</p>
@@ -137,15 +178,19 @@
 
 	<h2>Inspired By</h2>
 	<p>
-		Corpus is built around core ideas from
-		<a href="https://github.com/elysiajs/elysia">Elysia</a>, adapted for
-		simplicity and personal projects.
+		Corpus takes inspiration from
+		<a href="https://github.com/elysiajs/elysia">Elysia</a> and strips it down
+		to the essentials. It is simpler and built for personal projects.
 	</p>
 
 	<h2>Extensibility</h2>
 	<p>You can extend several interfaces to customize behavior:</p>
 
-	<pre><code id="extensibility"></code></pre>
+	<pre><code id="extensibility">declare module "@ozanarslan/corpus" {
+	interface Env {} // X.Config env interface
+	interface ContextDataInterface {} // Context data shape (c.data)
+	interface DatabaseClientInterface {} // X.Repository db dependency
+}</code></pre>
 
 	<h2>Next Steps</h2>
 	<p>
@@ -154,67 +199,3 @@
 		understand configuration.
 	</p>
 </main>
-
-<script>
-	document.addEventListener("DOMContentLoaded", () => {
-		const snippets = {
-			"routes-controllers": `// Simple route
-new C.Route("/health", () => "ok");
-
-// Or in a Controller with prefix
-export class ItemController extends C.Controller {
-	constructor(private itemService: ItemService) {
-		super({ prefix: "/item" });
-	}
-
-	create = this.route(
-		{ method: "POST", path: "/create" },
-		(c) => this.itemService.create(c.body),
-		ItemModel.create, // schema validation
-	);
-}`,
-			"schema-validation": `import { type } from "arktype";
-
-export class ItemModel {
-	static entity = type({
-		id: "number",
-		createdAt: "string.date.iso",
-		name: "string",
-	});
-
-	static create = {
-		body: this.entity.omit("id", "createdAt"),
-	};
-}`,
-			context: `create = this.route(
-	{ method: "POST", path: "/create" },
-	async (c) => {
-		// c.body is already validated
-		// c.params has path parameters
-		// c.data is a plain object you can use
-		return this.itemService.create(c.body);
-	},
-	ItemModel.create,
-);`,
-			middleware: `export class AuthMiddleware extends C.Middleware {
-	override handler: C.MiddlewareHandler = async (c) => {
-		const token = c.headers.authorization;
-		if (!token) throw new C.CError(401, "no token");
-		c.data.user = await verifyToken(token);
-	};
-}`,
-			extensibility: `declare module "@ozanarslan/corpus" {
-	interface Env {} // X.Config env interface
-	interface ContextDataInterface {} // Context data shape (c.data)
-	interface DatabaseClientInterface {} // X.Repository db dependency
-}`,
-		};
-
-		Object.entries(snippets).forEach(([id, content]) => {
-			const block = document.querySelector(`code#${id}`);
-			if (block) {
-				block.textContent = content;
-			}
-		});
-	});
-</script>

@@ -1,4 +1,5 @@
 aside {
+	font-family: "JetBrains Mono", "Menlo", monospace;
 	background-color: var(--color-aside-bg);
 	color: var(--color-text-primary);
 	font-size: 13px;
@@ -62,6 +63,13 @@ aside {
 		cursor: not-allowed;
 		opacity: 0.6;
 	}
+
+	nav a[aria-current="page"] {
+		color: var(--color-text-primary);
+		background-color: var(--color-hover-bg);
+		border-left-color: var(--color-text-accent);
+		font-weight: 500;
+	}
 }
 
 @media (max-width: 768px) {
@@ -85,6 +93,10 @@ aside {
 		nav a {
 			padding: 0.3rem 0.5rem;
 			font-size: 12px;
+		}
+
+		nav a[aria-current="page"] {
+			border-left-width: 2px;
 		}
 	}
 }

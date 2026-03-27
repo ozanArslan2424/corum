@@ -3,9 +3,10 @@ import type { MaybePromise } from "@/utils/types/MaybePromise";
 import type { RequestHandler } from "@/Server/types/RequestHandler";
 import type { ServeArgs } from "@/Server/types/ServeArgs";
 import type { Func } from "@/utils/types/Func";
+import type { RouterRouteData } from "@/Router/types/RouterRouteData";
 
 export interface ServerInterface {
-	get routes(): Array<[string, string]>;
+	get routes(): Array<RouterRouteData>;
 
 	setGlobalPrefix(value: string): void;
 

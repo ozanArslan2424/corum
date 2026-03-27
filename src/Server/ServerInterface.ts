@@ -5,10 +5,6 @@ import type { ServeArgs } from "@/Server/types/ServeArgs";
 import type { Func } from "@/utils/types/Func";
 
 export interface ServerInterface {
-	serve(options: ServeArgs): void;
-
-	close(): Promise<void>;
-
 	get routes(): Array<[string, string]>;
 
 	setGlobalPrefix(value: string): void;
@@ -17,6 +13,8 @@ export interface ServerInterface {
 		port: ServeArgs["port"],
 		hostname?: ServeArgs["hostname"],
 	): Promise<void>;
+
+	close(closeActiveConnections?: boolean): Promise<void>;
 
 	handle(request: Request): Promise<Response>;
 

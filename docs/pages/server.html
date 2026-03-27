@@ -1,0 +1,52 @@
+<main>
+	<h1>Server</h1>
+
+	<p>
+		<code>Server</code> is usually your first module in Corpus. It should be
+		instantiated before any <code>Route</code>, <code>Middleware</code>, or
+		<code>Controller</code> object is created. This is because Server's
+		constructor creates and registers the global routing for your app. It is
+		part of the C (Corpus) module which is the main module that holds all
+		necessary parts of an HTTP server.
+	</p>
+
+	<h2>Public Methods</h2>
+
+	<h3>.listen</h3>
+
+	<p>
+		Expose a port and start listening. This is pretty straightforward. The
+		method takes a required <code>port</code> and an optional
+		<code>hostname</code> arguments. This is an async method to allow async
+		operations in <code>handleBeforeListen</code> however, there is no return
+		value.
+
+		<br />
+
+		Example:
+	</p>
+	<pre><code>import { C } from "@ozanarslan/corpus";
+
+const server = new C.Server();
+// Since this is async, you might want to satisfy 
+// the linter by using void or await.
+void server.listen(3000, "0.0.0.0");</code></pre>
+
+	<h3>.close</h3>
+
+	<p>
+		The counterpart of listen is close. This method stops the underlying serve
+		function to prevent new connections from being accepted. Takes
+		<code>closeActiveConnections</code> boolean argument. This is also async to
+		allow async operations in <code>handleBeforeClose</code>.
+
+		<br />
+		Note: By default, closeActiveConnections is true. Bun's default is false.
+
+		<br />
+
+		Example:
+	</p>
+	<pre><code>void server.listen(3000, "0.0.0.0");
+void server.close();</code></pre>
+</main>

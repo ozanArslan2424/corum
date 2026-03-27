@@ -98,13 +98,17 @@ export default class ServerUsingNode extends ServerAbstract {
 		app.listen(args.port, args.hostname);
 	}
 
-	async close(): Promise<void> {
+	async close(closeActiveConnections: boolean = true): Promise<void> {
 		await this.handleBeforeClose?.();
 		log.log("Closing...");
 		this.wss?.close();
 		this.app?.close();
-		this.app?.closeAllConnections();
-		this.app?.closeIdleConnections();
+
+		if (closeActiveConnections) {
+			this.app?.closeAllConnections();
+			this.app?.closeIdleConnections();
+		}
+
 		if (XConfig.nodeEnv !== "test") {
 			process.exit(0);
 		}

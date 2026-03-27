@@ -16,11 +16,11 @@ export default class ServerUsingBun extends ServerAbstract {
 		this.app = this.createApp(args);
 	}
 
-	async close(): Promise<void> {
+	async close(closeActiveConnections: boolean = true): Promise<void> {
 		await this.handleBeforeClose?.();
 		log.log("Closing...");
 
-		await this.app?.stop(true);
+		await this.app?.stop(closeActiveConnections);
 
 		if (XConfig.nodeEnv !== "test") {
 			process.exit(0);

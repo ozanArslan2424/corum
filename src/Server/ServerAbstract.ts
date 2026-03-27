@@ -16,8 +16,8 @@ import { log, logFatal } from "@/utils/internalLogger";
 import { WebSocketRoute } from "@/Route/WebSocketRoute";
 
 export abstract class ServerAbstract implements ServerInterface {
-	abstract serve(options: ServeArgs): void;
-	abstract close(): Promise<void>;
+	protected abstract serve(options: ServeArgs): void;
+	abstract close(closeActiveConnections?: boolean): Promise<void>;
 
 	constructor(protected readonly opts?: ServerOptions) {
 		$routerStore.set(new Router(opts?.adapter));
@@ -61,7 +61,7 @@ export abstract class ServerAbstract implements ServerInterface {
 		return handled.response;
 	}
 
-	async handleRequest(
+	protected async handleRequest(
 		req: CRequest,
 		onUpgrade: Func<[WebSocketRoute], undefined>,
 	): Promise<CResponse | undefined> {

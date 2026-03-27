@@ -73,4 +73,4 @@ new C.WebSocketRoute("/ws", {
 	},
 });
 
-await server.listen(TEST_PORT);
+void server.listen(TEST_PORT);

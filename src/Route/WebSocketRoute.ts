@@ -16,7 +16,6 @@ export class WebSocketRoute<
 		super();
 		this.endpoint = path;
 		this.method = Method.GET;
-		this.pattern = this.resolvePattern(this.endpoint);
 		this.id = this.resolveId(this.method, this.endpoint);
 		this.onOpen = definition.onOpen;
 		this.onClose = definition.onClose;
@@ -27,7 +26,6 @@ export class WebSocketRoute<
 	id: string;
 	method: Method;
 	endpoint: E;
-	pattern: RegExp;
 	model = undefined;
 	handler: Func<[Context], MaybePromise<R>> = () => this;
 	variant: RouteVariant = RouteVariant.websocket;

@@ -48,7 +48,6 @@ export class DynamicRoute<
 		super();
 		this.endpoint = this.resolveEndpoint(definition);
 		this.method = this.resolveMethod(definition);
-		this.pattern = this.resolvePattern(this.endpoint);
 		this.id = this.resolveId(this.method, this.endpoint);
 		this.model = model;
 		this.handler = handler;
@@ -58,7 +57,6 @@ export class DynamicRoute<
 	id: string;
 	method: Method;
 	endpoint: E;
-	pattern: RegExp;
 	handler: Func<[context: Context<B, S, P, R>], MaybePromise<R>>;
 	model?: RouteModel<B, S, P, R>;
 	variant: RouteVariant = RouteVariant.dynamic;

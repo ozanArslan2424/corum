@@ -16,14 +16,9 @@ export abstract class RouteAbstract<
 	abstract variant: RouteVariant;
 	abstract endpoint: E;
 	abstract method: Method;
-	abstract pattern: RegExp;
 	abstract id: string;
 	abstract handler: Func<[Context<B, S, P, R>], MaybePromise<R>>;
 	abstract model?: RouteModel<B, S, P, R>;
-
-	protected resolvePattern(endpoint: E): RegExp {
-		return RouteAbstract.makeRoutePattern(endpoint);
-	}
 
 	protected resolveId(method: string, endpoint: E): string {
 		return RouteAbstract.makeRouteId(method, endpoint);
@@ -31,14 +26,5 @@ export abstract class RouteAbstract<
 
 	static makeRouteId(method: string, endpoint: string): string {
 		return `${method.toUpperCase()} ${endpoint}`;
-	}
-
-	static makeRoutePattern(endpoint: string): RegExp {
-		// Convert route pattern to regex: "/users/:id" -> /^\/users\/([^\/]+)$/
-		const regex = endpoint
-			.split("/")
-			.map((part) => (part.startsWith(":") ? "([^\\/]+)" : part))
-			.join("/");
-		return new RegExp(`^${regex}$`);
 	}
 }

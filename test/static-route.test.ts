@@ -31,13 +31,6 @@ describe("C.StaticRoute", () => {
 		expect(route.id).toBe(C.Route.makeRouteId(C.Method.GET, "/sr4"));
 	});
 
-	it("STATIC ROUTE - PATTERN IS SET", () => {
-		const route = new C.StaticRoute("/sr5", f("sample.html"));
-		expect(route.pattern).toBeInstanceOf(RegExp);
-		expect(route.pattern.test("/sr5")).toBe(true);
-		expect(route.pattern.test("/other")).toBe(false);
-	});
-
 	it("STATIC ROUTE - WITH MODEL", () => {
 		const model = { response: undefined };
 		const route = new C.StaticRoute("/sr6", f("sample.html"), undefined, model);

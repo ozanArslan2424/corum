@@ -5,6 +5,8 @@ type Log = typeof console & {
 
 function makeLog(): Log {
 	const log = console as Log;
+	log.warn = (...args: any[]) =>
+		console.log("\x1b[33m" + args[0], ...args.slice(1), "\x1b[0m");
 	log.success = (...args: any[]) => console.log("✅", ...args);
 	log.fatal = (...args: any[]): never => {
 		console.error("💀", ...args);

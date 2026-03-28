@@ -57,7 +57,6 @@ export class StaticRoute<
 		super();
 		this.endpoint = path;
 		this.method = Method.GET;
-		this.pattern = this.resolvePattern(this.endpoint);
 		this.id = this.resolveId(this.method, this.endpoint);
 		this.model = model;
 		this.filePath = this.resolveFilePath(definition);
@@ -68,7 +67,6 @@ export class StaticRoute<
 	id: string;
 	method: Method;
 	endpoint: E;
-	pattern: RegExp;
 	handler: Func<[Context<B, S, P, R>], MaybePromise<R>>;
 	model?: RouteModel<B, S, P, R>;
 	protected filePath: string;

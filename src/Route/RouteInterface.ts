@@ -16,7 +16,6 @@ export interface RouteInterface<
 	id: string;
 	method: Method;
 	endpoint: E;
-	pattern: RegExp;
 	handler: Func<[Context<B, S, P, R>], MaybePromise<R>>;
 	model?: RouteModel<B, S, P, R>;
 }

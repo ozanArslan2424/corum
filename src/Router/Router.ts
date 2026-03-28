@@ -1,6 +1,5 @@
 import type { CRequest } from "@/CRequest/CRequest";
 import type { RouterAdapterInterface } from "@/Router/adapters/RouterAdapterInterface";
-import { CorpusAdapter } from "@/Router/adapters/CorpusAdapter";
 import { MiddlewareRegistry } from "@/Router/registries/MiddlewareRegistry";
 import type { RouterReturnData } from "@/Router/types/RouterReturnData";
 import { LazyMap } from "@/utils/LazyMap";
@@ -13,9 +12,10 @@ import type { MiddlewareHandler } from "@/Middleware/types/MiddlewareHandler";
 import type { Middleware } from "@/Middleware/Middleware";
 import type { RouteInterface } from "@/Route/RouteInterface";
 import { objGetKeys } from "@/utils/objGetKeys";
+import { BranchAdapter } from "@/Router/adapters/BranchAdapter";
 
 export class Router {
-	constructor(private adapter: RouterAdapterInterface = new CorpusAdapter()) {}
+	constructor(private adapter: RouterAdapterInterface = new BranchAdapter()) {}
 
 	private middlewareRegistry = new MiddlewareRegistry();
 	private cache = new WeakMap<CRequest, RouterReturnData>();
@@ -38,7 +38,6 @@ export class Router {
 			endpoint: route.endpoint,
 			method: route.method,
 			handler: route.handler,
-			pattern: route.pattern,
 			variant: route.variant,
 		};
 		if (route.model) {

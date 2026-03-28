@@ -46,9 +46,9 @@ describe("X.Config", () => {
 	});
 
 	it("GET - UNDEFINED", () => {
-		const errorSpy = spyOn(log, "error");
+		const logSpy = spyOn(log, "warn");
 		expect(X.Config.get(undefinedKey)).toBeUndefined();
-		expect(errorSpy).toBeCalled();
+		expect(logSpy).toBeCalled();
 	});
 
 	it("GET - UNDEFINED WITH FALLBACK", () => {

@@ -37,25 +37,6 @@ describe("C.Route", () => {
 		expect(route.id).toBe(C.Route.makeRouteId(C.Method.POST, path));
 	});
 
-	it("PATTERN - STATIC ENDPOINT", () => {
-		const path = "/r3";
-		const route = new C.Route(path, handler);
-
-		expect(route.pattern).toBeInstanceOf(RegExp);
-		expect(route.pattern.test(path)).toBe(true);
-		expect(route.pattern.test("/other")).toBe(false);
-	});
-
-	it("PATTERN - DYNAMIC ENDPOINT WITH PARAM", () => {
-		const path = "/r4/:id";
-		const route = new C.Route(path, handler);
-
-		expect(route.pattern.test("/r4/123")).toBe(true);
-		expect(route.pattern.test("/r4/abc")).toBe(true);
-		expect(route.pattern.test("/r4")).toBe(false);
-		expect(route.pattern.test("/r4/123/extra")).toBe(false);
-	});
-
 	it("REGISTERS TO ROUTER", async () => {
 		const path = "/r5";
 		new C.Route(path, async () => "registered");

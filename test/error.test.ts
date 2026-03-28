@@ -98,6 +98,7 @@ describe("C.Error", () => {
 		new C.Route("/error-method", () => "ok");
 
 		const res = await s.handle(req("/error-method", { method: "POST" }));
+		console.log(res.status);
 		expect(res.status === 404 || res.status === 405).toBeTrue();
 	});
 });

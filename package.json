@@ -33,7 +33,7 @@
 		"lint": "bunx oxlint -c ./.oxlintrc.json --fix",
 		"test:ws": "bun run test/other/ws-simulation.ts",
 		"build": "bun run build.ts",
-		"build:docs": "bun run docs/build.ts"
+		"build:docs": "bun run build-docs.ts"
 	},
 	"devDependencies": {
 		"@types/bun": "^1.3.11",

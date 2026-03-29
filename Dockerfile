@@ -1,9 +1,15 @@
 FROM oven/bun:1 AS base
 WORKDIR /usr/src/app
 
+FROM base AS build
+COPY package.json bun.lock .
+RUN bun install --frozen-lockfile
+COPY . .
+RUN bun run build
+
 FROM base AS prerelease
 RUN bun add marked
-COPY dist ./dist
+COPY --from=build /usr/src/app/dist ./dist
 COPY docs ./docs
 RUN bun run docs/build.ts
 

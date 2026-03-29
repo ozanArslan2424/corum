@@ -1,5 +1,5 @@
-import { GlobalPrefixStore } from "@/store/GlobalPrefixStore";
-import { GlobalRouterStore } from "@/store/GlobalRouterStore";
+import { GlobalPrefixStore } from "@/Store/GlobalPrefixStore";
+import { GlobalRouterStore } from "@/Store/GlobalRouterStore";
 import * as C from "@/C";
 import * as X from "@/X";
 

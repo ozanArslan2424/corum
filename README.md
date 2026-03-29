@@ -3,6 +3,8 @@
 A simple typescript backend framework package to use for personal projects or simple crud applications.
 This package is by no means a replacement for full fledged backend frameworks commonly used in production.
 
+[Documentation](https://corpus-production.up.railway.app/)
+
 ## Quick Start
 
 Install the package:
@@ -169,5 +171,6 @@ Very much inspired from the core ideas behind [Elysia](https://github.com/elysia
 - [x] Better and more memory efficient router
 - [x] Reduce dist size
 - [x] Support additional response body types (ArrayBuffer, Blob, FormData, etc.) in the custom Response object.
-- [ ] Support WebSocket
+- [x] Support WebSocket
+- [x] [Documentation](https://corpus-production.up.railway.app/)
 - [ ] Compress static files in StaticRoute for caching and stuff maybe?

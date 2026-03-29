@@ -217,22 +217,27 @@ export class XRateLimiter {
 	};
 
 	private resolveStore(): RateLimitStoreInterface {
-		const store = this.config.store;
-
 		switch (this.config.storeType) {
 			case "file":
 				return new RateLimiterFileStore(this.config.storeDir);
-			case "redis":
+
+			case "redis": {
+				const store = this.config.store;
 				if (!store) {
 					logFatal("store required for redis store type");
 				}
 				return store;
-			case "memory":
-			case "custom":
+			}
+
+			case "custom": {
+				const store = this.config.store;
 				if (!store) {
 					logFatal("store required for custom store type");
 				}
 				return store;
+			}
+
+			case "memory":
 			default:
 				return new RateLimiterMemoryStore();
 		}

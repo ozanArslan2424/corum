@@ -1,5 +1,5 @@
 import type { Router } from "@/Router/Router";
-import { StoreAbstract } from "@/store/StoreAbstract";
+import { StoreAbstract } from "@/Store/StoreAbstract";
 import { logFatal } from "@/utils/internalLogger";
 
 export class GlobalRouterStore extends StoreAbstract<Router | null> {

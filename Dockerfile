@@ -9,18 +9,12 @@ RUN cd /temp/dev && bun install --frozen-lockfile
 FROM base AS build
 COPY --from=install /temp/dev/node_modules node_modules
 COPY . .
-RUN bun run build
-
-FROM base AS prerelease
-RUN bun add marked
-COPY --from=build /usr/src/app/dist ./dist
-COPY docs ./docs
-RUN bun run docs/build.ts
+RUN bun run build-docs.ts
 
 FROM base AS release
 WORKDIR /usr/src/app
-COPY --from=prerelease /usr/src/app/docs/dist ./docs/dist
-COPY --from=prerelease /usr/src/app/node_modules ./node_modules
+COPY --from=build /usr/src/app/docs/dist ./docs
+COPY --from=build /usr/src/app/dist ./docs/dist
 EXPOSE 3000
 ENV NODE_ENV=production
-CMD ["bun", "run", "docs/dist/index.js"]
+CMD ["bun", "run", "docs/index.js"]

@@ -18,7 +18,7 @@
 	"files": [
 		"dist"
 	],
-	"homepage": "https://github.com/ozanArslan2424/corpus.git#readme",
+	"homepage": "https://corpus-production.up.railway.app/",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/ozanArslan2424/corpus.git"

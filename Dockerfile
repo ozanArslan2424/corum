@@ -9,7 +9,7 @@ RUN cd /temp/dev && bun install --frozen-lockfile
 FROM base AS build
 COPY --from=install /temp/dev/node_modules node_modules
 COPY . .
-RUN cat tsconfig.build.json && cat tsconfig.json && ls src/store/
+RUN ls src/
 RUN bun run build-docs.ts
 
 FROM base AS release

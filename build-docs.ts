@@ -31,8 +31,13 @@ async function buildDocs() {
 	console.log("⚡ Built TypeScript");
 }
 
-const start = performance.now();
-await buildPackage();
-await buildDocs();
-const end = performance.now();
-console.log(`📚 Docs built in ${(end - start).toFixed(2)}ms`);
+try {
+	const start = performance.now();
+	await buildPackage();
+	await buildDocs();
+	const end = performance.now();
+	console.log(`📚 Docs built in ${(end - start).toFixed(2)}ms`);
+} catch (err) {
+	console.error(err);
+	process.exit(1);
+}

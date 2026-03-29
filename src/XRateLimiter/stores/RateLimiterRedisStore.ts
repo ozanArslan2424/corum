@@ -1,13 +1,11 @@
 import type { RateLimitStoreInterface } from "@/XRateLimiter/stores/RateLimitStoreInterface";
-import type { BasicRedisClientInterface } from "@/XRateLimiter/types/BasicRedisClientInterface";
 import type { RateLimitEntry } from "@/XRateLimiter/types/RateLimitEntry";
+import type { createClient } from "redis";
 
 // Redis store for distributed deployments
-export class RateLimiterRedisStore<
-	R extends BasicRedisClientInterface,
-> implements RateLimitStoreInterface {
+export class RateLimiterRedisStore implements RateLimitStoreInterface {
 	constructor(
-		private readonly redis: R,
+		private readonly redis: ReturnType<typeof createClient>,
 		private readonly prefix: string = "rl:",
 	) {}
 
@@ -17,12 +15,12 @@ export class RateLimiterRedisStore<
 	}
 
 	async set(id: string, entry: RateLimitEntry): Promise<void> {
-		await this.redis.set(
-			this.prefix + id,
-			JSON.stringify(entry),
-			"PX",
-			Math.max(0, entry.resetAt - Date.now()),
-		);
+		await this.redis.set(this.prefix + id, JSON.stringify(entry), {
+			expiration: {
+				type: "PX",
+				value: Math.max(0, entry.resetAt - Date.now()),
+			},
+		});
 	}
 
 	async delete(id: string): Promise<void> {
@@ -37,7 +35,7 @@ export class RateLimiterRedisStore<
 	async clear(): Promise<void> {
 		const keys = await this.redis.keys(this.prefix + "*");
 		if (keys.length > 0) {
-			await this.redis.del(...keys);
+			await this.redis.del(keys);
 		}
 	}
 

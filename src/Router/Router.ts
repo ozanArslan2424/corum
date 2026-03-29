@@ -2,7 +2,6 @@ import type { CRequest } from "@/CRequest/CRequest";
 import type { RouterAdapterInterface } from "@/Router/adapters/RouterAdapterInterface";
 import { MiddlewareRegistry } from "@/Router/registries/MiddlewareRegistry";
 import type { RouterReturnData } from "@/Router/types/RouterReturnData";
-import { LazyMap } from "@/utils/LazyMap";
 import type { Func } from "@/utils/types/Func";
 import { internFunc } from "@/utils/internFunc";
 import { strRemoveWhitespace } from "@/utils/strRemoveWhitespace";
@@ -13,13 +12,16 @@ import type { Middleware } from "@/Middleware/Middleware";
 import type { RouteInterface } from "@/Route/RouteInterface";
 import { objGetKeys } from "@/utils/objGetKeys";
 import { BranchAdapter } from "@/Router/adapters/BranchAdapter";
+import { log } from "@/utils/internalLogger";
+import type { XCors } from "@/XCors/XCors";
 
 export class Router {
 	constructor(private adapter: RouterAdapterInterface = new BranchAdapter()) {}
 
+	cors: XCors | null = null;
 	private middlewareRegistry = new MiddlewareRegistry();
 	private cache = new WeakMap<CRequest, RouterReturnData>();
-	private internFuncMap = new LazyMap<string, Func>();
+	private internFuncMap = new Map<string, Func>();
 
 	addMiddleware(middleware: Middleware): void {
 		this.middlewareRegistry.add(middleware);
@@ -32,7 +34,7 @@ export class Router {
 		return this.middlewareRegistry.find(id);
 	}
 
-	addRoute(route: RouteInterface<string, any, any, any, any>): void {
+	addRoute(route: RouteInterface<any, any, any, any, string>): void {
 		const data: RouterRouteData = {
 			id: route.id,
 			endpoint: route.endpoint,
@@ -67,6 +69,12 @@ export class Router {
 	}
 
 	getRouteList(): Array<RouterRouteData> {
-		return this.adapter.list();
+		const fn = this.adapter.list;
+		if (!fn) {
+			log.warn(
+				"Router adapter does not support list method, returning empty array",
+			);
+		}
+		return fn?.() ?? [];
 	}
 }

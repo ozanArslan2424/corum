@@ -1,8 +1,29 @@
-import { C, X } from "@/index";
+import { C, X } from "../dist";
+import { convertMD } from "./convert-md";
 
 const server = new C.Server();
 
+const fileCache = new X.CacheMap(async (path) => {
+	const file = new X.File(path);
+	return await file.text();
+});
+
+const pageCache = new X.CacheMap(async (page) => {
+	const md = new X.File(addr("markdown", `${page}.md`));
+	if (await md.exists()) {
+		const markdown = await md.text();
+		return await convertMD(markdown);
+	} else {
+		const html = new X.File(addr("html", `${page}.html`));
+		return await html.text();
+	}
+});
+
 function addr(...path: string[]) {
+	// if (X.Config.nodeEnv === "production") {
+	// 	console.log(X.Config.cwd());
+	// 	return X.Config.resolvePath(X.Config.cwd(), ...path);
+	// }
 	return X.Config.resolvePath(X.Config.cwd(), "docs", ...path);
 }
 
@@ -15,37 +36,31 @@ function insert(target: string, entries: Record<string, string>) {
 	return result;
 }
 
-new C.StaticRoute("/styles.css", addr("styles", "styles.css"));
-new C.StaticRoute("/main.css", addr("styles", "main.css"));
-new C.StaticRoute("/header.css", addr("styles", "header.css"));
-new C.StaticRoute("/sidebar.css", addr("styles", "sidebar.css"));
-new C.StaticRoute("/landing.css", addr("styles", "landing.css"));
+new C.Route<unknown, unknown, { file: string }>("/styles/:file", (c) =>
+	C.Response.streamFile(addr("css", c.params.file)),
+);
 
-new C.StaticRoute("/", addr("components", "layout.html"), async (_, layout) => {
-	const header = new X.File(addr("components", "header.html"));
-	const sidebar = new X.File(addr("components", "sidebar.html"));
-	const content = new X.File(addr("pages", "index.html"));
-
-	return insert(layout, {
-		topbar: await header.text(),
-		sidebar: await sidebar.text(),
-		content: await content.text(),
-	});
+new C.StaticRoute("/", addr("html", "layout.html"), async (_, layout) => {
+	const topbar = await fileCache.get(addr("html", "header.html"));
+	const sidebar = await fileCache.get(addr("html", "sidebar.html"));
+	const content = await fileCache.get(addr("html", "index.html"));
+	return insert(layout, { topbar, sidebar, content });
 });
 
-new C.StaticRoute<"/docs/:page", unknown, unknown, { page: string }>(
+new C.StaticRoute<unknown, unknown, { page: string }>(
 	"/docs/:page",
-	addr("components", "layout.html"),
+	addr("html", "layout.html"),
 	async (c, layout) => {
-		const header = new X.File(addr("components", "header.html"));
-		const sidebar = new X.File(addr("components", "sidebar.html"));
-		const content = new X.File(addr("pages", `${c.params.page}.html`));
-		return insert(layout, {
-			topbar: await header.text(),
-			sidebar: await sidebar.text(),
-			content: await content.text(),
-		});
+		const page = c.params.page;
+		const topbar = await fileCache.get(addr("html", "header.html"));
+		const sidebar = await fileCache.get(addr("html", "sidebar.html"));
+		const content = await pageCache.get(page);
+		return insert(layout, { topbar, sidebar, content });
 	},
 );
+
+server.setOnBeforeListen(() => {
+	console.log(server.routes.map((r) => r.id).join("\n"));
+});
 
 await server.listen(3000);

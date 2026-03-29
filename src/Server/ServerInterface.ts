@@ -53,7 +53,4 @@ export interface ServerInterface {
 
 	setOnBeforeClose(handler: () => MaybePromise<void>): void;
 	defaultOnBeforeClose: Func<[], MaybePromise<void>> | undefined;
-
-	setOnPreflight(handler: RequestHandler): void;
-	defaultPreflightHandler: RequestHandler;
 }

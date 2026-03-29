@@ -1,20 +1,13 @@
 main {
-	padding: 2rem;
-	max-width: 1200px;
-	margin: 0 auto;
+	counter-reset: h2 h3 h4;
+	padding-block: 2rem;
+	padding-inline: 4rem;
 	line-height: 1.6;
 }
 
-main h1 {
-	font-size: 2rem;
-	color: var(--color-text-primary);
-	margin-bottom: 1.5rem;
-	font-weight: 600;
-	border-bottom: 2px solid var(--color-border);
-	padding-bottom: 0.5rem;
-}
-
 main h2 {
+	counter-increment: h2;
+	counter-reset: h3 h4;
 	font-size: 1.4rem;
 	color: var(--color-text-primary);
 	margin-top: 2.5rem;
@@ -24,7 +17,14 @@ main h2 {
 	border-bottom: 1px solid var(--color-border);
 }
 
+main h2::before {
+	content: counter(h2) ". ";
+	color: var(--color-text-accent);
+}
+
 main h3 {
+	counter-increment: h3;
+	counter-reset: h4;
 	font-size: 1.1rem;
 	color: var(--color-text-primary);
 	margin-top: 1.5rem;
@@ -32,12 +32,23 @@ main h3 {
 	font-weight: 600;
 }
 
+main h3::before {
+	content: counter(h2) "." counter(h3) " ";
+	color: var(--color-text-accent);
+}
+
 main h4 {
+	counter-increment: h4;
 	font-size: 1rem;
 	color: var(--color-text-primary);
 	margin-top: 1rem;
 	margin-bottom: 0.5rem;
 	font-weight: 500;
+}
+
+main h4::before {
+	content: counter(h2) "." counter(h3) "." counter(h4) " ";
+	color: var(--color-text-accent);
 }
 
 main p {
@@ -241,7 +252,7 @@ main .comparison-item p {
 	border-radius: 4px;
 }
 
-.table-of-contents h4 {
+.table-of-contents h5 {
 	font-size: 0.85rem;
 	line-height: 1;
 	text-transform: uppercase;
@@ -273,5 +284,97 @@ main .comparison-item p {
 
 	&:hover {
 		color: var(--color-text-accent);
+	}
+}
+
+main table {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 1.5rem 0;
+	font-size: 0.9rem;
+	background-color: var(--color-aside-bg);
+	border: 1px solid var(--color-border);
+	border-radius: 6px;
+	overflow: hidden;
+}
+
+main thead {
+	background-color: var(--color-code-bg);
+	border-bottom: 2px solid var(--color-border);
+}
+
+main th {
+	padding: 0.875rem 1rem;
+	text-align: left;
+	font-weight: 600;
+	color: var(--color-text-primary);
+	text-transform: uppercase;
+	font-size: 0.8rem;
+	letter-spacing: 0.5px;
+}
+
+main td {
+	padding: 0.875rem 1rem;
+	border-bottom: 1px solid var(--color-border);
+	color: var(--color-text-secondary);
+	line-height: 1.6;
+}
+
+main tbody tr:last-child td {
+	border-bottom: none;
+}
+
+main tbody tr {
+	transition: background-color 0.2s ease;
+}
+
+main tbody tr:hover {
+	background-color: var(--color-code-bg);
+}
+
+main td code,
+main th code {
+	background-color: var(--color-code-bg);
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 0.85em;
+}
+
+main td a {
+	color: var(--color-text-accent);
+	border-bottom: 1px solid transparent;
+}
+
+main td a:hover {
+	border-bottom-color: var(--color-text-accent);
+}
+
+/* Responsive tables */
+@media (max-width: 768px) {
+	main table {
+		font-size: 0.85rem;
+	}
+
+	main th,
+	main td {
+		padding: 0.75rem 0.875rem;
+	}
+
+	main th {
+		font-size: 0.75rem;
+	}
+}
+
+@media (max-width: 480px) {
+	main table {
+		display: block;
+		overflow-x: auto;
+		white-space: nowrap;
+		border-radius: 4px;
+	}
+
+	main th,
+	main td {
+		padding: 0.625rem 0.75rem;
 	}
 }

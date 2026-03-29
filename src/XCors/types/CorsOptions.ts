@@ -1,7 +1,7 @@
 import type { CHeaderKey } from "@/CHeaders/types/CHeaderKey";
 
 export type CorsOptions = {
-	/** Which origins are allowed to access the resource */
+	/** Which origins are allowed to access the resource. Use ["*"] for any origin, or specific domains. */
 	allowedOrigins?: string[];
 
 	/** Which HTTP methods are allowed (GET, POST, etc.) */
@@ -18,4 +18,7 @@ export type CorsOptions = {
 
 	/** Whether to expose cookies and auth headers to the client */
 	credentials?: boolean;
+
+	/** How long (in seconds) browsers can cache preflight results. Default: 86400 (24 hours) */
+	maxAge?: number;
 };

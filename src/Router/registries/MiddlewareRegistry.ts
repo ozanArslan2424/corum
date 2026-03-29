@@ -1,14 +1,13 @@
 import { Controller } from "@/Controller/Controller";
 import { DynamicRoute } from "@/Route/DynamicRoute";
-import { LazyMap } from "@/utils/LazyMap";
 import { compile } from "@/utils/compile";
 import type { MiddlewareInterface } from "@/Middleware/MiddlwareInterface";
 import { MiddlewareVariant } from "@/Middleware/enums/MiddlewareVariant";
 import type { MiddlewareHandler } from "@/Middleware/types/MiddlewareHandler";
 
 export class MiddlewareRegistry {
-	private inboundMiddlewares = new LazyMap<string, Array<MiddlewareHandler>>();
-	private outboundMiddlewares = new LazyMap<string, Array<MiddlewareHandler>>();
+	private inboundMiddlewares = new Map<string, Array<MiddlewareHandler>>();
+	private outboundMiddlewares = new Map<string, Array<MiddlewareHandler>>();
 
 	add(middleware: MiddlewareInterface): void {
 		const resolved = MiddlewareRegistry.resolveRouteIds(middleware);

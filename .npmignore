@@ -1,11 +1,15 @@
 /src
 /test
 /node_modules
+/docs
 
 .DS_Store
 
 .oxlintrc.json
 .prettierrc
-build.ts
 tsconfig.build.json
 tsconfig.json
+
+build.ts
+build-docs.ts
+Dockerfile

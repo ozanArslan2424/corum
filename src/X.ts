@@ -14,6 +14,9 @@ export { XRateLimiter as RateLimiter } from "./XRateLimiter/XRateLimiter";
 export { RateLimiterFileStore } from "./XRateLimiter/stores/RateLimiterFileStore";
 export { RateLimiterMemoryStore } from "./XRateLimiter/stores/RateLimiterMemoryStore";
 export { RateLimiterRedisStore } from "./XRateLimiter/stores/RateLimiterRedisStore";
+export type { RateLimitStoreInterface } from "./XRateLimiter/stores/RateLimitStoreInterface";
+
+export { XCacheMap as CacheMap } from "@/XCacheMap/XCacheMap";
 
 export { XParser as Parser } from "./Model/XParser";
 

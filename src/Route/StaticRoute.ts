@@ -40,11 +40,11 @@ type R = CResponse | string;
  */
 
 export class StaticRoute<
-	E extends string = string,
 	B = unknown,
 	S = unknown,
 	P = unknown,
-> extends RouteAbstract<E, B, S, P, R> {
+	E extends string = string,
+> extends RouteAbstract<B, S, P, R, E> {
 	constructor(
 		path: E,
 		definition: StaticRouteDefinition,

@@ -45,14 +45,14 @@ export abstract class Controller {
 	 * but automatically prepends the controller prefix and runs `beforeEach` before the handler.
 	 */
 	protected route<
-		E extends string = string,
 		B = unknown,
 		S = unknown,
 		P = unknown,
 		R = unknown,
+		E extends string = string,
 	>(
-		...args: ConstructorParameters<typeof DynamicRoute<E, B, S, P, R>>
-	): DynamicRoute<E, B, S, P, R> {
+		...args: ConstructorParameters<typeof DynamicRoute<B, S, P, R, E>>
+	): DynamicRoute<B, S, P, R, E> {
 		const [def, handler, model] = args;
 		const method = typeof def === "string" ? Method.GET : def.method;
 		const path = joinPathSegments<E>(
@@ -77,13 +77,13 @@ export abstract class Controller {
 	 * but automatically prepends the controller prefix.
 	 */
 	protected staticRoute<
-		E extends string = string,
 		B = unknown,
 		S = unknown,
 		P = unknown,
+		E extends string = string,
 	>(
-		...args: ConstructorParameters<typeof StaticRoute<E, B, S, P>>
-	): StaticRoute<E, B, S, P> {
+		...args: ConstructorParameters<typeof StaticRoute<B, S, P, E>>
+	): StaticRoute<B, S, P, E> {
 		const [path, filePath, handler, model] = args;
 		const route = new StaticRoute(
 			joinPathSegments<E>(this.prefix, path),

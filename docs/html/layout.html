@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Corpus Docs</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link rel="stylesheet" href="/styles/styles.css" />
+		<link rel="stylesheet" href="/styles/main.css" />
+		<link rel="stylesheet" href="/styles/landing.css" />
+		<link rel="stylesheet" href="/styles/header.css" />
+		<link rel="stylesheet" href="/styles/sidebar.css" />
+		<script>
+			// Load highlight.js library
+			const script = document.createElement("script");
+			script.src =
+				"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js";
+			script.onload = () => {
+				// Load the theme CSS
+				const link = document.createElement("link");
+				link.rel = "stylesheet";
+				link.href =
+					"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css";
+				document.head.appendChild(link);
+
+				// Wait for DOM to be fully ready and all scripts to finish
+				window.addEventListener("load", () => {
+					// Highlight all code blocks
+					document.querySelectorAll("pre code").forEach((block) => {
+						block.classList.add("typescript");
+						hljs.highlightElement(block);
+					});
+				});
+			};
+			document.head.appendChild(script);
+		</script>
+
+		<script>
+			document
+				.querySelectorAll(".code-copy .copy-btn:not([onclick])")
+				.forEach((btn) => {
+					btn.addEventListener("click", async () => {
+						const code = btn.previousElementSibling.textContent;
+						try {
+							await navigator.clipboard.writeText(code);
+							btn.classList.add("copied");
+							setTimeout(() => btn.classList.remove("copied"), 2000);
+						} catch (err) {
+							console.error("Failed to copy:", err);
+						}
+					});
+				});
+		</script>
+
+		<script>
+			document.addEventListener("DOMContentLoaded", () => {
+				const links = document.querySelectorAll('a[href^="#"]');
+
+				links.forEach((link) => {
+					link.addEventListener("click", (e) => {
+						const targetId = link.getAttribute("href");
+						if (targetId === "#") return;
+
+						const targetElement = document.querySelector(targetId);
+						if (targetElement) {
+							e.preventDefault();
+							targetElement.scrollIntoView({
+								behavior: "smooth",
+								block: "start",
+							});
+						}
+					});
+				});
+			});
+		</script>
+	</head>
+	<body>
+		<nav class="topbar"><!-- INSERT==topbar --></nav>
+		<div class="container">
+			<!-- INSERT==sidebar -->
+			<main><!-- INSERT==content --></main>
+		</div>
+	</body>
+</html>
+
+<script>
+	const searchLinks = Array.from(document.querySelectorAll("aside nav a"))
+		.filter(
+			(a) => a.getAttribute("href") !== "#" && !a.hasAttribute("aria-disabled"),
+		)
+		.map((a) => ({
+			label: a.textContent.trim(),
+			href: a.getAttribute("href"),
+			group: a.closest("nav").querySelector("h3").textContent.trim(),
+		}));
+
+	const dialog = document.getElementById("search-dialog");
+	const results = document.getElementById("search-results");
+
+	function renderResults(links) {
+		results.innerHTML = links
+			.map(
+				(l) =>
+					`<li><a href="${l.href}"><span>${l.label}</span><span class="search-result-group">${l.group}</span></a></li>`,
+			)
+			.join("");
+	}
+
+	function filterSearchResults(query) {
+		const q = query.toLowerCase();
+		renderResults(
+			q
+				? searchLinks.filter(
+						(l) =>
+							l.label.toLowerCase().includes(q) ||
+							l.group.toLowerCase().includes(q),
+					)
+				: searchLinks,
+		);
+	}
+
+	function openSearchDialog() {
+		renderResults(searchLinks);
+		dialog.showModal();
+		dialog.querySelector("input").focus();
+	}
+
+	dialog.addEventListener("click", (e) => {
+		if (e.target === dialog) dialog.close();
+	});
+
+	document.addEventListener("keydown", (e) => {
+		if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+			e.preventDefault();
+			openSearchDialog();
+		}
+		if (e.key === "Escape") dialog.close();
+	});
+</script>

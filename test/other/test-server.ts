@@ -1,9 +1,18 @@
-import { C } from "@/index";
+import { C, X } from "@/index";
 import { createTestServer } from "../utils/createTestServer";
 import { TEST_PORT } from "../utils/req";
 import { log } from "@/utils/internalLogger";
+import { createClient } from "redis";
 
 const server = createTestServer();
+
+const redis = createClient({ url: "redis://localhost:6379" });
+await redis.connect();
+
+new X.RateLimiter({
+	storeType: "redis",
+	store: new X.RateLimiterRedisStore(redis),
+});
 
 new C.WebSocketRoute("/ws", {
 	onOpen: (ws) => {

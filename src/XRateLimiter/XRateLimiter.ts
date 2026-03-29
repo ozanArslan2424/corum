@@ -6,7 +6,6 @@ import type { RateLimitConfig } from "@/XRateLimiter/types/RateLimitConfig";
 import { CHeaders } from "@/CHeaders/CHeaders";
 import { CError } from "@/CError/CError";
 import { RateLimiterFileStore } from "@/XRateLimiter/stores/RateLimiterFileStore";
-import { RateLimiterRedisStore } from "@/XRateLimiter/stores/RateLimiterRedisStore";
 import { RateLimiterMemoryStore } from "@/XRateLimiter/stores/RateLimiterMemoryStore";
 import { Status } from "@/CResponse/enums/Status";
 import { CommonHeaders } from "@/CHeaders/enums/CommonHeaders";
@@ -20,6 +19,29 @@ export class XRateLimiter {
 		this.storedSalt = this.getRandomBytes();
 		this.saltRotatesAt = Date.now() + this.config.saltRotateMs;
 		this.registerMiddleware();
+	}
+
+	private registerMiddleware() {
+		new Middleware({
+			useOn: "*",
+			handler: async (c) => {
+				const result = await this.getResult(c.headers);
+				c.res.headers.innerCombine(result.headers);
+				const exposedHeaders = Object.values(this.config.headerNames);
+				c.res.headers.append(
+					CommonHeaders.AccessControlExposeHeaders,
+					exposedHeaders,
+				);
+
+				if (!result.success) {
+					throw new CError(
+						"Too many requests",
+						Status.TOO_MANY_REQUESTS,
+						c.res,
+					);
+				}
+			},
+		});
 	}
 
 	private readonly config: RateLimitConfig;
@@ -195,40 +217,24 @@ export class XRateLimiter {
 	};
 
 	private resolveStore(): RateLimitStoreInterface {
+		const store = this.config.store;
+
 		switch (this.config.storeType) {
 			case "file":
 				return new RateLimiterFileStore(this.config.storeDir);
 			case "redis":
-				if (!this.config.redisClient) {
-					logFatal("Redis client required for redis store type");
+				if (!store) {
+					logFatal("store required for redis store type");
 				}
-				return new RateLimiterRedisStore(this.config.redisClient);
+				return store;
 			case "memory":
+			case "custom":
+				if (!store) {
+					logFatal("store required for custom store type");
+				}
+				return store;
 			default:
 				return new RateLimiterMemoryStore();
 		}
-	}
-
-	private registerMiddleware() {
-		new Middleware({
-			useOn: "*",
-			handler: async (c) => {
-				const result = await this.getResult(c.headers);
-				c.res.headers.innerCombine(result.headers);
-				const exposedHeaders = Object.values(this.config.headerNames);
-				c.res.headers.append(
-					CommonHeaders.AccessControlExposeHeaders,
-					exposedHeaders,
-				);
-
-				if (!result.success) {
-					throw new CError(
-						"Too many requests",
-						Status.TOO_MANY_REQUESTS,
-						c.res,
-					);
-				}
-			},
-		});
 	}
 }

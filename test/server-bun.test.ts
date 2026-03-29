@@ -29,7 +29,7 @@ describe("C.Server USING BUN", () => {
 
 	// ─── preflight ────────────────────────────────────────────────
 
-	it("PREFLIGHT - RETURNS 200 WITH DEPARTED BODY", async () => {
+	it("PREFLIGHT - RETURNS NO_CONTENT", async () => {
 		const s = createTestServer();
 		const res = await s.handle(
 			req("/srv-preflight", {
@@ -37,9 +37,9 @@ describe("C.Server USING BUN", () => {
 				headers: { "Access-Control-Request-Method": "POST" },
 			}),
 		);
-		expect(res.status).toBe(200);
+		expect(res.status).toBe(C.Status.NO_CONTENT);
 		const body = await res.text();
-		expect(body).toBe("Departed");
+		expect(body).toBe("");
 	});
 
 	// ─── setOnError ───────────────────────────────────────────────

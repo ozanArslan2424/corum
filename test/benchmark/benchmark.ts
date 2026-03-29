@@ -1,13 +1,12 @@
 import { log } from "@/utils/internalLogger";
 import { RouterBenchmark } from "./RouterBenchmark";
-import { MemoiristAdapter } from "@/Router/adapters/MemoiristAdapter";
-import { BranchAdapter } from "@/Router/adapters/BranchAdapter";
+import { MemoiristAdapter, BranchAdapter } from "@/index";
 
 async function main() {
-	const adapters = [MemoiristAdapter, BranchAdapter];
+	const adapters = [new MemoiristAdapter(), new BranchAdapter()];
 	const results: string[] = [];
 	for (const adapter of adapters) {
-		const bench = new RouterBenchmark(new adapter());
+		const bench = new RouterBenchmark(adapter);
 		bench.setup();
 		results.push(await bench.run());
 	}

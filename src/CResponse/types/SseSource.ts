@@ -1,7 +1,17 @@
-import type { SseData } from "@/CResponse/types/SseData";
 import type { Func } from "@/utils/types/Func";
 
 export type SseSource = Func<
-	[send: Func<[event: SseData], void>],
+	[
+		send: Func<
+			[
+				item: {
+					data: unknown;
+					event?: string;
+					id?: string;
+				},
+			],
+			void
+		>,
+	],
 	void | Func<[], void>
 >;

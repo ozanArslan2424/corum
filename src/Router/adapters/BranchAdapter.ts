@@ -76,7 +76,7 @@ export class BranchAdapter implements RouterAdapterInterface {
 		}
 	}
 
-	list(): Array<RouterRouteData> {
+	list: Func<[], Array<RouterRouteData>> | undefined = () => {
 		const routes: Array<RouterRouteData> = [];
 
 		const walk = (branch: Branch) => {
@@ -100,7 +100,7 @@ export class BranchAdapter implements RouterAdapterInterface {
 
 		walk(this._root);
 		return routes;
-	}
+	};
 
 	private createBranchStore(path: string) {
 		// begin with slash

@@ -14,12 +14,16 @@ export class Middleware extends MiddlewareAbstract {
 	constructor(opts: MiddlewareOptions) {
 		super();
 		this.variant = opts.variant ?? MiddlewareVariant.inbound;
-		this.useOn = opts.useOn;
-		this.handler = opts.handler;
+		if (opts.useOn) {
+			this.useOn = opts.useOn;
+		}
+		if (opts.handler) {
+			this.handler = opts.handler;
+		}
 		$routerStore.get().addMiddleware(this);
 	}
 
 	readonly variant: MiddlewareVariant;
-	readonly useOn: MiddlewareOptions["useOn"];
-	readonly handler: MiddlewareOptions["handler"];
+	readonly useOn: Required<MiddlewareOptions>["useOn"] = "*";
+	readonly handler: Required<MiddlewareOptions>["handler"] = () => {};
 }

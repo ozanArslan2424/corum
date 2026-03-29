@@ -3,7 +3,7 @@ import { describe, expect, it } from "bun:test";
 import { createTestServer } from "./utils/createTestServer";
 import { req } from "./utils/req";
 
-describe("C.Cors", () => {
+describe("X.Cors", () => {
 	const allowedOrigin = "https://example.com";
 	const disallowedOrigin = "https://evil.com";
 

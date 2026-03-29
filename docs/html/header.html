@@ -1,0 +1,25 @@
+<nav class="topbar">
+	<div class="topbar-brand">
+		<h1>Corpus</h1>
+		<span>Docs</span>
+	</div>
+	<div class="topbar-actions">
+		<input
+			type="text"
+			class="topbar-search"
+			placeholder="Search..."
+			readonly
+			onclick="openSearchDialog()"
+		/>
+	</div>
+</nav>
+
+<dialog class="search-dialog" id="search-dialog">
+	<input
+		type="text"
+		class="search-dialog-input"
+		placeholder="Search..."
+		oninput="filterSearchResults(this.value)"
+	/>
+	<ul class="search-dialog-results" id="search-results"></ul>
+</dialog>

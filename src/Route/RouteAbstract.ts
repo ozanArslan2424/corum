@@ -7,12 +7,12 @@ import type { Func } from "@/utils/types/Func";
 import type { MaybePromise } from "@/utils/types/MaybePromise";
 
 export abstract class RouteAbstract<
-	E extends string = string,
 	B = unknown,
 	S = unknown,
 	P = unknown,
 	R = unknown,
-> implements RouteInterface<E, B, S, P, R> {
+	E extends string = string,
+> implements RouteInterface<B, S, P, R, E> {
 	abstract variant: RouteVariant;
 	abstract endpoint: E;
 	abstract method: Method;

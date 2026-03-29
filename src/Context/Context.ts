@@ -27,20 +27,11 @@ import type { RouterReturnData } from "@/Router/types/RouterReturnData";
  * */
 
 export class Context<B = unknown, S = unknown, P = unknown, R = unknown> {
-	constructor(
-		req: CRequest,
-		body: B,
-		search: S,
-		params: P,
-		res?: CResponse<R>,
-	) {
+	constructor(req: CRequest, res?: CResponse<R>) {
 		this.req = req;
 		this.url = req.urlObject;
 		this.headers = req.headers;
 		this.cookies = req.cookies;
-		this.body = body;
-		this.search = search;
-		this.params = params;
 		this.res = res ?? new CResponse<R>();
 	}
 
@@ -48,15 +39,11 @@ export class Context<B = unknown, S = unknown, P = unknown, R = unknown> {
 	url: URL;
 	headers: CHeaders;
 	cookies: Cookies;
-	body: B;
-	search: S;
-	params: P;
+	body: B = {} as B;
+	search: S = {} as S;
+	params: P = {} as P;
 	res: CResponse<R>;
 	data: ContextDataInterface = {};
-
-	static makeFromRequest(req: CRequest): Context {
-		return new Context(req, {}, {}, {});
-	}
 
 	static async appendParsedData<
 		B = unknown,

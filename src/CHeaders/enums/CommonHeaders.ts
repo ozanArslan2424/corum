@@ -1,7 +1,6 @@
 import type { ValueOf } from "@/utils/types/ValueOf";
 
 /** Just some common headers. */
-
 export const CommonHeaders = {
 	/** Controls caching mechanisms for requests and responses */
 	CacheControl: "Cache-Control",
@@ -25,6 +24,7 @@ export const CommonHeaders = {
 	Referer: "Referer",
 	/** Indicates whether the connection should be kept alive */
 	Connection: "Connection",
+	/** Requests that the server switch to a different protocol (e.g. WebSocket) */
 	Upgrade: "Upgrade",
 	/** Used to specify directives that must be obeyed by caching mechanisms */
 	Pragma: "Pragma",
@@ -48,13 +48,22 @@ export const CommonHeaders = {
 	AccessControlMaxAge: "Access-Control-Max-Age",
 	/** Indicates whether the response can be shared with resources with credentials */
 	AccessControlAllowCredentials: "Access-Control-Allow-Credentials",
+	/** Indicates which HTTP method will be used in the actual CORS request */
 	AccessControlRequestMethod: "Access-Control-Request-Method",
+	/** Indicates which headers can be exposed to the browser in a CORS response */
 	AccessControlExposeHeaders: "Access-Control-Expose-Headers",
+	/** Indicates which origins are allowed to access the resource */
 	AccessControlAllowOrigin: "Access-Control-Allow-Origin",
+	/** Specifies the HTTP methods allowed when accessing the resource in a CORS request */
 	AccessControlAllowMethods: "Access-Control-Allow-Methods",
+	/** Specifies the HTTP headers allowed in a CORS request */
 	AccessControlAllowHeaders: "Access-Control-Allow-Headers",
+	/** Sends cookies from the server to the client */
 	SetCookie: "Set-Cookie",
+	/** Sends cookies from the client to the server */
 	Cookie: "Cookie",
+	/** Determines which headers should be used to select a response from cache when content negotiation is in use */
+	Vary: "Vary",
 } as const;
 
 export type CommonHeaders = ValueOf<typeof CommonHeaders>;

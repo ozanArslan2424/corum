@@ -72,7 +72,7 @@ export abstract class ServerAbstract implements ServerInterface {
 			}
 
 			const router = $routerStore.get();
-			const ctx = Context.makeFromRequest(req);
+			const ctx = new Context(req);
 			// gmw = global middlewares
 			const gmw = router.findMiddleware("*");
 
@@ -159,12 +159,12 @@ export abstract class ServerAbstract implements ServerInterface {
 		);
 	};
 
-	protected handlePreflight: RequestHandler = (req) =>
-		this.defaultPreflightHandler(req);
-	setOnPreflight(handler: RequestHandler): void {
-		this.handlePreflight = handler;
-	}
-	defaultPreflightHandler: RequestHandler = () => {
-		return new CResponse("Departed");
+	protected handlePreflight: RequestHandler = async (req) => {
+		const cors = $routerStore.get().cors;
+		if (!cors) {
+			return new CResponse(undefined, { status: Status.NO_CONTENT });
+		}
+		const handler = cors.getPreflightHandler();
+		return await handler(req);
 	};
 }

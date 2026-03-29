@@ -1,55 +1,97 @@
 import type { CorsOptions } from "@/XCors/types/CorsOptions";
-import { boolToString } from "@/utils/boolToString";
 import { isSomeArray } from "@/utils/isSomeArray";
 import { MiddlewareVariant } from "@/Middleware/enums/MiddlewareVariant";
-import type { MiddlewareHandler } from "@/Middleware/types/MiddlewareHandler";
-import { MiddlewareAbstract } from "@/Middleware/MiddlewareAbstract";
+import { Middleware } from "@/Middleware/Middleware";
+import { CResponse } from "@/CResponse/CResponse";
+import { Status } from "@/CResponse/enums/Status";
 import { CommonHeaders } from "@/CHeaders/enums/CommonHeaders";
-import type { MiddlewareUseOn } from "@/Middleware/types/MiddlewareUseOn";
+import type { RequestHandler } from "@/Server/types/RequestHandler";
+import { boolToString } from "@/utils/boolToString";
 import { $routerStore } from "@/index";
 
-/** Simple cors helper object to set cors headers */
-
-export class XCors extends MiddlewareAbstract {
+/** Simple cors helper to set CORS headers. Also provides a preflight handler for the Server. */
+export class XCors {
 	constructor(private readonly opts: CorsOptions | undefined) {
-		super();
-		$routerStore.get().addMiddleware(this);
+		this.registerMiddleware();
+		$routerStore.get().cors = this;
 	}
 
-	private readonly originKey = CommonHeaders.AccessControlAllowOrigin;
-	private readonly methodsKey = CommonHeaders.AccessControlAllowMethods;
-	private readonly headersKey = CommonHeaders.AccessControlAllowHeaders;
-	private readonly credentialsKey = CommonHeaders.AccessControlAllowCredentials;
-	private readonly exposedHeadersKey = CommonHeaders.AccessControlExposeHeaders;
+	private registerMiddleware() {
+		new Middleware({
+			variant: MiddlewareVariant.outbound,
+			useOn: "*",
+			handler: async (c) => {
+				this.applyHeaders(c.res.headers, c.headers.get("origin") ?? "");
+			},
+		});
+	}
 
-	useOn: MiddlewareUseOn = "*";
-	variant: MiddlewareVariant = MiddlewareVariant.outbound;
-	handler: MiddlewareHandler = async (c) => {
-		const reqOrigin = c.headers.get("origin") ?? "";
+	/** Applies CORS headers to a Headers object given the request origin. */
+	private applyHeaders(
+		headers: Headers,
+		reqOrigin: string,
+		includeMaxAge = false,
+	): void {
 		const {
 			allowedOrigins,
 			allowedMethods,
 			allowedHeaders,
 			exposedHeaders,
 			credentials,
+			maxAge = 86400,
 		} = this.opts ?? {};
 
-		if (isSomeArray(allowedOrigins) && allowedOrigins.includes(reqOrigin)) {
-			c.res.headers.set(this.originKey, reqOrigin);
+		const isWildcard = !allowedOrigins || allowedOrigins.includes("*");
+		const originAllowed = !isWildcard && allowedOrigins.includes(reqOrigin);
+
+		// Credentials mode forbids wildcard origin — reflect actual origin instead
+		if (credentials && isWildcard && reqOrigin) {
+			headers.set(CommonHeaders.AccessControlAllowOrigin, reqOrigin);
+			headers.append(CommonHeaders.Vary, "Origin");
+		} else if (isWildcard) {
+			headers.set(CommonHeaders.AccessControlAllowOrigin, "*");
+		} else if (originAllowed) {
+			headers.set(CommonHeaders.AccessControlAllowOrigin, reqOrigin);
+			headers.append(CommonHeaders.Vary, "Origin");
 		}
 
 		if (isSomeArray(allowedMethods)) {
-			c.res.headers.append(this.methodsKey, allowedMethods);
+			headers.set(
+				CommonHeaders.AccessControlAllowMethods,
+				allowedMethods.join(", "),
+			);
 		}
 
 		if (isSomeArray(allowedHeaders)) {
-			c.res.headers.append(this.headersKey, allowedHeaders);
+			headers.set(
+				CommonHeaders.AccessControlAllowHeaders,
+				allowedHeaders.join(", "),
+			);
 		}
 
 		if (isSomeArray(exposedHeaders)) {
-			c.res.headers.append(this.exposedHeadersKey, exposedHeaders);
+			headers.set(
+				CommonHeaders.AccessControlExposeHeaders,
+				exposedHeaders.join(", "),
+			);
 		}
 
-		c.res.headers.set(this.credentialsKey, boolToString(credentials));
-	};
+		if (includeMaxAge) {
+			headers.set(CommonHeaders.AccessControlMaxAge, maxAge.toString());
+		}
+
+		headers.set(
+			CommonHeaders.AccessControlAllowCredentials,
+			boolToString(credentials),
+		);
+	}
+
+	/** Preflight handler for OPTIONS requests. */
+	getPreflightHandler(): RequestHandler {
+		return (req) => {
+			const res = new CResponse(undefined, { status: Status.NO_CONTENT });
+			this.applyHeaders(res.headers, req.headers.get("origin") ?? "", true);
+			return res;
+		};
+	}
 }

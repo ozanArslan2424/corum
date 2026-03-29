@@ -3,6 +3,7 @@ import type { RouterAdapterInterface } from "@/Router/adapters/RouterAdapterInte
 import type { RouterRouteData } from "@/Router/types/RouterRouteData";
 import type { RouterReturnData } from "@/Router/types/RouterReturnData";
 import type { CRequest } from "@/CRequest/CRequest";
+import type { Func } from "@/utils/types/Func";
 
 /**
  * Router adapter wrapping the "memoirist" package.
@@ -43,9 +44,9 @@ export class MemoiristAdapter implements RouterAdapterInterface {
 		};
 	}
 
-	list(): Array<RouterRouteData> {
+	list: Func<[], Array<RouterRouteData>> | undefined = () => {
 		return this.router.history.map((v) => v[2]);
-	}
+	};
 
 	add(data: RouterRouteData): void {
 		this.router.add(data.method, data.endpoint, data);

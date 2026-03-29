@@ -1,9 +1,7 @@
-import type { BasicRedisClientInterface } from "@/XRateLimiter/types/BasicRedisClientInterface";
+import type { RateLimitStoreInterface } from "@/XRateLimiter/stores/RateLimitStoreInterface";
 import type { RateLimitIdPrefix } from "@/XRateLimiter/types/RateLimitIdPrefix";
 
-export type RateLimitConfig<
-	R extends BasicRedisClientInterface | undefined = undefined,
-> = {
+export type RateLimitConfig = {
 	/**
 	 * Limits based on identifier type:
 	 * u: Authenticated users — higher limit, accountable identity (e.g., 120 requests)
@@ -31,11 +29,10 @@ export type RateLimitConfig<
 	 * - memory: Fastest, but resets on server restart (default)
 	 * - file: Persistent across restarts, good for single instance
 	 * - redis: Distributed, for multi-instance deployments
-	 * */
-	storeType: "memory" | "file" | "redis";
-
-	/** Redis client instance (required when storeType = "redis") */
-	redisClient?: R;
+	 * - custom: Bring your own store implementation
+	 */
+	storeType: "memory" | "file" | "redis" | "custom";
+	store?: RateLimitStoreInterface;
 
 	/** Directory path for file-based storage (required when storeType = "file") */
 	storeDir?: string;

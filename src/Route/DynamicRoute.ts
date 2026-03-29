@@ -34,12 +34,12 @@ import type { DynamicRouteDefinition } from "@/Route/types/DynamicRouteDefinitio
  */
 
 export class DynamicRoute<
-	E extends string = string,
 	B = unknown,
 	S = unknown,
 	P = unknown,
 	R = unknown,
-> extends RouteAbstract<E, B, S, P, R> {
+	E extends string = string,
+> extends RouteAbstract<B, S, P, R, E> {
 	constructor(
 		definition: DynamicRouteDefinition<E>,
 		handler: Func<[context: Context<B, S, P, R>], MaybePromise<R>>,

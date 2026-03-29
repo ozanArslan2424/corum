@@ -6,11 +6,11 @@ import type { Func } from "@/utils/types/Func";
 import type { MaybePromise } from "@/utils/types/MaybePromise";
 
 export interface RouteInterface<
-	E extends string = string,
 	B = unknown,
 	S = unknown,
 	P = unknown,
 	R = unknown,
+	E extends string = string,
 > {
 	variant: RouteVariant;
 	id: string;

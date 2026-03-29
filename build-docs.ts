@@ -3,6 +3,7 @@ async function buildPackage() {
 		entrypoints: ["./src/index.ts"],
 		outdir: "./dist",
 		target: "bun",
+		tsconfig: "./tsconfig.build.json",
 	});
 
 	if (!result.success) {

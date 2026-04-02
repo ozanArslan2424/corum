@@ -47,10 +47,9 @@ import { SomeService } from "./SomeService";
 class SomeMiddleware extends C.MiddlewareAbstract {
 	constructor(
 		private readonly someService: SomeService,
-		// if you want to pass the args during instantiation
-		...args: ConstructorParameters<typeof C.Middleware>
+		override readonly useOn: C.MiddlewareUseOn,
 	) {
-		super(...args);
+		super();
 		// this method needs to be called to register it to the router
 		// here or where you instantiate
 		this.register();

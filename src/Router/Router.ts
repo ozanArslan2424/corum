@@ -13,12 +13,10 @@ import type { RouteInterface } from "@/Route/RouteInterface";
 import { objGetKeys } from "@/utils/objGetKeys";
 import { BranchAdapter } from "@/Router/adapters/BranchAdapter";
 import { log } from "@/utils/internalLogger";
-import type { XCors } from "@/XCors/XCors";
 
 export class Router {
 	constructor(private adapter: RouterAdapterInterface = new BranchAdapter()) {}
 
-	cors: XCors | null = null;
 	private middlewareRegistry = new MiddlewareRegistry();
 	private cache = new WeakMap<CRequest, RouterReturnData>();
 	private internFuncMap = new Map<string, Func>();
@@ -35,27 +33,10 @@ export class Router {
 	}
 
 	addRoute(route: RouteInterface<any, any, any, any, string>): void {
-		const data: RouterRouteData = {
-			id: route.id,
-			endpoint: route.endpoint,
-			method: route.method,
-			handler: route.handler,
-			variant: route.variant,
-		};
+		const data = route.toRouterData();
+
 		if (route.model) {
-			const modelData: RouterRouteData["model"] = {};
-			for (const key of objGetKeys<keyof RouteModel>(route.model)) {
-				if (key === "response") continue;
-				const schema = route.model[key];
-				if (!schema) continue;
-				modelData[key] = internFunc(
-					this.internFuncMap,
-					schema["~standard"].validate,
-					"model",
-					strRemoveWhitespace(JSON.stringify(schema)),
-				);
-			}
-			data.model = modelData;
+			data.model = this.internModelData(route.model);
 		}
 
 		this.adapter.add(data);
@@ -76,5 +57,21 @@ export class Router {
 			);
 		}
 		return fn?.() ?? [];
+	}
+
+	private internModelData(model: RouteModel): RouterRouteData["model"] {
+		const modelData: RouterRouteData["model"] = {};
+		for (const key of objGetKeys<keyof RouteModel>(model)) {
+			if (key === "response") continue;
+			const schema = model[key];
+			if (!schema) continue;
+			modelData[key] = internFunc(
+				this.internFuncMap,
+				schema["~standard"].validate,
+				"model",
+				strRemoveWhitespace(JSON.stringify(schema)),
+			);
+		}
+		return modelData;
 	}
 }

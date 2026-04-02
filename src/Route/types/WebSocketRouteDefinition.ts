@@ -1,15 +1,9 @@
-import type { CWebSocketInterface } from "@/CWebSocket/CWebSocketInterface";
-import type { Func } from "@/utils/types/Func";
-import type { MaybePromise } from "@/utils/types/MaybePromise";
+import type { WebSocketOnClose } from "@/Route/types/WebSocketOnClose";
+import type { WebSocketOnMessage } from "@/Route/types/WebSocketOnMessage";
+import type { WebSocketOnOpen } from "@/Route/types/WebSocketOnOpen";
 
 export type WebSocketRouteDefinition = {
-	onOpen?: Func<[ws: CWebSocketInterface], MaybePromise<void>>;
-	onClose?: Func<
-		[ws: CWebSocketInterface, code?: number, reason?: string],
-		MaybePromise<void>
-	>;
-	onMessage: Func<
-		[ws: CWebSocketInterface, message: string | Buffer],
-		MaybePromise<void>
-	>;
+	onOpen?: WebSocketOnOpen;
+	onClose?: WebSocketOnClose;
+	onMessage: WebSocketOnMessage;
 };

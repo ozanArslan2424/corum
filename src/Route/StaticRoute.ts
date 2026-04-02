@@ -1,17 +1,10 @@
-import { Method } from "@/CRequest/enums/Method";
 import { CResponse } from "@/CResponse/CResponse";
 import type { RouteModel } from "@/Model/types/RouteModel";
-import { $routerStore } from "@/index";
-import { CError } from "@/CError/CError";
-import { RouteVariant } from "@/Route/enums/RouteVariant";
-import { RouteAbstract } from "@/Route/RouteAbstract";
-import { XFile } from "@/XFile/XFile";
-import { Status } from "@/CResponse/enums/Status";
-import { CommonHeaders } from "@/CHeaders/enums/CommonHeaders";
 import type { Context } from "@/Context/Context";
 import type { Func } from "@/utils/types/Func";
 import type { MaybePromise } from "@/utils/types/MaybePromise";
 import type { StaticRouteDefinition } from "@/Route/types/StaticRouteDefinition";
+import { StaticRouteAbstract } from "@/Route/StaticRouteAbstract";
 
 type R = CResponse | string;
 
@@ -44,60 +37,17 @@ export class StaticRoute<
 	S = unknown,
 	P = unknown,
 	E extends string = string,
-> extends RouteAbstract<B, S, P, R, E> {
+> extends StaticRouteAbstract<B, S, P, E> {
 	constructor(
-		path: E,
-		definition: StaticRouteDefinition,
-		handler?: Func<
+		readonly path: E,
+		readonly definition: StaticRouteDefinition,
+		readonly callback?: Func<
 			[context: Context<B, S, P, R>, content: string],
 			MaybePromise<R>
 		>,
-		model?: RouteModel<B, S, P, R>,
+		readonly model?: RouteModel<B, S, P, R>,
 	) {
 		super();
-		this.endpoint = path;
-		this.method = Method.GET;
-		this.id = this.resolveId(this.method, this.endpoint);
-		this.model = model;
-		this.filePath = this.resolveFilePath(definition);
-		this.handler = this.resolveHandler(definition, handler);
-		$routerStore.get().addRoute(this);
-	}
-
-	id: string;
-	method: Method;
-	endpoint: E;
-	handler: Func<[Context<B, S, P, R>], MaybePromise<R>>;
-	model?: RouteModel<B, S, P, R>;
-	protected filePath: string;
-	variant: RouteVariant = RouteVariant.static;
-
-	protected resolveFilePath(definition: StaticRouteDefinition): string {
-		return typeof definition === "string" ? definition : definition.filePath;
-	}
-
-	protected resolveHandler(
-		definition: StaticRouteDefinition,
-		customHandler?: Func<[Context<B, S, P, R>, string], MaybePromise<R>>,
-	): Func<[Context<B, S, P, R>], MaybePromise<R>> {
-		if (customHandler !== undefined) {
-			return async (c) => {
-				const file = new XFile(this.filePath);
-				const exists = await file.exists();
-				if (!exists) {
-					throw new CError(Status.NOT_FOUND.toString(), Status.NOT_FOUND);
-				}
-				const content = await file.text();
-				c.res.headers.setMany({
-					[CommonHeaders.ContentType]: file.mimeType,
-					[CommonHeaders.ContentLength]: content.length.toString(),
-				});
-				return customHandler(c, content);
-			};
-		} else if (typeof definition === "string") {
-			return async () => await CResponse.file(this.filePath);
-		} else {
-			return async () => await CResponse.streamFile(this.filePath);
-		}
+		this.register();
 	}
 }

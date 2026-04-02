@@ -6,4 +6,5 @@ export interface MiddlewareInterface {
 	useOn: MiddlewareUseOn;
 	variant: MiddlewareVariant;
 	handler: MiddlewareHandler;
+	register(): void;
 }

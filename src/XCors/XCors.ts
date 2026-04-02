@@ -2,23 +2,20 @@ import type { CorsOptions } from "@/XCors/types/CorsOptions";
 import { isSomeArray } from "@/utils/isSomeArray";
 import { MiddlewareVariant } from "@/Middleware/enums/MiddlewareVariant";
 import { MiddlewareAbstract } from "@/Middleware/MiddlewareAbstract";
+import type { MiddlewareUseOn } from "@/Middleware/types/MiddlewareUseOn";
+import type { MiddlewareHandler } from "@/Middleware/types/MiddlewareHandler";
 import { CResponse } from "@/CResponse/CResponse";
 import { Status } from "@/CResponse/enums/Status";
 import { CommonHeaders } from "@/CHeaders/enums/CommonHeaders";
 import type { RequestHandler } from "@/Server/types/RequestHandler";
 import { boolToString } from "@/utils/boolToString";
-import {
-	$routerStore,
-	type MiddlewareHandler,
-	type MiddlewareUseOn,
-} from "@/index";
+import { $corsStore } from "@/index";
 
 /** Simple cors helper to set CORS headers. Also provides a preflight handler for the Server. */
 export class XCors extends MiddlewareAbstract {
 	constructor(private readonly opts: CorsOptions | undefined) {
 		super();
-		// $routerStore.get().addMiddleware(this);
-		$routerStore.get().cors = this;
+		$corsStore.set(this);
 	}
 
 	override variant: MiddlewareVariant = MiddlewareVariant.outbound;

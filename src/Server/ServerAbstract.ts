@@ -1,6 +1,6 @@
 import { Context } from "@/Context/Context";
 import { Status } from "@/CResponse/enums/Status";
-import { $prefixStore, $routerStore } from "@/index";
+import { $corsStore, $prefixStore, $routerStore } from "@/index";
 import { CError } from "@/CError/CError";
 import { CRequest } from "@/CRequest/CRequest";
 import { CResponse } from "@/CResponse/CResponse";
@@ -15,6 +15,7 @@ import type { ServerOptions } from "@/Server/types/ServerOptions";
 import { log, logFatal } from "@/utils/internalLogger";
 import { WebSocketRoute } from "@/Route/WebSocketRoute";
 import type { RouterRouteData } from "@/Router/types/RouterRouteData";
+import { RouteVariant } from "@/Route/enums/RouteVariant";
 
 export abstract class ServerAbstract implements ServerInterface {
 	protected abstract serve(options: ServeArgs): void;
@@ -67,6 +68,7 @@ export abstract class ServerAbstract implements ServerInterface {
 		onUpgrade: Func<[WebSocketRoute], undefined>,
 	): Promise<CResponse | undefined> {
 		const router = $routerStore.get();
+		const cors = $corsStore.get();
 		const ctx = new Context(req);
 		// gmw = global middlewares
 		const gmw = router.findMiddleware("*");
@@ -93,7 +95,7 @@ export abstract class ServerAbstract implements ServerInterface {
 
 				await Context.appendParsedData(ctx, req, match);
 				const mr = await match.route.handler(ctx);
-				if (mr instanceof WebSocketRoute && req.isWebsocket) {
+				if (match.route.variant === RouteVariant.websocket && req.isWebsocket) {
 					return onUpgrade(mr);
 				} else if (mr instanceof CResponse) {
 					ctx.res = mr;
@@ -115,8 +117,8 @@ export abstract class ServerAbstract implements ServerInterface {
 			ctx.res = await this.handleError(err as Error);
 		}
 
-		if (router.cors) {
-			await router.cors.handler(ctx);
+		if (cors) {
+			await cors.handler(ctx);
 		}
 
 		return ctx.res;
@@ -162,7 +164,7 @@ export abstract class ServerAbstract implements ServerInterface {
 	};
 
 	protected handlePreflight: RequestHandler = async (req) => {
-		const cors = $routerStore.get().cors;
+		const cors = $corsStore.get();
 		if (!cors) {
 			return new CResponse(undefined, { status: Status.NO_CONTENT });
 		}

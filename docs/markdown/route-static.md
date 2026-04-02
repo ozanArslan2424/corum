@@ -55,6 +55,29 @@ new C.StaticRoute("/doc", "assets/doc.txt", (c, content) => {
 });
 ```
 
+### Extending the abstract class
+
+I wouldn't recommend extending since the model parsing basically becomes useless.
+
+```ts
+class MyRoute extends C.StaticRouteAbstract {
+	constructor() {
+		super();
+		// this method needs to be called to register it to the router
+		// here or where you instantiate
+		this.register();
+	}
+
+	path: string = "/extended";
+	definition: C.StaticRouteDefinition = {
+		filePath: addr("assets", "video.mp4"),
+		stream: true,
+	};
+	callback: C.StaticRouteCallback = () => "extended";
+	model?: C.RouteModel | undefined = undefined;
+}
+```
+
 </section>
 
 ## Constructor Parameters

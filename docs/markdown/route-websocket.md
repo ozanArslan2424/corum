@@ -31,6 +31,28 @@ new C.WebSocketRoute("/ws", {
 });
 ```
 
+### Extending the abstract class
+
+It makes sense to extend the abstract class since the definition involves 3 callbacks and can become pretty ugly.
+
+```ts
+class MyRoute extends C.WebSocketRouteAbstract {
+	constructor() {
+		super();
+		// this method needs to be called to register it to the router
+		// here or where you instantiate
+		this.register();
+	}
+
+	path: string = "/ws";
+	onClose?: C.WebSocketOnClose | undefined = undefined;
+	onOpen?: C.WebSocketOnOpen | undefined = undefined;
+	onMessage: C.WebSocketOnMessage = (ws, message) => {
+		ws.send(`ECHO: ${message}`);
+	};
+}
+```
+
 ### Full lifecycle handlers
 
 ```ts

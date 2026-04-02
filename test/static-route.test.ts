@@ -3,6 +3,10 @@ import { describe, expect, it } from "bun:test";
 import { createTestServer } from "./utils/createTestServer";
 import { req } from "./utils/req";
 import { RouteVariant } from "@/Route/enums/RouteVariant";
+import type { RouteModel } from "@/Model/types/RouteModel";
+import type { Func } from "@/utils/types/Func";
+import type { MaybePromise } from "@/utils/types/MaybePromise";
+import type { StaticRouteDefinition } from "@/Route/types/StaticRouteDefinition";
 
 const s = createTestServer();
 
@@ -28,7 +32,7 @@ describe("C.StaticRoute", () => {
 
 	it("STATIC ROUTE - ID IS SET", () => {
 		const route = new C.StaticRoute("/sr4", f("sample.html"));
-		expect(route.id).toBe(C.Route.makeRouteId(C.Method.GET, "/sr4"));
+		expect(route.id).toBe(`${C.Method.GET} ${"/sr4"}`);
 	});
 
 	it("STATIC ROUTE - WITH MODEL", () => {
@@ -148,5 +152,33 @@ describe("C.StaticRoute", () => {
 		new C.StaticRoute("/sr-bin", f("sample.xyz"));
 		const res = await s.handle(req("/sr-bin"));
 		expect(res.headers.get("Content-Type")).toBe("application/octet-stream");
+	});
+
+	it("USING EXTENDED ABSTRACT METHOD", async () => {
+		const path = "/sr-extended";
+
+		class MyRoute extends C.StaticRouteAbstract {
+			constructor() {
+				super();
+				this.register();
+			}
+
+			path: string = path;
+
+			definition: C.StaticRouteDefinition = f("sample.txt");
+
+			callback: Func<
+				[C.Context<unknown, unknown, unknown, string | C.Response<unknown>>],
+				MaybePromise<string | C.Response<unknown>>
+			> = () => "";
+
+			model?:
+				| RouteModel<unknown, unknown, unknown, string | C.Response<unknown>>
+				| undefined;
+		}
+
+		new MyRoute();
+		const res = await s.handle(req(path));
+		expect(res.status).toBe(200);
 	});
 });

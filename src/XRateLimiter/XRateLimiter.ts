@@ -11,7 +11,6 @@ import { Status } from "@/CResponse/enums/Status";
 import { CommonHeaders } from "@/CHeaders/enums/CommonHeaders";
 import { logFatal } from "@/utils/internalLogger";
 import { MiddlewareAbstract } from "@/Middleware/MiddlewareAbstract";
-import { $routerStore } from "@/index";
 import { MiddlewareVariant } from "@/Middleware/enums/MiddlewareVariant";
 import type { MiddlewareHandler } from "@/Middleware/types/MiddlewareHandler";
 import type { MiddlewareUseOn } from "@/Middleware/types/MiddlewareUseOn";
@@ -23,7 +22,7 @@ export class XRateLimiter extends MiddlewareAbstract {
 		this.store = this.resolveStore();
 		this.storedSalt = this.getRandomBytes();
 		this.saltRotatesAt = Date.now() + this.config.saltRotateMs;
-		$routerStore.get().addMiddleware(this);
+		this.register();
 	}
 
 	override variant: MiddlewareVariant = MiddlewareVariant.inbound;

@@ -1,4 +1,3 @@
-import { $routerStore } from "@/index";
 import { MiddlewareVariant } from "@/Middleware/enums/MiddlewareVariant";
 import { MiddlewareAbstract } from "@/Middleware/MiddlewareAbstract";
 import type { MiddlewareOptions } from "@/Middleware/types/MiddlewareOptions";
@@ -20,10 +19,9 @@ export class Middleware extends MiddlewareAbstract {
 		if (opts.handler) {
 			this.handler = opts.handler;
 		}
-		queueMicrotask(() => $routerStore.get().addMiddleware(this));
+		this.register();
 	}
 
-	readonly variant: MiddlewareVariant;
 	readonly useOn: Required<MiddlewareOptions>["useOn"] = "*";
 	readonly handler: Required<MiddlewareOptions>["handler"] = () => {};
 }

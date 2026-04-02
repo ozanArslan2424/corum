@@ -1,7 +1,9 @@
-import { C, X } from "@/index";
-import { describe, expect, it } from "bun:test";
+import { $corsStore, C, X } from "@/index";
+import { describe, expect, it, afterEach } from "bun:test";
 import { createTestServer } from "./utils/createTestServer";
 import { req } from "./utils/req";
+
+afterEach(() => $corsStore.reset());
 
 describe("C.Server USING BUN", () => {
 	// ─── handle() - routing ───────────────────────────────────────

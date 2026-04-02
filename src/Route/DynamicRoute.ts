@@ -1,13 +1,10 @@
-import { Method } from "@/CRequest/enums/Method";
-import { $prefixStore, $routerStore } from "@/index";
 import type { RouteModel } from "@/Model/types/RouteModel";
-import { RouteVariant } from "@/Route/enums/RouteVariant";
-import { RouteAbstract } from "@/Route/RouteAbstract";
-import { joinPathSegments } from "@/utils/joinPathSegments";
 import type { Context } from "@/Context/Context";
 import type { Func } from "@/utils/types/Func";
 import type { MaybePromise } from "@/utils/types/MaybePromise";
 import type { DynamicRouteDefinition } from "@/Route/types/DynamicRouteDefinition";
+import { DynamicRouteAbstract } from "@/Route/DynamicRouteAbstract";
+import type { DynamicRouteCallback } from "@/Route/types/DynamicRouteCallback";
 
 /**
  * Defines an HTTP endpoint. Accepts a {@link DynamicRouteDefinition} which can either be a plain
@@ -39,36 +36,13 @@ export class DynamicRoute<
 	P = unknown,
 	R = unknown,
 	E extends string = string,
-> extends RouteAbstract<B, S, P, R, E> {
+> extends DynamicRouteAbstract<B, S, P, R, E> {
 	constructor(
-		definition: DynamicRouteDefinition<E>,
-		handler: Func<[context: Context<B, S, P, R>], MaybePromise<R>>,
-		model?: RouteModel<B, S, P, R>,
+		readonly definition: DynamicRouteDefinition<E>,
+		readonly callback: DynamicRouteCallback<B, S, P, R>,
+		readonly model?: RouteModel<B, S, P, R>,
 	) {
 		super();
-		this.endpoint = this.resolveEndpoint(definition);
-		this.method = this.resolveMethod(definition);
-		this.id = this.resolveId(this.method, this.endpoint);
-		this.model = model;
-		this.handler = handler;
-		$routerStore.get().addRoute(this);
-	}
-
-	id: string;
-	method: Method;
-	endpoint: E;
-	handler: Func<[context: Context<B, S, P, R>], MaybePromise<R>>;
-	model?: RouteModel<B, S, P, R>;
-	variant: RouteVariant = RouteVariant.dynamic;
-
-	protected resolveEndpoint(definition: DynamicRouteDefinition<E>): E {
-		return joinPathSegments(
-			$prefixStore.get(),
-			typeof definition === "string" ? definition : definition.path,
-		);
-	}
-
-	protected resolveMethod(definition: DynamicRouteDefinition<E>): Method {
-		return typeof definition === "string" ? Method.GET : definition.method;
+		this.register();
 	}
 }

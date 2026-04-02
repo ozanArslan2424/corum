@@ -1,5 +1,6 @@
-import { GlobalPrefixStore } from "@/Store/GlobalPrefixStore";
-import { GlobalRouterStore } from "@/Store/GlobalRouterStore";
+import { Router } from "@/Router/Router";
+import { Store } from "@/utils/Store";
+
 import * as C from "@/C";
 import * as X from "@/X";
 
@@ -9,8 +10,9 @@ export type { RouterAdapterInterface } from "@/Router/adapters/RouterAdapterInte
 export type { RouterReturnData } from "@/Router/types/RouterReturnData";
 export type { RouterRouteData } from "@/Router/types/RouterRouteData";
 
-export const $prefixStore = new GlobalPrefixStore();
-export const $routerStore = new GlobalRouterStore();
+export const $prefixStore = new Store("");
+export const $routerStore = new Store(new Router());
+export const $corsStore = new Store<X.Cors | null>(null);
 
 export type * from "./types.d.ts";
 export * from "@/C";

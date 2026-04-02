@@ -16,51 +16,71 @@ describe("C.Middleware using extends", () => {
 	new C.Route("r22", (c) => c.data);
 	const c1 = createTestController("c12");
 
-	class M1 extends C.Middleware {
-		override useOn: C.MiddlewareUseOn = [r1, c1.cr1];
-		override handler: C.MiddlewareHandler = (c) => {
+	class M1 extends C.MiddlewareAbstract {
+		constructor() {
+			super();
+			this.register();
+		}
+		useOn: C.MiddlewareUseOn = [r1, c1.cr1];
+		handler: C.MiddlewareHandler = (c) => {
 			c.data = middlewareData;
 		};
 	}
 
-	new M1({});
+	new M1();
 
 	const r3 = new C.Route("/r32", (c) => c.data);
 
-	class M2 extends C.Middleware {
+	class M2 extends C.MiddlewareAbstract {
+		constructor() {
+			super();
+			this.register();
+		}
 		override useOn: C.MiddlewareUseOn = [r3];
 		override handler: C.MiddlewareHandler = (c) => {
 			c.data = { user: "john", role: "admin", count: 1 };
 		};
 	}
 
-	new M2({});
+	new M2();
 
 	const r4 = new C.Route("/r42", (c) => c.data);
 
-	class M3 extends C.Middleware {
+	class M3 extends C.MiddlewareAbstract {
+		constructor() {
+			super();
+			this.register();
+		}
 		override useOn: C.MiddlewareUseOn = [r4];
 		override handler: C.MiddlewareHandler = (c) => {
 			c.data = { user: "john", role: "admin", count: 1 };
 		};
 	}
-	class M4 extends C.Middleware {
+	class M4 extends C.MiddlewareAbstract {
+		constructor() {
+			super();
+			this.register();
+		}
 		override useOn: C.MiddlewareUseOn = [r4];
 		override handler: C.MiddlewareHandler = (c) => {
 			(c.data as Record<string, unknown>).role = "superadmin";
 			(c.data as Record<string, unknown>).count = 2;
 		};
 	}
-	class M5 extends C.Middleware {
+	class M5 extends C.MiddlewareAbstract {
+		constructor() {
+			super();
+			this.register();
+		}
 		override useOn: C.MiddlewareUseOn = "*";
 		override handler: C.MiddlewareHandler = (c) => {
 			log.log(c.url.pathname);
 		};
 	}
 
-	new M3({});
-	new M4({});
-	new M5({});
+	new M3();
+	new M4();
+	new M5();
 
 	it("ROUTE - APPLIES TO REGISTERED ROUTE", async () => {
 		const res = await s.handle(req("/r12"));
@@ -91,13 +111,17 @@ describe("C.Middleware using extends", () => {
 	});
 
 	it("ROUTE - OVERRIDES PREVIOUS MIDDLEWARE DATA", async () => {
-		class M6 extends C.Middleware {
+		class M6 extends C.MiddlewareAbstract {
+			constructor() {
+				super();
+				this.register();
+			}
 			override useOn: C.MiddlewareUseOn = [r1];
 			override handler: C.MiddlewareHandler = (c) => {
 				c.data = overrideData;
 			};
 		}
-		new M6({});
+		new M6();
 
 		const res = await s.handle(req("/r12"));
 		const data = await X.Parser.parseBody<string>(res);

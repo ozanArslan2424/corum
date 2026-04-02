@@ -4,6 +4,7 @@ import type { RouteVariant } from "@/Route/enums/RouteVariant";
 import type { Context } from "@/Context/Context";
 import type { Func } from "@/utils/types/Func";
 import type { MaybePromise } from "@/utils/types/MaybePromise";
+import type { RouterRouteData } from "@/Router/types/RouterRouteData";
 
 export interface RouteInterface<
 	B = unknown,
@@ -12,10 +13,12 @@ export interface RouteInterface<
 	R = unknown,
 	E extends string = string,
 > {
-	variant: RouteVariant;
-	id: string;
-	method: Method;
-	endpoint: E;
-	handler: Func<[Context<B, S, P, R>], MaybePromise<R>>;
-	model?: RouteModel<B, S, P, R>;
+	get id(): string;
+	get handler(): Func<[Context<B, S, P, R>], MaybePromise<R>>;
+	get endpoint(): E;
+	get method(): Method;
+	readonly variant: RouteVariant;
+	readonly model?: RouteModel<B, S, P, R>;
+	register(): void;
+	toRouterData(): RouterRouteData;
 }

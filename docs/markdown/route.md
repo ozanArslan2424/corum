@@ -27,6 +27,25 @@ import { C } from "@ozanarslan/corpus";
 new C.Route("/users", () => [{ id: 1, name: "Alice" }]);
 ```
 
+### Extending the abstract class
+
+I wouldn't recommend extending since the model parsing basically becomes useless.
+
+```ts
+class MyRoute extends C.RouteAbstract {
+	constructor() {
+		super();
+		// this method needs to be called to register it to the router
+		// here or where you instantiate
+		this.register();
+	}
+
+	definition: C.RouteDefinition<string> = "/extended";
+	callback: C.RouteCallback = () => "extended";
+	model?: C.RouteModel | undefined = undefined;
+}
+```
+
 ### Route with specific HTTP method
 
 ```ts

@@ -16,7 +16,7 @@ The Middleware class registers inbound or outbound middleware into the global ro
 
 <section>
 
-As with many modules, the Middleware class can be instantiated directly with new or extended. The middlewares are automatically registered and inserted into the lifecycle inside the constructor.
+As with many modules, the Middleware class can be instantiated directly with new or extended using the abstract class. The middlewares are automatically registered and inserted into the lifecycle inside the constructor.
 
 ### With new
 
@@ -44,12 +44,16 @@ void server.listen(3000);
 import { C } from "@ozanarslan/corpus";
 import { SomeService } from "./SomeService";
 
-class SomeMiddleware extends C.Middleware {
+class SomeMiddleware extends C.MiddlewareAbstract {
 	constructor(
 		private readonly someService: SomeService,
+		// if you want to pass the args during instantiation
 		...args: ConstructorParameters<typeof C.Middleware>
 	) {
 		super(...args);
+		// this method needs to be called to register it to the router
+		// here or where you instantiate
+		this.register();
 	}
 
 	override handler: C.MiddlewareHandler = (c) => {

@@ -1,6 +1,6 @@
 {
 	"name": "@ozanarslan/corpus",
-	"version": "0.1.22",
+	"version": "0.1.23",
 	"description": "Small Typescript backend framework with only core utilities",
 	"keywords": [
 		"backend framework",

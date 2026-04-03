@@ -32,27 +32,27 @@ function insert(target: string, entries: Record<string, string>) {
 	return result;
 }
 
+const topbar = await fileCache.get(addr("html", "header.html"));
+const sidebar = await fileCache.get(addr("html", "sidebar.html"));
+const index = await fileCache.get(addr("html", "index.html"));
+
 new C.Route<unknown, unknown, { file: string }>("/styles/:file", (c) =>
 	C.Response.streamFile(addr("css", c.params.file)),
 );
 
-new C.StaticRoute("/", addr("html", "layout.html"), async (_, layout) => {
-	const topbar = await fileCache.get(addr("html", "header.html"));
-	const sidebar = await fileCache.get(addr("html", "sidebar.html"));
-	const content = await fileCache.get(addr("html", "index.html"));
-	return insert(layout, { topbar, sidebar, content });
-});
+new C.StaticRoute("/", addr("html", "layout.html"), async (_, layout) =>
+	insert(layout, { topbar, sidebar, content: index }),
+);
 
 new C.StaticRoute<unknown, unknown, { page: string }>(
 	"/docs/:page",
 	addr("html", "layout.html"),
-	async (c, layout) => {
-		const page = c.params.page;
-		const topbar = await fileCache.get(addr("html", "header.html"));
-		const sidebar = await fileCache.get(addr("html", "sidebar.html"));
-		const content = await pageCache.get(page);
-		return insert(layout, { topbar, sidebar, content });
-	},
+	async (c, layout) =>
+		insert(layout, {
+			topbar,
+			sidebar,
+			content: await pageCache.get(c.params.page),
+		}),
 );
 
 server.setOnBeforeListen(() => {

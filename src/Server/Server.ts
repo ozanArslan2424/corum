@@ -6,6 +6,7 @@ import type { ServeArgs } from "@/Server/types/ServeArgs";
 import { log } from "@/utils/log";
 import { WebSocketRoute } from "@/Route/WebSocketRoute";
 import { CError } from "@/CError/CError";
+import { perform } from "@/utils/perform";
 
 /**
  * Server is the entrypoint to the app. It must be initialized before registering routes and middlewares.
@@ -46,15 +47,17 @@ export class Server extends ServerAbstract {
 		request: Request,
 		server: App,
 	): Promise<Response | undefined> {
-		const req = new CRequest(request);
-		const res = await this.handleRequest(req, (wsRoute) => {
-			const upgraded = server.upgrade(request, { data: wsRoute });
-			if (!upgraded) {
-				throw new CError("Upgrade failed", Status.UPGRADE_REQUIRED);
-			}
-			return undefined;
-		});
-		return res?.response;
+		return await perform(async () => {
+			const req = new CRequest(request);
+			const res = await this.handleRequest(req, (wsRoute) => {
+				const upgraded = server.upgrade(request, { data: wsRoute });
+				if (!upgraded) {
+					throw new CError("Upgrade failed", Status.UPGRADE_REQUIRED);
+				}
+				return undefined;
+			});
+			return res?.response;
+		}, "fetch");
 	}
 
 	private websocket: Bun.WebSocketHandler<WebSocketRoute> = {

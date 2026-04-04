@@ -160,4 +160,92 @@ describe("C.Headers", () => {
 			[authHeader.toLowerCase()]: overrideValue,
 		});
 	});
+
+	it("SET - NUMBER VALUE", () => {
+		const headers = new TC.Headers();
+		headers.set(authHeader, 42);
+		expect(headers.get(authHeader)).toBe("42");
+	});
+
+	it("SET - BOOLEAN VALUE", () => {
+		const headers = new TC.Headers();
+		headers.set(authHeader, true);
+		expect(headers.get(authHeader)).toBe("true");
+	});
+
+	it("APPEND - ARRAY VALUE", () => {
+		const headers = new TC.Headers();
+		headers.append(authHeader, ["value1", "value2"]);
+		const result = headers.get(authHeader);
+		expect(result).toContain("value1");
+		expect(result).toContain("value2");
+	});
+
+	it("GET - CASE INSENSITIVE", () => {
+		const headers = new TC.Headers();
+		headers.set(authHeader, authValue);
+		expect(headers.get(authHeader.toLowerCase() as any)).toBe(authValue);
+		expect(headers.get(authHeader.toUpperCase() as any)).toBe(authValue);
+	});
+
+	it("HAS - CASE INSENSITIVE", () => {
+		const headers = new TC.Headers();
+		headers.set(authHeader, authValue);
+		expect(headers.has(authHeader.toLowerCase() as any)).toBeTrue();
+		expect(headers.has(authHeader.toUpperCase() as any)).toBeTrue();
+	});
+
+	it("COUNT - EMPTY", () => {
+		const headers = new TC.Headers();
+		expect(headers.count).toBe(0);
+	});
+
+	it("COUNT - MULTIPLE", () => {
+		const headers = new TC.Headers({
+			[authHeader]: authValue,
+			[contHeader]: contValue,
+		});
+		expect(headers.count).toBe(2);
+	});
+
+	it("TOJSON - EMPTY", () => {
+		const headers = new TC.Headers();
+		expect(headers.toJSON()).toBeEmptyObject();
+	});
+
+	it("TOJSON - MULTIPLE", () => {
+		const headers = new TC.Headers({
+			[authHeader]: authValue,
+			[contHeader]: contValue,
+		});
+		expect(headers.toJSON()).toEqual({
+			[authHeader.toLowerCase()]: authValue,
+			[contHeader.toLowerCase()]: contValue,
+		});
+	});
+
+	it("SETMANY - SKIPS UNDEFINED VALUES", () => {
+		const headers = new TC.Headers();
+		headers.setMany({
+			[authHeader]: authValue,
+			[contHeader]: undefined as any,
+		});
+		expect(headers.count).toBe(1);
+		expect(headers.has(contHeader)).toBeFalse();
+	});
+
+	it("COMBINE - SOURCE WINS ON CONFLICT", () => {
+		const source = new TC.Headers({ [authHeader]: "source-value" });
+		const target = new TC.Headers({ [authHeader]: "target-value" });
+		const combined = TC.Headers.combine(source, target);
+		expect(combined.get(authHeader)).toBe("source-value");
+	});
+
+	it("COMBINE - SET-COOKIE APPENDS INSTEAD OF OVERWRITING", () => {
+		const source = new TC.Headers({ "Set-Cookie": "a=1" });
+		const target = new TC.Headers({ "Set-Cookie": "b=2" });
+		TC.Headers.combine(source, target);
+		const result = target.get("Set-Cookie");
+		expect(result).toContain("a=1");
+	});
 });

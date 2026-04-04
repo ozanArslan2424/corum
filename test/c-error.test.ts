@@ -78,7 +78,7 @@ describe("C.Error", () => {
 		expect(res.status).toBe(404);
 	});
 
-	it("INTEGRATION - THROWN IN ROUTE RETURNS CORRECT BODY", async () => {
+	it("INTEGRATION - THROWN IN ROUTE RETURNS DEFAULT BODY", async () => {
 		new TC.Route("/error-422", () => {
 			throw new TC.Error("invalid fields", TC.Status.UNPROCESSABLE_ENTITY);
 		});

@@ -11,7 +11,7 @@ const s = createTestServer();
 describe("C.Context", () => {
 	it("HAS CORRECT SHAPE", async () => {
 		new TC.Route("/ctx-shape", (c) => {
-			expect(c.req).toBeDefined();
+			expect(c.req).toBeInstanceOf(TC.Request);
 			expect(c.url).toBeInstanceOf(URL);
 			expect(c.headers).toBeInstanceOf(TC.Headers);
 			expect(c.cookies).toBeInstanceOf(TC.Cookies);
@@ -24,6 +24,37 @@ describe("C.Context", () => {
 
 		const res = await s.handle(req("/ctx-shape"));
 		expect(res.status).toBe(TC.Status.OK);
+	});
+
+	it("APPENDS CORRECT PARSED DATA", async () => {
+		const r = new TC.Request("http://localhost:3000/hello/randomID?a=b", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ hello: "world" }),
+		});
+		const fakeRouterReturn: TC.RouterReturn = {
+			params: { id: "randomID" },
+			search: { a: "b" },
+			route: {
+				endpoint: "/hello/:id",
+				id: "POST /hello/:id",
+				handler: () => {},
+				method: "POST",
+				variant: "dynamic",
+				model: undefined,
+			},
+		};
+
+		const c = new TC.Context(r);
+		expect(c.body).toBeEmptyObject();
+		expect(c.search).toBeEmptyObject();
+		expect(c.params).toBeEmptyObject();
+
+		await TC.Context.appendParsedData(c, r, fakeRouterReturn);
+
+		expect(c.body).toEqual({ hello: "world" });
+		expect(c.search).toEqual(fakeRouterReturn.search);
+		expect(c.params).toEqual(fakeRouterReturn.params);
 	});
 
 	it("BODY - JSON", async () => {

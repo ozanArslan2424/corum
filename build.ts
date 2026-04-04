@@ -33,7 +33,7 @@ async function build() {
 		outdir: "./dist",
 		target: "bun",
 		tsconfig: "./tsconfig.json",
-		// minify: true,
+		minify: true,
 		sourcemap: true,
 	};
 

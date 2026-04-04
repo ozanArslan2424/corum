@@ -1,3 +1,4 @@
+import { log } from "@/Utils/log";
 import dts from "bun-plugin-dts";
 
 function ms(start: number) {
@@ -8,12 +9,12 @@ function ms(start: number) {
 }
 
 function step(label: string) {
-	console.log(` > ${label}`);
+	log.step(label);
 	return performance.now();
 }
 
 function done(label: string, start: number) {
-	console.log(` ✓ ${label} ${ms(start)}`);
+	log.success(`${label} ${ms(start)}`);
 }
 
 async function build() {
@@ -24,7 +25,7 @@ async function build() {
 		await Bun.$`rm -rf ./dist`.quiet();
 		done("cleaned dist", t);
 	} catch {
-		console.warn("⚠️  could not clean dist (might not exist yet)");
+		log.warn("could not clean dist (might not exist yet)");
 	}
 
 	const defaultBuildConfig: Bun.BuildConfig = {
@@ -32,7 +33,8 @@ async function build() {
 		outdir: "./dist",
 		target: "bun",
 		tsconfig: "./tsconfig.json",
-		minify: true,
+		// minify: true,
+		sourcemap: true,
 	};
 
 	t = step("building esm + cjs");
@@ -55,8 +57,8 @@ async function build() {
 			naming: "[dir]/[name].cjs",
 		}),
 	]);
-	if (!esm.success) esm.logs.forEach((l) => console.error(l));
-	if (!cjs.success) cjs.logs.forEach((l) => console.error(l));
+	if (!esm.success) esm.logs.forEach((l) => log.error(l));
+	if (!cjs.success) cjs.logs.forEach((l) => log.error(l));
 	if (!esm.success || !cjs.success) process.exit(1);
 	done("built esm + cjs", t);
 }
@@ -67,6 +69,6 @@ try {
 	await build();
 	done("done", t);
 } catch (err) {
-	console.error(err);
+	log.error(err);
 	process.exit(1);
 }

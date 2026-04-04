@@ -1,6 +1,5 @@
 import { $registryTesting, TX } from "./_modules";
 import { afterEach, describe, expect, it, spyOn } from "bun:test";
-import { log } from "@/Utils/log";
 
 afterEach(() => $registryTesting.reset());
 
@@ -48,9 +47,10 @@ describe("X.Config", () => {
 	});
 
 	it("GET - UNDEFINED", () => {
-		const logSpy = spyOn(log, "warn");
+		const logSpy = spyOn(console, "warn");
 		expect(TX.Config.get(undefinedKey)).toBeUndefined();
 		expect(logSpy).toBeCalled();
+		logSpy.mockClear();
 	});
 
 	it("GET - UNDEFINED WITH FALLBACK", () => {

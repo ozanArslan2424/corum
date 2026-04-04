@@ -52,6 +52,7 @@ type FindResultReturn = {
  * RPS:           17335289
  */
 export class BranchAdapter implements RouterAdapterInterface {
+	__brand: string = "BranchAdapter";
 	private _root: Branch = this.createBranch("/", null);
 	private storeFactory: Func<[], Store> = () => new Map();
 

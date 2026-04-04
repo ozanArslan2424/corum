@@ -39,9 +39,10 @@
 		"build": "bun run build.ts",
 		"build:docs": "bun run build-docs.ts",
 		"test:serve": "bun run test/other/test-server.ts",
+		"test:http": "bun run test/other/http-simulation.ts",
 		"test:ws": "bun run test/other/ws-simulation.ts",
 		"test:benchmark": "bun run test/benchmark/benchmark.ts",
-		"tests": "bun test && bun test:ws -s && bun test:benchmark"
+		"tests": "bun run build && bun test && bun test:http -s && bun test:ws -s && bun test:benchmark"
 	},
 	"packageManager": "pnpm@10.33.0",
 	"devDependencies": {

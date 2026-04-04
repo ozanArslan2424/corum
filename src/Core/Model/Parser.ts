@@ -10,6 +10,7 @@ import type { UnknownObject } from "@/Utils/UnknownObject";
 import { arrIncludes } from "@/Utils/arrIncludes";
 import { isObjectWith } from "@/Utils/isObjectWith";
 import { objAppendEntry } from "@/Utils/objAppendEntry";
+import { Func } from "@/Utils/Func";
 
 export class Parser {
 	static async parse<T = UnknownObject>(
@@ -53,11 +54,13 @@ export class Parser {
 		params: Record<string, string>,
 		validate?: SchemaValidator<P>,
 	): Promise<P> {
-		const data: UnknownObject = {};
-		for (const [key, value] of Object.entries(params)) {
-			data[key] = decodeURIComponent(value);
-		}
-		return await this.parse(data, validate);
+		return Func.timeReturn("Parser.parseUrlData", async () => {
+			const data: UnknownObject = {};
+			for (const [key, value] of Object.entries(params)) {
+				data[key] = decodeURIComponent(value);
+			}
+			return await this.parse(data, validate);
+		});
 	}
 
 	/** This can be used for both request and response bodies */
@@ -65,48 +68,50 @@ export class Parser {
 		r: CRequest | CResponse | Response,
 		validate?: SchemaValidator<B>,
 	): Promise<B> {
-		let data;
-		const empty = {} as B;
-		const input =
-			r instanceof Request ? r : r instanceof Response ? r : r.response;
+		return Func.timeReturn("Parser.parseBody", async () => {
+			let data;
+			const empty = {} as B;
+			const input =
+				r instanceof Request ? r : r instanceof Response ? r : r.response;
 
-		try {
-			switch (Parser.getNormalizedContentType(input)) {
-				case "json":
-					data = await this.getJsonBody(input);
-					break;
-				case "form-urlencoded":
-					data = await this.getFormUrlEncodedBody(input);
-					break;
-				case "form-data":
-					data = await this.getFormDataBody(input);
-					break;
-				case "text":
-					data = await this.getTextBody(input);
-					break;
-				case "unknown":
-					data = await this.getUnknownBody(input);
-					break;
-				case "xml":
-				case "binary":
-				case "pdf":
-				case "image":
-				case "audio":
-				case "video":
-					throw new CError(
-						"unprocessable.contentType",
-						Status.UNPROCESSABLE_ENTITY,
-					);
-				case "no-body-allowed":
-				default:
-					return empty;
+			try {
+				switch (Parser.getNormalizedContentType(input)) {
+					case "json":
+						data = await this.getJsonBody(input);
+						break;
+					case "form-urlencoded":
+						data = await this.getFormUrlEncodedBody(input);
+						break;
+					case "form-data":
+						data = await this.getFormDataBody(input);
+						break;
+					case "text":
+						data = await this.getTextBody(input);
+						break;
+					case "unknown":
+						data = await this.getUnknownBody(input);
+						break;
+					case "xml":
+					case "binary":
+					case "pdf":
+					case "image":
+					case "audio":
+					case "video":
+						throw new CError(
+							"unprocessable.contentType",
+							Status.UNPROCESSABLE_ENTITY,
+						);
+					case "no-body-allowed":
+					default:
+						return empty;
+				}
+
+				return await this.parse(data, validate);
+			} catch (err) {
+				if (err instanceof SyntaxError) return empty;
+				throw err;
 			}
-
-			return await this.parse(data, validate);
-		} catch (err) {
-			if (err instanceof SyntaxError) return empty;
-			throw err;
-		}
+		});
 	}
 
 	private static async getUnknownBody<B = UnknownObject>(

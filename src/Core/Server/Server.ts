@@ -5,7 +5,6 @@ import { ServerAbstract } from "@/Core/Server/ServerAbstract";
 import type { ServeArgs } from "@/Core/Server/ServeArgs";
 import { WebSocketRoute } from "@/Core/Route/WebSocketRoute";
 import { CError } from "@/Core/CError/CError";
-import { log } from "@/Utils/log";
 
 /**
  * Server is the entrypoint to the app. It must be initialized before registering routes and middlewares.
@@ -22,7 +21,6 @@ export class Server extends ServerAbstract {
 
 	async close(closeActiveConnections: boolean = true): Promise<void> {
 		await this.handleBeforeClose?.();
-		log.log("Closing...");
 
 		await this.app?.stop(closeActiveConnections);
 

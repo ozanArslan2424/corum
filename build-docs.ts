@@ -1,3 +1,5 @@
+import { log } from "@/Utils/log";
+
 function ms(start: number) {
 	const elapsed = performance.now() - start;
 	return elapsed >= 1000
@@ -6,12 +8,12 @@ function ms(start: number) {
 }
 
 function step(label: string) {
-	console.log(` > ${label}`);
+	log.step(label);
 	return performance.now();
 }
 
 function done(label: string, start: number) {
-	console.log(` ✓ ${label} ${ms(start)}`);
+	log.success(`${label} ${ms(start)}`);
 }
 
 async function build() {
@@ -25,7 +27,7 @@ async function build() {
 		tsconfig: "./tsconfig.build.json",
 	});
 	if (!b1.success) {
-		b1.logs.forEach((l) => console.error(l));
+		b1.logs.forEach((l) => log.error(l));
 		process.exit(1);
 	}
 	done("built corpus package", t);
@@ -50,7 +52,7 @@ async function build() {
 		format: "esm",
 	});
 	if (!b2.success) {
-		b2.logs.forEach((l) => console.error(l));
+		b2.logs.forEach((l) => log.error(l));
 		process.exit(1);
 	}
 	done("built docs server", t);
@@ -62,6 +64,6 @@ try {
 	await build();
 	done("done", t);
 } catch (err) {
-	console.error(err);
+	log.error(err);
 	process.exit(1);
 }

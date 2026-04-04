@@ -1,12 +1,21 @@
-import { CookiesAbstract } from "@/Core/Cookies/CookiesAbstract";
 import type { CookiesInterface } from "@/Core/Cookies/CookiesInterface";
 import type { CookieOptions } from "@/Core/Cookies/CookieOptions";
 import type { CookiesInit } from "@/Core/Cookies/CookiesInit";
 
-export class Cookies extends CookiesAbstract {
+export class Cookies implements CookiesInterface {
 	constructor(init?: CookiesInit | CookiesInterface) {
-		super();
-		this.applyInit(init);
+		if (init instanceof Cookies) {
+			for (const name of init.keys()) {
+				const value = init.get(name) ?? "";
+				this.set({ name, value });
+			}
+		} else if (Array.isArray(init)) {
+			for (const opts of init) {
+				this.set(opts);
+			}
+		} else if (init && "name" in init && "value" in init) {
+			this.set(init);
+		}
 	}
 
 	protected map = new Bun.CookieMap();

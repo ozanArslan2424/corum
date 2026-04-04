@@ -1,4 +1,4 @@
-import { log } from "@/Utils/log";
+import { logFatal } from "@/Utils/log";
 import type { RateLimitStoreInterface } from "@/Extra/XRateLimiter/RateLimitStoreInterface";
 import type { RateLimitEntry } from "@/Extra/XRateLimiter/RateLimitEntry";
 import crypto from "crypto";
@@ -17,7 +17,7 @@ export class RateLimiterFileStore implements RateLimitStoreInterface {
 
 	private ensureStoreDir() {
 		fs.mkdir(this.storeDir, { recursive: true }).catch((err) => {
-			log.error("Rate Limit File Store Directory could not be created:", err);
+			logFatal("Rate Limit File Store Directory could not be created:", err);
 		});
 	}
 

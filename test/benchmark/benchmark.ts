@@ -1,4 +1,4 @@
-import { log } from "@/Utils/log";
+import { log, logFatal } from "@/Utils/log";
 import { RouterBenchmark } from "./RouterBenchmark";
 import { TC } from "../_modules";
 
@@ -16,5 +16,5 @@ async function main() {
 
 // Run the benchmark
 main().catch((error) => {
-	log.fatal("Benchmark failed:", error);
+	logFatal("Benchmark failed:", error);
 });

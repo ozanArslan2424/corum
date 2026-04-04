@@ -28,6 +28,7 @@ import type { Func } from "@/Utils/Func";
  * RPS:           17088409
  */
 export class MemoiristAdapter implements RouterAdapterInterface {
+	__brand: string = "MemoiristAdapter";
 	private router = new Memoirist<RouterData>();
 
 	find(req: CRequest): RouterReturn | null {

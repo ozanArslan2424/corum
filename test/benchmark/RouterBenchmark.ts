@@ -162,7 +162,7 @@ export class RouterBenchmark {
 		const rps = (total / (sum / 1000)).toFixed(0);
 
 		return `-------------------------------------------------
-${this.adapter.constructor.name} results: (${this.router.list().length} routes)
+${this.adapter.__brand} results: (${this.router.list().length} routes)
 Setup Time: ${this.setupTime}
 Lookups:    ${total.toLocaleString()}
 Hit rate:   ${((hits / total) * 100).toFixed(2)}%

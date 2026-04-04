@@ -5,7 +5,6 @@ import { CHeaders } from "@/Core/CHeaders/CHeaders";
 import type { CRequestInfo } from "@/Core/CRequest/CRequestInfo";
 import type { CRequestInit } from "@/Core/CRequest/CRequestInit";
 import { strSplit } from "@/Utils/strSplit";
-import { Func } from "@/Utils/Func";
 import type { CHeadersInit } from "@/Core/CHeaders/CHeadersInit";
 
 /** CRequest includes a cookie jar, better headers, and some utilities. */
@@ -34,68 +33,62 @@ export class CRequest extends Request {
 	}
 
 	get urlObject(): URL {
-		return Func.timeReturn("CRequest.resolveUrlObject", (): URL => {
-			let urlObject: URL;
+		let urlObject: URL;
 
-			switch (true) {
-				case this.info instanceof URL:
-					urlObject = this.info;
-					break;
+		switch (true) {
+			case this.info instanceof URL:
+				urlObject = this.info;
+				break;
 
-				case this.info instanceof CRequest:
-					urlObject = this.info.urlObject;
-					break;
+			case this.info instanceof CRequest:
+				urlObject = this.info.urlObject;
+				break;
 
-				case this.info instanceof Request:
-					urlObject = new URL(this.info.url);
-					break;
+			case this.info instanceof Request:
+				urlObject = new URL(this.info.url);
+				break;
 
-				default: // string
-					urlObject = new URL(this.info);
-					break;
-			}
+			default: // string
+				urlObject = new URL(this.info);
+				break;
+		}
 
-			if (!urlObject.pathname) {
-				urlObject.pathname += "/";
-			}
+		if (!urlObject.pathname) {
+			urlObject.pathname += "/";
+		}
 
-			return urlObject;
-		});
+		return urlObject;
 	}
 
 	override get headers(): CHeaders {
-		return Func.timeReturn("CRequest.resolveHeaders", (): CHeaders => {
-			let init: CHeadersInit | undefined;
+		let init: CHeadersInit | undefined;
 
-			if (this.info instanceof Request) {
-				init = this.info.headers;
-			}
+		if (this.info instanceof Request) {
+			init = this.info.headers;
+		}
 
-			if (this.init?.headers) {
-				init = this.init.headers;
-			}
+		if (this.init?.headers) {
+			init = this.init.headers;
+		}
 
-			return new CHeaders(init);
-		});
+		return new CHeaders(init);
 	}
 
 	get cookies(): Cookies {
-		return Func.timeReturn("CRequest.resolveCookies", (): Cookies => {
-			const jar = new Cookies();
+		const jar = new Cookies();
 
-			const cookieHeader = this.headers.get(CommonHeaders.Cookie);
+		const cookieHeader = this.headers.get(CommonHeaders.Cookie);
 
-			if (cookieHeader) {
-				const pairs = strSplit(";", cookieHeader);
+		if (cookieHeader) {
+			const pairs = strSplit(";", cookieHeader);
 
-				for (const pair of pairs) {
-					const [name, value] = strSplit("=", pair);
-					if (!name || !value) continue;
-					jar.set({ name, value });
-				}
+			for (const pair of pairs) {
+				const [name, value] = strSplit("=", pair);
+				if (!name || !value) continue;
+				jar.set({ name, value });
 			}
+		}
 
-			return jar;
-		});
+		return jar;
 	}
 }

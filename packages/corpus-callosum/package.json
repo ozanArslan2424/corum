@@ -1,6 +1,6 @@
 {
 	"name": "@ozanarslan/corpus-callosum",
-	"version": "0.2.0",
+	"version": "0.3.0",
 	"description": "CLI for @ozanarslan/corpus",
 	"license": "MIT",
 	"author": "Ozan Arslan <ozanarslanwork@gmail.com>",

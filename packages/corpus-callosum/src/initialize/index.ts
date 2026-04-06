@@ -1,71 +1,37 @@
 import { registerSilentConsole } from "../utils/registerSilentConsole";
 import { writeFileSync } from "fs";
 import { resolve } from "path";
-import { getCasingConverter } from "./utils/getCasingConverter";
+import { getCasingConverter } from "../utils/getCasingConverter";
 import { getFilesToGenerate } from "./getFilesToGenerate";
 import { PackageManager } from "./PackageManager";
 import { ImportsManager } from "./ImportsManager";
-import { ACCEPTED_PACKAGE_MANAGERS } from "./utils/ACCEPTED_PACKAGE_MANAGERS";
-import { logFatal } from "corpus-utils/internalLog";
-import { ACCEPTED_VALIDATION_LIBS } from "./utils/ACCEPTED_VALIDATION_LIBS";
-import { parseArgs } from "util";
+import { getInitializeConfig } from "./getInitializeConfig";
 
 const exampleModuleName = "Example";
 const fallbackDirName = "corpus";
 
 export async function initialize() {
-	const { values } = parseArgs({
-		args: process.argv.slice(3),
-		options: {
-			casing: { type: "string", short: "c", default: "pascal" },
-			silent: { type: "boolean", short: "s" },
-			db: { type: "string" },
-			pm: { type: "string", default: "bun" },
-			validation: { type: "string" },
-		},
-	});
+	const config = getInitializeConfig();
 
-	if (values.pm && !ACCEPTED_PACKAGE_MANAGERS.includes(values.pm)) {
-		logFatal(
-			`"${values.pm}" is not a supported package manager. Supported options: ${ACCEPTED_PACKAGE_MANAGERS.join(", ")}`,
-		);
-	}
-
-	if (
-		values.validation &&
-		!ACCEPTED_VALIDATION_LIBS.some((lib) => values.validation!.startsWith(lib))
-	) {
-		logFatal(
-			`"${values.validation}" is not a supported validation library. Supported options: ${ACCEPTED_VALIDATION_LIBS.join(", ")}`,
-		);
-	}
-
-	if (values.silent) {
-		registerSilentConsole();
-	}
-
-	const dbFilePath = values.db ?? null;
-	const validationLib = values.validation ?? null;
+	if (config.silent) registerSilentConsole();
 
 	const cwd = resolve(process.cwd());
-	const convertCase = getCasingConverter(values.casing);
-	const pm = new PackageManager(values.pm);
+	const convertCase = getCasingConverter(config.casing);
+	const pm = new PackageManager(config.packageManager);
 	const im = new ImportsManager(
 		cwd,
 		convertCase(exampleModuleName),
 		convertCase(fallbackDirName),
 	);
 
-	if (values.silent) registerSilentConsole();
-
-	const pkgName = await pm.resolvePackageName(cwd, validationLib);
+	const pkgName = await pm.resolvePackageName(cwd, config.validationLibrary);
 
 	const files = getFilesToGenerate(
 		cwd,
 		im,
 		exampleModuleName,
-		dbFilePath,
-		validationLib,
+		config.dbFilePath,
+		config.validationLibrary,
 		convertCase,
 	);
 

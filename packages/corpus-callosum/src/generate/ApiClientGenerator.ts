@@ -1,9 +1,10 @@
-import type { GeneratorConfig } from "./GeneratorConfig";
+import type { ApiClientGeneratorConfig } from "./ApiClientGeneratorConfig";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import path from "path";
 import { compile } from "json-schema-to-typescript";
 import type { Schema } from "../utils/Schema";
 import { toJsonSchema } from "@standard-community/standard-json";
+import { defaultApiClientGeneratorConfig } from "./defaultApiClientGeneratorConfig";
 
 type DocEntry = { id: string; endpoint: string; method: string; model?: any };
 type MapEntry = {
@@ -13,37 +14,24 @@ type MapEntry = {
 	funcKey: string;
 };
 
-const defaultGeneratorConfig = {
-	output: "/src/corpus.gen.ts",
-	exportRoutesAs: "individual",
-	generateClient: true,
-	exportClientAs: "CorpusApi",
-	// Default targets arktype. The `fallback: ctx => ctx.base` strategy silently
-	// drops any unsupported constraint and keeps the rest of the schema intact,
-	// which is the least-surprising behaviour for codegen purposes.
-	jsonSchemaOptions: {
-		fallback: (ctx: any) => ctx.base,
-	},
-} satisfies Required<GeneratorConfig>;
-
 export class ApiClientGenerator {
 	constructor(
 		private readonly docs: Record<string, DocEntry>,
-		private readonly cliOverrides: GeneratorConfig,
+		private readonly cliOverrides: ApiClientGeneratorConfig,
 	) {}
 
-	config: Required<GeneratorConfig> = defaultGeneratorConfig;
+	config: Required<ApiClientGeneratorConfig> = defaultApiClientGeneratorConfig;
 
 	public readConfig() {
 		const extensions = [".ts", ".js"];
 		const base = path.resolve(process.cwd(), "corpus.config");
 		const configPath = extensions.map((ext) => base + ext).find(existsSync);
 		const userConfigFile = configPath
-			? (require(configPath).default ?? require(configPath))
+			? require(configPath).default?.apiClientGenerator
 			: {};
 
 		this.config = {
-			...defaultGeneratorConfig,
+			...defaultApiClientGeneratorConfig,
 			...userConfigFile,
 			...this.cliOverrides,
 		};

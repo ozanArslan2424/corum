@@ -1,7 +1,11 @@
 import { defineConfig } from "tsdown";
 
 export default defineConfig({
-	entry: ["src/**/*.ts"],
+	entry: [
+		"./src/index.ts",
+		"./src/generate/ApiClientGenerator.ts",
+		"./src/generate/defaultApiClientGeneratorConfig.ts",
+	],
 	outDir: "dist",
 	format: ["esm"],
 	dts: true,

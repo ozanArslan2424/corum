@@ -1,11 +1,12 @@
 # @ozanarslan/corpus-callosum
 
+This package is still a WIP. `corpus gen` correctly generates api client however, `corpus init` only initializes an example project in empty projects.
 CLI for [@ozanarslan/corpus](https://github.com/ozanArslan2424/corpus) that generates TypeScript client code from your Corpus server.
 
 ## Usage
 
 ```bash
-pnpx @ozanarslan/corpus-callosum -m ./src/main.ts
+pnpx @ozanarslan/corpus-callosum gen -m ./src/main.ts
 ```
 
 Or install as a dev dependency:
@@ -17,7 +18,7 @@ pnpm add -D @ozanarslan/corpus-callosum
 ```json
 {
 	"scripts": {
-		"generate": "corpus -m ./src/main.ts -o ./src/generated.ts"
+		"api:gen": "corpus gen -m ./src/main.ts -o ./src/generated.ts"
 	}
 }
 ```
@@ -26,7 +27,7 @@ pnpm add -D @ozanarslan/corpus-callosum
 
 Your entry file must call `.listen()` either at the top level or inside a single function.
 
-## Options
+### corpus gen Options
 
 | Flag | Description                                                      |
 | ---- | ---------------------------------------------------------------- |
@@ -38,7 +39,7 @@ Your entry file must call `.listen()` either at the top level or inside a single
 ```ts
 import type { StandardJSONSchemaV1 } from "@standard-schema/spec";
 
-export type GeneratorConfig = Partial<{
+export type ApiClientGeneratorConfig = Partial<{
 	/**
 	 * The file path where the generated output will be written.
 	 *

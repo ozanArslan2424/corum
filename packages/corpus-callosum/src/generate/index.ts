@@ -10,6 +10,7 @@ import {
 } from "../utils/DIST_API_GENERATOR_FILE";
 import { hoistFunctionBody } from "./hoistFunctionBody";
 import { parseArgs } from "util";
+import { defaultApiClientGeneratorConfig } from "./defaultApiClientGeneratorConfig";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -17,21 +18,42 @@ export async function generate() {
 	const { values } = parseArgs({
 		args: process.argv.slice(3),
 		options: {
-			main: { type: "string", short: "m", default: "./src/main.ts" },
-			package: { type: "string", short: "p" },
-			output: { type: "string", short: "o" },
-			exportRoutesAs: { type: "string" },
-			exportClientAs: { type: "string" },
-			generateClient: { type: "boolean" },
-			silent: { type: "boolean", short: "s" },
+			main: {
+				type: "string",
+				short: "m",
+				default: defaultApiClientGeneratorConfig.main,
+			},
+			package: {
+				type: "string",
+				short: "p",
+				default: defaultApiClientGeneratorConfig.packageName,
+			},
+			output: {
+				type: "string",
+				short: "o",
+				default: defaultApiClientGeneratorConfig.output,
+			},
+			exportRoutesAs: {
+				type: "string",
+				default: defaultApiClientGeneratorConfig.exportRoutesAs,
+			},
+			exportClientAs: {
+				type: "string",
+				default: defaultApiClientGeneratorConfig.exportClientAs,
+			},
+			generateClient: {
+				type: "boolean",
+				default: defaultApiClientGeneratorConfig.generateClient,
+			},
+			silent: {
+				type: "boolean",
+				short: "s",
+				default: defaultApiClientGeneratorConfig.silent,
+			},
 		},
 	});
 
 	const mainPath = resolve(values.main);
-
-	if (!values.package) {
-		values.package = "@ozanarslan/corpus";
-	}
 	const packagePath = values.package;
 
 	const cliOverrides = Object.fromEntries(

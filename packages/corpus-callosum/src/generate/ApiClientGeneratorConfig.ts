@@ -1,12 +1,33 @@
 import type { StandardJSONSchemaV1 } from "@standard-schema/spec";
 
-export type GeneratorConfig = Partial<{
+export type ApiClientGeneratorConfig = Partial<{
+	/**
+	 * The server entrypoint file path.
+	 *
+	 * @default "./src/main.ts"
+	 */
+	main: string;
+
 	/**
 	 * The file path where the generated output will be written.
 	 *
-	 * @default "/src/corpus.gen.ts"
+	 * @default "./src/corpus.gen.ts"
 	 */
 	output: string;
+
+	/**
+	 * The corpus package path.
+	 *
+	 * @default "@ozanarslan/corpus"
+	 */
+	packageName: string;
+
+	/**
+	 * Suppress console logs.
+	 *
+	 * @default false
+	 */
+	silent: boolean;
 
 	/**
 	 * Controls how the paths object is exported.

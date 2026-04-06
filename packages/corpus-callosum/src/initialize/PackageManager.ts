@@ -2,15 +2,16 @@ import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { logFatal } from "corpus-utils/internalLog";
-import {
-	ACCEPTED_VALIDATION_LIBS,
-	DEFAULT_VALIDATION_LIB_VERSIONS,
-} from "./utils/ACCEPTED_VALIDATION_LIBS";
+import { DEFAULT_VALIDATION_LIB_VERSIONS } from "../utils/ACCEPTED_VALIDATION_LIBS";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export class PackageManager {
-	constructor(private readonly pm: string) {}
+	constructor(pm: string | null) {
+		this.pm = pm ?? this.pkg.packageManager?.split("@")?.[0] ?? "bun";
+	}
+
+	private readonly pm: string;
 
 	pkg = JSON.parse(
 		readFileSync(join(__dirname, "../../package.json"), "utf-8"),

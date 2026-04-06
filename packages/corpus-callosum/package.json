@@ -1,6 +1,6 @@
 {
 	"name": "@ozanarslan/corpus-callosum",
-	"version": "0.3.2",
+	"version": "0.3.3",
 	"description": "CLI for @ozanarslan/corpus",
 	"license": "MIT",
 	"author": "Ozan Arslan <ozanarslanwork@gmail.com>",
@@ -22,37 +22,8 @@
 	],
 	"exports": {
 		".": "./dist/index.mjs",
-		"./examples/Database/DatabaseClient": "./dist/examples/Database/DatabaseClient.mjs",
-		"./examples/Example/ExampleController": "./dist/examples/Example/ExampleController.mjs",
-		"./examples/Example/ExampleModel": "./dist/examples/Example/ExampleModel.mjs",
-		"./examples/Example/ExampleRepository": "./dist/examples/Example/ExampleRepository.mjs",
-		"./examples/Example/ExampleService": "./dist/examples/Example/ExampleService.mjs",
-		"./examples/main": "./dist/examples/main.mjs",
-		"./generate": "./dist/generate/index.mjs",
 		"./generate/ApiClientGenerator": "./dist/generate/ApiClientGenerator.mjs",
-		"./generate/GeneratorConfig": "./dist/generate/GeneratorConfig.mjs",
-		"./generate/hoistFunctionBody": "./dist/generate/hoistFunctionBody.mjs",
-		"./initialize": "./dist/initialize/index.mjs",
-		"./initialize/getFilesToGenerate": "./dist/initialize/getFilesToGenerate.mjs",
-		"./initialize/ImportsManager": "./dist/initialize/ImportsManager.mjs",
-		"./initialize/PackageManager": "./dist/initialize/PackageManager.mjs",
-		"./initialize/utils/ACCEPTED_PACKAGE_MANAGERS": "./dist/initialize/utils/ACCEPTED_PACKAGE_MANAGERS.mjs",
-		"./initialize/utils/ACCEPTED_VALIDATION_LIBS": "./dist/initialize/utils/ACCEPTED_VALIDATION_LIBS.mjs",
-		"./initialize/utils/getCasingConverter": "./dist/initialize/utils/getCasingConverter.mjs",
-		"./initialize/utils/toCamelCase": "./dist/initialize/utils/toCamelCase.mjs",
-		"./initialize/utils/toKebabCase": "./dist/initialize/utils/toKebabCase.mjs",
-		"./initialize/utils/toPascalCase": "./dist/initialize/utils/toPascalCase.mjs",
-		"./initialize/writers/generateControllerContent": "./dist/initialize/writers/generateControllerContent.mjs",
-		"./initialize/writers/generateDatabaseContent": "./dist/initialize/writers/generateDatabaseContent.mjs",
-		"./initialize/writers/generateMainContent": "./dist/initialize/writers/generateMainContent.mjs",
-		"./initialize/writers/generateModelContent": "./dist/initialize/writers/generateModelContent.mjs",
-		"./initialize/writers/generateRepositoryContent": "./dist/initialize/writers/generateRepositoryContent.mjs",
-		"./initialize/writers/generateServiceContent": "./dist/initialize/writers/generateServiceContent.mjs",
-		"./initialize/writers/generateTypesContent": "./dist/initialize/writers/generateTypesContent.mjs",
-		"./utils/DIST_API_GENERATOR_FILE": "./dist/utils/DIST_API_GENERATOR_FILE.mjs",
-		"./utils/registerSilentConsole": "./dist/utils/registerSilentConsole.mjs",
-		"./utils/replaceListenCall": "./dist/utils/replaceListenCall.mjs",
-		"./utils/Schema": "./dist/utils/Schema.mjs",
+		"./generate/defaultApiClientGeneratorConfig": "./dist/generate/defaultApiClientGeneratorConfig.mjs",
 		"./package.json": "./package.json"
 	},
 	"scripts": {
@@ -76,11 +47,5 @@
 		"valibot": "^1.3.1",
 		"yup": "^1.7.1",
 		"zod": "^4.3.6"
-	},
-	"inlinedDependencies": {
-		"@ark/schema": "0.56.0",
-		"@ark/util": "0.56.0",
-		"arkregex": "0.0.5",
-		"arktype": "2.2.0"
 	}
 }

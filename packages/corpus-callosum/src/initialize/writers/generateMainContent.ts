@@ -1,5 +1,5 @@
-import { toCamelCase } from "../utils/toCamelCase";
-import { toPascalCase } from "../utils/toPascalCase";
+import { toCamelCase } from "../../utils/toCamelCase";
+import { toPascalCase } from "../../utils/toPascalCase";
 
 export function generateMainContent(
 	modules: string[],

@@ -1,6 +1,6 @@
 # @ozanarslan/corpus-callosum
 
-This package is still a WIP. `corpus gen` correctly generates api client however, `corpus init` only initializes an example project in empty projects.
+This package is still a WIP. `corpus gen` correctly generates api client however, `corpus init` only initializes an example project in an empty directory.
 CLI for [@ozanarslan/corpus](https://github.com/ozanArslan2424/corpus) that generates TypeScript client code from your Corpus server.
 
 ## Usage
@@ -37,6 +37,18 @@ Your entry file must call `.listen()` either at the top level or inside a single
 | `-s` | Silent mode                                                      |
 
 ```ts
+export function defineConfig(config: Config): Required<Config> {
+	return {
+		...defaultConfig,
+		...config,
+	};
+}
+
+export type Config = Partial<{
+	apiClientGenerator: ApiClientGeneratorConfig;
+	initialize: InitializeConfig;
+}>;
+
 import type { StandardJSONSchemaV1 } from "@standard-schema/spec";
 
 export type ApiClientGeneratorConfig = Partial<{
@@ -90,5 +102,57 @@ export type ApiClientGeneratorConfig = Partial<{
 	 * { jsonSchemaOptions: { target: "draft-07", libraryOptions: { fallback: ctx => ctx.base } } }
 	 */
 	jsonSchemaOptions: StandardJSONSchemaV1.Options;
+}>;
+
+export type InitializeConfig = Partial<{
+	/**
+	 * Casing for file and directory names,
+	 *
+	 * @default "pascal"
+	 */
+	casing: "pascal" | "camel" | "kebab";
+
+	/**
+	 * Suppress console logs.
+	 *
+	 * @default false
+	 */
+	silent: boolean;
+
+	/**
+	 * Database client file path.
+	 *
+	 * @default null
+	 */
+	dbFilePath: string | null;
+
+	/**
+	 * Validation Library to generate models using.
+	 * Append version number with @ if you need a specific version.
+	 *
+	 * Default versions:
+	 * arktype: "2.2.0"
+	 * valibot: "1.3.1"
+	 * yup: "1.7.1"
+	 * zod: "4.3.6"
+	 *
+	 * @default null
+	 */
+	validationLibrary:
+		| "arktype"
+		| "zod"
+		| "valibot"
+		| "yup"
+		| (string & {})
+		| null;
+
+	/**
+	 * Package manager to install any missing dependencies with.
+	 * Also picks up from package.json
+	 * Default is bun since corpus uses bun runtime.
+	 *
+	 * @default "bun"
+	 */
+	packageManager: "bun" | "pnpm" | "npm" | null;
 }>;
 ```

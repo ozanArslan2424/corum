@@ -7,7 +7,7 @@
 		"lint": "bunx oxlint -c ./.oxlintrc.json --fix",
 		"changeset": "changeset",
 		"version": "changeset version",
-		"release": "pnpm -r run build && changeset publish"
+		"release": "changeset publish"
 	},
 	"packageManager": "pnpm@10.33.0",
 	"devDependencies": {

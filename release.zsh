@@ -44,7 +44,7 @@ for dir in packages/*/; do
   backup_and_remove "$dir/node_modules" "${local_name}__node_modules"
 done
 
-echo "Done. To rollback, run: mv $BACKUP_DIR/*__dist packages/<name>/dist etc., or restore manually from $BACKUP_DIR/"
+echo "Done. To rollback, restore manually from $BACKUP_DIR/"
 pause "Step 1 complete. Ready to install dependencies?"
 
 # 2. Install dependencies
@@ -70,10 +70,26 @@ pause "Step 5 complete. Ready to run tests?"
 # 6. Test all packages
 echo -e "${GREEN}Step 6: Running pnpm -r test:all...${RESET}"
 pnpm -r --reporter=append-only test:all
-pause "Step 6 complete. Ready to commit and push?"
+pause "Step 6 complete. Ready to create a changeset?"
 
-# 7. Git commit and push
-echo -e "${GREEN}Step 7: Git commit and push...${RESET}"
+# 7. Changeset (interactive — waits for CLI to finish naturally)
+echo -e "${GREEN}Step 7: Running pnpm run changeset...${RESET}"
+pnpm run changeset
+pause "Step 7 complete. Ready to version packages?"
+
+# 8. Version
+echo -e "${GREEN}Step 8: Running pnpm run version...${RESET}"
+pnpm run version
+pause "Step 8 complete. Ready to publish?"
+
+# 9. Release
+echo -e "${GREEN}Step 9: Running pnpm run release...${RESET}"
+pnpm run release
+pause "Step 9 complete. Ready to format, commit, and push?"
+
+# 10. Format, commit and push
+echo -e "${GREEN}Step 10: Formatting, committing, and pushing...${RESET}"
+pnpm run fm
 echo -n "  Commit message: "
 read -r COMMIT_MSG
 if [[ -z "$COMMIT_MSG" ]]; then
@@ -83,21 +99,6 @@ fi
 git add .
 git commit -m "$COMMIT_MSG"
 git push
-pause "Step 7 complete. Ready to create a changeset?"
-
-# 8. Changeset (interactive — waits for CLI to finish naturally)
-echo -e "${GREEN}Step 8: Running pnpm run changeset...${RESET}"
-pnpm run changeset
-pause "Step 8 complete. Ready to version packages?"
-
-# 9. Version
-echo -e "${GREEN}Step 9: Running pnpm run version...${RESET}"
-pnpm run version
-pause "Step 9 complete. Ready to publish?"
-
-# 10. Release
-echo -e "${GREEN}Step 10: Running pnpm run release...${RESET}"
-pnpm run release
 
 # Cleanup backup
 echo ""

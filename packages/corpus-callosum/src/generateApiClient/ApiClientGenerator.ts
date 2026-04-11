@@ -28,8 +28,8 @@ export class ApiClientGenerator {
 
 	get config(): Config {
 		return {
-			...ConfigManager.getFileConfig(),
 			...ConfigManager.getDefaultConfig(),
+			...ConfigManager.getFileConfig(),
 			...this.cliOverrides,
 		};
 	}

@@ -1,5 +1,11 @@
 # @ozanarslan/corpus-callosum
 
+## 0.4.3
+
+### Patch Changes
+
+- bugfix: schema manager config order
+
 ## 0.4.2
 
 ### Patch Changes

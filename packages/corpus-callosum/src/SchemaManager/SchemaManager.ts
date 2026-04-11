@@ -8,11 +8,11 @@ import { convertSchema as yupToJsonSchema } from "@sodaru/yup-to-json-schema";
 import z from "zod";
 
 export class SchemaManager {
-	constructor(config: Config) {
-		this.options = config.jsonSchemaOptions as Record<string, unknown>;
-	}
+	constructor(private readonly config: Config) {}
 
-	options: Record<string, unknown> | undefined;
+	get options(): Record<string, unknown> {
+		return this.config.jsonSchemaOptions;
+	}
 
 	toJsonSchema(schema: Schema, lib: ValidationLib): Record<string, unknown> {
 		const usedLib = lib ?? schema["~standard"].vendor;

@@ -1,5 +1,3 @@
-import type { StandardJSONSchemaV1 } from "@standard-schema/spec";
-
 export type Config = {
 	/**
 	 * Suppress console logs.
@@ -126,7 +124,7 @@ export type Config = {
 	 * // arktype / zod — handle unsupported types gracefully
 	 * { libraryOptions: { fallback: (ctx) => ctx.base } }
 	 */
-	jsonSchemaOptions: StandardJSONSchemaV1.Options | Record<string, unknown>;
+	jsonSchemaOptions: Record<string, unknown>;
 };
 
 export type PartialConfig = Partial<Config>;

@@ -8,7 +8,8 @@ import { ConfigManager } from "../ConfigManager/ConfigManager";
 
 type DocEntry = { id: string; endpoint: string; method: string; model?: any };
 type MapEntry = {
-	key: string;
+	camelKey: string;
+	pascalKey: string;
 	modelKey: string;
 	funcKey: string;
 	params: string[];
@@ -47,11 +48,13 @@ export class ApiClientGenerator {
 		const map = this.getRouteMap(routes);
 
 		this.writeInitialContent(w);
+		await this.writeModelsNamespace(w, map);
+
 		for (const r of map.values()) {
-			await this.writeModel(w, r);
+			// await this.writeModel(w, r);
 			this.writeRequestMaker(w, r);
 		}
-		this.writeArgsInterface(w, map);
+		this.writeArgsNamespace(w, map);
 		this.writeApiClientClass(w, map);
 		this.writeExports(w);
 	}
@@ -60,12 +63,14 @@ export class ApiClientGenerator {
 		const map = new Map<string, MapEntry>();
 
 		for (const r of routes) {
-			const key = this.toCamelCaseKey(r.endpoint, r.method);
+			const camelKey = this.toCamelCaseKey(r.endpoint, r.method);
+			const pascalKey = this.capitalize(camelKey);
 			map.set(r.id, {
-				key,
+				camelKey,
+				pascalKey,
 				params: this.extractParams(r.endpoint),
-				modelKey: `${this.capitalize(key)}Model`,
-				funcKey: `make${this.capitalize(key)}Request`,
+				modelKey: `Models.${pascalKey}`,
+				funcKey: `make${pascalKey}Request`,
 				model: r.model,
 				method: r.method,
 				endpoint: r.endpoint,
@@ -106,60 +111,60 @@ export class ApiClientGenerator {
 		});
 	}
 
-	private async writeModel(w: Writer, r: MapEntry) {
-		const model: Record<
-			"body" | "search" | "params" | "response",
-			{ opt: boolean; type: string }
-		> = {
-			body: { opt: false, type: `` },
-			search: { opt: true, type: `Record<string, unknown>` },
-			params: { opt: false, type: `` },
-			response: { opt: false, type: `unknown` },
-		};
-
-		if (r.model?.body) {
-			model.body = {
-				opt: false,
-				type: await this.buildSchemaType(r.model.body),
-			};
-		}
-
-		if (r.model?.search) {
-			model.search = {
-				opt: false,
-				type: await this.buildSchemaType(r.model.search),
-			};
-		}
-
-		if (r.model?.params) {
-			model.params = {
-				opt: false,
-				type: await this.buildSchemaType(r.model.params),
-			};
-		} else if (r.params.length > 0) {
-			model.params = {
-				opt: false,
-				type: `{ ${r.params.map((p) => `${p === "*" ? '"*"' : p}: _Prim`).join(";")}}`,
-			};
-		}
-
-		if (r.model?.response) {
-			model.response = {
-				opt: false,
-				type: await this.buildSchemaType(r.model.response),
-			};
-		}
-
-		w.$interface({
-			name: r.modelKey,
-			body: (w) => {
-				for (const [key, val] of Object.entries(model)) {
-					if (val.type === "") continue;
-					w.pair(`${val.opt ? `${key}?` : key}`, `${val.type}`);
-				}
-			},
-		});
-	}
+	// private async writeModel(w: Writer, r: MapEntry) {
+	// 	const model: Record<
+	// 		"body" | "search" | "params" | "response",
+	// 		{ opt: boolean; type: string }
+	// 	> = {
+	// 		body: { opt: false, type: `` },
+	// 		search: { opt: true, type: `Record<string, unknown>` },
+	// 		params: { opt: false, type: `` },
+	// 		response: { opt: false, type: `unknown` },
+	// 	};
+	//
+	// 	if (r.model?.body) {
+	// 		model.body = {
+	// 			opt: false,
+	// 			type: await this.buildSchemaType(r.model.body),
+	// 		};
+	// 	}
+	//
+	// 	if (r.model?.search) {
+	// 		model.search = {
+	// 			opt: false,
+	// 			type: await this.buildSchemaType(r.model.search),
+	// 		};
+	// 	}
+	//
+	// 	if (r.model?.params) {
+	// 		model.params = {
+	// 			opt: false,
+	// 			type: await this.buildSchemaType(r.model.params),
+	// 		};
+	// 	} else if (r.params.length > 0) {
+	// 		model.params = {
+	// 			opt: false,
+	// 			type: `{ ${r.params.map((p) => `${p === "*" ? '"*"' : p}: _Prim`).join(";")}}`,
+	// 		};
+	// 	}
+	//
+	// 	if (r.model?.response) {
+	// 		model.response = {
+	// 			opt: false,
+	// 			type: await this.buildSchemaType(r.model.response),
+	// 		};
+	// 	}
+	//
+	// 	w.$interface({
+	// 		name: r.modelKey,
+	// 		body: (w) => {
+	// 			for (const [key, val] of Object.entries(model)) {
+	// 				if (val.type === "") continue;
+	// 				w.pair(`${val.opt ? `${key}?` : key}`, `${val.type}`);
+	// 			}
+	// 		},
+	// 	});
+	// }
 
 	private writeRequestMaker(w: Writer, r: MapEntry) {
 		w.$arrow({
@@ -191,13 +196,88 @@ export class ApiClientGenerator {
 		});
 	}
 
-	private writeArgsInterface(w: Writer, map: Map<string, MapEntry>) {
+	private async writeModelsNamespace(w: Writer, map: Map<string, MapEntry>) {
+		const models = new Map<
+			string,
+			Record<
+				"body" | "search" | "params" | "response",
+				{ opt: boolean; type: string }
+			>
+		>();
+
+		for (const r of map.values()) {
+			const model: Record<
+				"body" | "search" | "params" | "response",
+				{ opt: boolean; type: string }
+			> = {
+				body: { opt: false, type: `` },
+				search: { opt: true, type: `Record<string, unknown>` },
+				params: { opt: false, type: `` },
+				response: { opt: false, type: `unknown` },
+			};
+
+			if (r.model?.body) {
+				model.body = {
+					opt: false,
+					type: await this.buildSchemaType(r.model.body),
+				};
+			}
+
+			if (r.model?.search) {
+				model.search = {
+					opt: false,
+					type: await this.buildSchemaType(r.model.search),
+				};
+			}
+
+			if (r.model?.params) {
+				model.params = {
+					opt: false,
+					type: await this.buildSchemaType(r.model.params),
+				};
+			} else if (r.params.length > 0) {
+				model.params = {
+					opt: false,
+					type: `{ ${r.params.map((p) => `${p === "*" ? '"*"' : p}: _Prim`).join(";")}}`,
+				};
+			}
+
+			if (r.model?.response) {
+				model.response = {
+					opt: false,
+					type: await this.buildSchemaType(r.model.response),
+				};
+			}
+
+			models.set(r.pascalKey, model);
+		}
+
+		w.$namespace({
+			name: "Models",
+			body: (w) => {
+				for (const [pascalKey, model] of models.entries()) {
+					w.$interface({
+						isExported: true,
+						name: pascalKey,
+						body: (w) => {
+							for (const [key, val] of Object.entries(model)) {
+								if (val.type === "") continue;
+								w.pair(`${val.opt ? `${key}?` : key}`, `${val.type}`);
+							}
+						},
+					});
+				}
+			},
+		});
+	}
+
+	private writeArgsNamespace(w: Writer, map: Map<string, MapEntry>) {
 		w.$namespace({
 			name: "Args",
 			body: (w) => {
 				for (const r of map.values()) {
 					w.$type({
-						name: r.modelKey.replace("Model", ""),
+						name: r.pascalKey,
 						value: `ExtractArgs<${r.modelKey}>`,
 						isExported: true,
 					});
@@ -270,7 +350,7 @@ export class ApiClientGenerator {
 						w.inline("{");
 						for (const r of map.values()) {
 							w.pair(
-								r.key,
+								r.camelKey,
 								r.params.length === 0
 									? `"${r.endpoint}"`
 									: `(p: ExtractArgs<${r.modelKey}>["params"]) => \`${r.endpoint
@@ -290,7 +370,7 @@ export class ApiClientGenerator {
 				for (const r of map.values()) {
 					w.$arrowMethod({
 						keyword: "public",
-						name: r.key,
+						name: r.camelKey,
 						args: [`args: ExtractArgs<${r.modelKey}>`],
 						body: (w) =>
 							w.$return(

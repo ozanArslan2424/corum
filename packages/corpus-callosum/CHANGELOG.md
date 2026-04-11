@@ -1,5 +1,11 @@
 # @ozanarslan/corpus-callosum
 
+## 0.4.6
+
+### Patch Changes
+
+- models namespace
+
 ## 0.4.5
 
 ### Patch Changes

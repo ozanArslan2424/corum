@@ -15,14 +15,225 @@ interface ReqArgs {
 	init?: RequestInit;
 }
 
-interface Param1Param2GetModel {
-	search?: Record<string, unknown>;
-	params: { param1: _Prim; param2: _Prim };
-	response: unknown;
+namespace Models {
+	export interface Param1Param2Get {
+		search?: Record<string, unknown>;
+		params: { param1: _Prim; param2: _Prim };
+		response: unknown;
+	}
+
+	export interface HelloParam1Param2Get {
+		search?: Record<string, unknown>;
+		params: { param1: _Prim; param2: _Prim };
+		response: unknown;
+	}
+
+	export interface WorldParam1Param2Get {
+		search?: Record<string, unknown>;
+		params: { param1: _Prim; param2: _Prim };
+		response: unknown;
+	}
+
+	export interface LalalaParam1Param2Get {
+		search?: Record<string, unknown>;
+		params: { param1: _Prim; param2: _Prim };
+		response: unknown;
+	}
+
+	export interface YesyesParam2Get {
+		search?: Record<string, unknown>;
+		params: { param2: _Prim };
+		response: unknown;
+	}
+
+	export interface OkayParam1LetsgoGet {
+		search?: Record<string, unknown>;
+		params: { param1: _Prim };
+		response: unknown;
+	}
+
+	export interface DenemeParam1Param2Get {
+		search?: Record<string, unknown>;
+		params: { param1: _Prim; param2: _Prim };
+		response: unknown;
+	}
+
+	export interface WeGotThisGet {
+		search?: Record<string, unknown>;
+		response: unknown;
+	}
+
+	export interface OhmyohmyGet {
+		search?: Record<string, unknown>;
+		response: unknown;
+	}
+
+	export interface _2brosGet {
+		search?: Record<string, unknown>;
+		response: unknown;
+	}
+
+	export interface ChillinInAHottubGet {
+		search?: Record<string, unknown>;
+		response: unknown;
+	}
+
+	export interface _5FeetApartCuzTheyreNotGayGet {
+		search?: Record<string, unknown>;
+		response: unknown;
+	}
+
+	export interface Verywild_Get {
+		search?: Record<string, unknown>;
+		params: { "*": _Prim };
+		response: unknown;
+	}
+
+	export interface Craaaazy_Get {
+		search?: Record<string, unknown>;
+		params: { "*": _Prim };
+		response: unknown;
+	}
+
+	export interface UsersPost {
+		body: {
+			address: { city: string; country: string; zip?: string };
+			age: number;
+			name: string;
+			role: "admin" | "editor" | "viewer";
+			tags: string[];
+		};
+		search?: Record<string, unknown>;
+		response: {
+			age: number;
+			createdAt: string;
+			id: string;
+			name: string;
+			role: "admin" | "editor" | "viewer";
+			status: "active" | "banned" | "inactive";
+			tags: string[];
+			updatedAt: string;
+		};
+	}
+
+	export interface UsersGet {
+		search: {
+			limit: unknown;
+			page: unknown;
+			role?: "admin" | "editor" | "viewer";
+			status?: "active" | "banned" | "inactive";
+		};
+		response: unknown;
+	}
+
+	export interface UsersIdGet {
+		search?: Record<string, unknown>;
+		params: { id: string };
+		response: {
+			age: number;
+			createdAt: string;
+			id: string;
+			name: string;
+			role: "admin" | "editor" | "viewer";
+			status: "active" | "banned" | "inactive";
+			tags: string[];
+			updatedAt: string;
+		};
+	}
+
+	export interface UsersIdPut {
+		body: {
+			address: { city: string; country: string; zip?: string };
+			age: number;
+			name: string;
+			role: "admin" | "editor" | "viewer";
+			tags: string[];
+		};
+		search?: Record<string, unknown>;
+		params: { id: string };
+		response: {
+			age: number;
+			createdAt: string;
+			id: string;
+			name: string;
+			role: "admin" | "editor" | "viewer";
+			status: "active" | "banned" | "inactive";
+			tags: string[];
+			updatedAt: string;
+		};
+	}
+
+	export interface UsersIdDelete {
+		search?: Record<string, unknown>;
+		params: { id: string };
+		response: unknown;
+	}
+
+	export interface UsersIdPostsPost {
+		body: {
+			content: string;
+			metadata: {
+				category: "life" | "other" | "tech";
+				likes: number;
+				views: number;
+			};
+			published: boolean;
+			title: string;
+		};
+		search?: Record<string, unknown>;
+		params: { id: string };
+		response: {
+			authorId: string;
+			content: string;
+			createdAt: string;
+			id: string;
+			metadata: {
+				category: "life" | "other" | "tech";
+				likes: number;
+				views: number;
+			};
+			published: boolean;
+			title: string;
+			updatedAt: string;
+		};
+	}
+
+	export interface OrgsPost {
+		body: {
+			name: string;
+			owner: { role: "admin" | "editor" | "viewer"; userId: string };
+			plan: "enterprise" | "free" | "pro";
+			seats: number;
+		};
+		search?: Record<string, unknown>;
+		response: unknown;
+	}
+
+	export interface OrgsOrgIdMembersGet {
+		search: { limit: unknown; page: unknown };
+		params: { orgId: string };
+		response: unknown;
+	}
+
+	export interface OrgsOrgIdMembersMemberIdPut {
+		body: {
+			role: "admin" | "editor" | "viewer";
+			status: "active" | "banned" | "inactive";
+		};
+		search?: Record<string, unknown>;
+		params: { memberId: string; orgId: string };
+		response: unknown;
+	}
+
+	export interface OrgsOrgIdMembersMemberIdDelete {
+		search?: Record<string, unknown>;
+		params: { memberId: string; orgId: string };
+		response: unknown;
+	}
 }
 
 const makeParam1Param2GetRequest = (
-	args: ExtractArgs<Param1Param2GetModel>,
+	args: ExtractArgs<Models.Param1Param2Get>,
 ) => {
 	return {
 		endpoint: `/${String(args.params.param1)}/${String(args.params.param2)}`,
@@ -31,14 +242,8 @@ const makeParam1Param2GetRequest = (
 	};
 };
 
-interface HelloParam1Param2GetModel {
-	search?: Record<string, unknown>;
-	params: { param1: _Prim; param2: _Prim };
-	response: unknown;
-}
-
 const makeHelloParam1Param2GetRequest = (
-	args: ExtractArgs<HelloParam1Param2GetModel>,
+	args: ExtractArgs<Models.HelloParam1Param2Get>,
 ) => {
 	return {
 		endpoint: `/hello/${String(args.params.param1)}/${String(args.params.param2)}`,
@@ -47,14 +252,8 @@ const makeHelloParam1Param2GetRequest = (
 	};
 };
 
-interface WorldParam1Param2GetModel {
-	search?: Record<string, unknown>;
-	params: { param1: _Prim; param2: _Prim };
-	response: unknown;
-}
-
 const makeWorldParam1Param2GetRequest = (
-	args: ExtractArgs<WorldParam1Param2GetModel>,
+	args: ExtractArgs<Models.WorldParam1Param2Get>,
 ) => {
 	return {
 		endpoint: `/world/${String(args.params.param1)}/${String(args.params.param2)}`,
@@ -63,14 +262,8 @@ const makeWorldParam1Param2GetRequest = (
 	};
 };
 
-interface LalalaParam1Param2GetModel {
-	search?: Record<string, unknown>;
-	params: { param1: _Prim; param2: _Prim };
-	response: unknown;
-}
-
 const makeLalalaParam1Param2GetRequest = (
-	args: ExtractArgs<LalalaParam1Param2GetModel>,
+	args: ExtractArgs<Models.LalalaParam1Param2Get>,
 ) => {
 	return {
 		endpoint: `/lalala/${String(args.params.param1)}/${String(args.params.param2)}`,
@@ -79,14 +272,8 @@ const makeLalalaParam1Param2GetRequest = (
 	};
 };
 
-interface YesyesParam2GetModel {
-	search?: Record<string, unknown>;
-	params: { param2: _Prim };
-	response: unknown;
-}
-
 const makeYesyesParam2GetRequest = (
-	args: ExtractArgs<YesyesParam2GetModel>,
+	args: ExtractArgs<Models.YesyesParam2Get>,
 ) => {
 	return {
 		endpoint: `/yesyes/${String(args.params.param2)}`,
@@ -95,14 +282,8 @@ const makeYesyesParam2GetRequest = (
 	};
 };
 
-interface OkayParam1LetsgoGetModel {
-	search?: Record<string, unknown>;
-	params: { param1: _Prim };
-	response: unknown;
-}
-
 const makeOkayParam1LetsgoGetRequest = (
-	args: ExtractArgs<OkayParam1LetsgoGetModel>,
+	args: ExtractArgs<Models.OkayParam1LetsgoGet>,
 ) => {
 	return {
 		endpoint: `/okay/${String(args.params.param1)}/letsgo`,
@@ -111,14 +292,8 @@ const makeOkayParam1LetsgoGetRequest = (
 	};
 };
 
-interface DenemeParam1Param2GetModel {
-	search?: Record<string, unknown>;
-	params: { param1: _Prim; param2: _Prim };
-	response: unknown;
-}
-
 const makeDenemeParam1Param2GetRequest = (
-	args: ExtractArgs<DenemeParam1Param2GetModel>,
+	args: ExtractArgs<Models.DenemeParam1Param2Get>,
 ) => {
 	return {
 		endpoint: `/deneme/${String(args.params.param1)}/${String(args.params.param2)}`,
@@ -127,12 +302,7 @@ const makeDenemeParam1Param2GetRequest = (
 	};
 };
 
-interface WeGotThisGetModel {
-	search?: Record<string, unknown>;
-	response: unknown;
-}
-
-const makeWeGotThisGetRequest = (args: ExtractArgs<WeGotThisGetModel>) => {
+const makeWeGotThisGetRequest = (args: ExtractArgs<Models.WeGotThisGet>) => {
 	return {
 		endpoint: "/we/got/this",
 		method: "GET",
@@ -140,12 +310,7 @@ const makeWeGotThisGetRequest = (args: ExtractArgs<WeGotThisGetModel>) => {
 	};
 };
 
-interface OhmyohmyGetModel {
-	search?: Record<string, unknown>;
-	response: unknown;
-}
-
-const makeOhmyohmyGetRequest = (args: ExtractArgs<OhmyohmyGetModel>) => {
+const makeOhmyohmyGetRequest = (args: ExtractArgs<Models.OhmyohmyGet>) => {
 	return {
 		endpoint: "/ohmyohmy",
 		method: "GET",
@@ -153,12 +318,7 @@ const makeOhmyohmyGetRequest = (args: ExtractArgs<OhmyohmyGetModel>) => {
 	};
 };
 
-interface _2brosGetModel {
-	search?: Record<string, unknown>;
-	response: unknown;
-}
-
-const make_2brosGetRequest = (args: ExtractArgs<_2brosGetModel>) => {
+const make_2brosGetRequest = (args: ExtractArgs<Models._2brosGet>) => {
 	return {
 		endpoint: "/2bros",
 		method: "GET",
@@ -166,13 +326,8 @@ const make_2brosGetRequest = (args: ExtractArgs<_2brosGetModel>) => {
 	};
 };
 
-interface ChillinInAHottubGetModel {
-	search?: Record<string, unknown>;
-	response: unknown;
-}
-
 const makeChillinInAHottubGetRequest = (
-	args: ExtractArgs<ChillinInAHottubGetModel>,
+	args: ExtractArgs<Models.ChillinInAHottubGet>,
 ) => {
 	return {
 		endpoint: "/chillin/in/a/hottub",
@@ -181,13 +336,8 @@ const makeChillinInAHottubGetRequest = (
 	};
 };
 
-interface _5FeetApartCuzTheyreNotGayGetModel {
-	search?: Record<string, unknown>;
-	response: unknown;
-}
-
 const make_5FeetApartCuzTheyreNotGayGetRequest = (
-	args: ExtractArgs<_5FeetApartCuzTheyreNotGayGetModel>,
+	args: ExtractArgs<Models._5FeetApartCuzTheyreNotGayGet>,
 ) => {
 	return {
 		endpoint: "/5/feet/apart/cuz/theyre/not/gay",
@@ -196,13 +346,7 @@ const make_5FeetApartCuzTheyreNotGayGetRequest = (
 	};
 };
 
-interface Verywild_GetModel {
-	search?: Record<string, unknown>;
-	params: { "*": _Prim };
-	response: unknown;
-}
-
-const makeVerywild_GetRequest = (args: ExtractArgs<Verywild_GetModel>) => {
+const makeVerywild_GetRequest = (args: ExtractArgs<Models.Verywild_Get>) => {
 	return {
 		endpoint: `/verywild/${String(args.params["*"])}`,
 		method: "GET",
@@ -210,13 +354,7 @@ const makeVerywild_GetRequest = (args: ExtractArgs<Verywild_GetModel>) => {
 	};
 };
 
-interface Craaaazy_GetModel {
-	search?: Record<string, unknown>;
-	params: { "*": _Prim };
-	response: unknown;
-}
-
-const makeCraaaazy_GetRequest = (args: ExtractArgs<Craaaazy_GetModel>) => {
+const makeCraaaazy_GetRequest = (args: ExtractArgs<Models.Craaaazy_Get>) => {
 	return {
 		endpoint: `/craaaazy/${String(args.params["*"])}`,
 		method: "GET",
@@ -224,28 +362,7 @@ const makeCraaaazy_GetRequest = (args: ExtractArgs<Craaaazy_GetModel>) => {
 	};
 };
 
-interface UsersPostModel {
-	body: {
-		address: { city: string; country: string; zip?: string };
-		age: number;
-		name: string;
-		role: "admin" | "editor" | "viewer";
-		tags: string[];
-	};
-	search?: Record<string, unknown>;
-	response: {
-		age: number;
-		createdAt: string;
-		id: string;
-		name: string;
-		role: "admin" | "editor" | "viewer";
-		status: "active" | "banned" | "inactive";
-		tags: string[];
-		updatedAt: string;
-	};
-}
-
-const makeUsersPostRequest = (args: ExtractArgs<UsersPostModel>) => {
+const makeUsersPostRequest = (args: ExtractArgs<Models.UsersPost>) => {
 	return {
 		endpoint: "/users",
 		method: "POST",
@@ -254,17 +371,7 @@ const makeUsersPostRequest = (args: ExtractArgs<UsersPostModel>) => {
 	};
 };
 
-interface UsersGetModel {
-	search: {
-		limit: unknown;
-		page: unknown;
-		role?: "admin" | "editor" | "viewer";
-		status?: "active" | "banned" | "inactive";
-	};
-	response: unknown;
-}
-
-const makeUsersGetRequest = (args: ExtractArgs<UsersGetModel>) => {
+const makeUsersGetRequest = (args: ExtractArgs<Models.UsersGet>) => {
 	return {
 		endpoint: "/users",
 		method: "GET",
@@ -272,22 +379,7 @@ const makeUsersGetRequest = (args: ExtractArgs<UsersGetModel>) => {
 	};
 };
 
-interface UsersIdGetModel {
-	search?: Record<string, unknown>;
-	params: { id: string };
-	response: {
-		age: number;
-		createdAt: string;
-		id: string;
-		name: string;
-		role: "admin" | "editor" | "viewer";
-		status: "active" | "banned" | "inactive";
-		tags: string[];
-		updatedAt: string;
-	};
-}
-
-const makeUsersIdGetRequest = (args: ExtractArgs<UsersIdGetModel>) => {
+const makeUsersIdGetRequest = (args: ExtractArgs<Models.UsersIdGet>) => {
 	return {
 		endpoint: `/users/${String(args.params.id)}`,
 		method: "GET",
@@ -295,29 +387,7 @@ const makeUsersIdGetRequest = (args: ExtractArgs<UsersIdGetModel>) => {
 	};
 };
 
-interface UsersIdPutModel {
-	body: {
-		address: { city: string; country: string; zip?: string };
-		age: number;
-		name: string;
-		role: "admin" | "editor" | "viewer";
-		tags: string[];
-	};
-	search?: Record<string, unknown>;
-	params: { id: string };
-	response: {
-		age: number;
-		createdAt: string;
-		id: string;
-		name: string;
-		role: "admin" | "editor" | "viewer";
-		status: "active" | "banned" | "inactive";
-		tags: string[];
-		updatedAt: string;
-	};
-}
-
-const makeUsersIdPutRequest = (args: ExtractArgs<UsersIdPutModel>) => {
+const makeUsersIdPutRequest = (args: ExtractArgs<Models.UsersIdPut>) => {
 	return {
 		endpoint: `/users/${String(args.params.id)}`,
 		method: "PUT",
@@ -326,13 +396,7 @@ const makeUsersIdPutRequest = (args: ExtractArgs<UsersIdPutModel>) => {
 	};
 };
 
-interface UsersIdDeleteModel {
-	search?: Record<string, unknown>;
-	params: { id: string };
-	response: unknown;
-}
-
-const makeUsersIdDeleteRequest = (args: ExtractArgs<UsersIdDeleteModel>) => {
+const makeUsersIdDeleteRequest = (args: ExtractArgs<Models.UsersIdDelete>) => {
 	return {
 		endpoint: `/users/${String(args.params.id)}`,
 		method: "DELETE",
@@ -340,37 +404,8 @@ const makeUsersIdDeleteRequest = (args: ExtractArgs<UsersIdDeleteModel>) => {
 	};
 };
 
-interface UsersIdPostsPostModel {
-	body: {
-		content: string;
-		metadata: {
-			category: "life" | "other" | "tech";
-			likes: number;
-			views: number;
-		};
-		published: boolean;
-		title: string;
-	};
-	search?: Record<string, unknown>;
-	params: { id: string };
-	response: {
-		authorId: string;
-		content: string;
-		createdAt: string;
-		id: string;
-		metadata: {
-			category: "life" | "other" | "tech";
-			likes: number;
-			views: number;
-		};
-		published: boolean;
-		title: string;
-		updatedAt: string;
-	};
-}
-
 const makeUsersIdPostsPostRequest = (
-	args: ExtractArgs<UsersIdPostsPostModel>,
+	args: ExtractArgs<Models.UsersIdPostsPost>,
 ) => {
 	return {
 		endpoint: `/users/${String(args.params.id)}/posts`,
@@ -380,18 +415,7 @@ const makeUsersIdPostsPostRequest = (
 	};
 };
 
-interface OrgsPostModel {
-	body: {
-		name: string;
-		owner: { role: "admin" | "editor" | "viewer"; userId: string };
-		plan: "enterprise" | "free" | "pro";
-		seats: number;
-	};
-	search?: Record<string, unknown>;
-	response: unknown;
-}
-
-const makeOrgsPostRequest = (args: ExtractArgs<OrgsPostModel>) => {
+const makeOrgsPostRequest = (args: ExtractArgs<Models.OrgsPost>) => {
 	return {
 		endpoint: "/orgs",
 		method: "POST",
@@ -400,14 +424,8 @@ const makeOrgsPostRequest = (args: ExtractArgs<OrgsPostModel>) => {
 	};
 };
 
-interface OrgsOrgIdMembersGetModel {
-	search: { limit: unknown; page: unknown };
-	params: { orgId: string };
-	response: unknown;
-}
-
 const makeOrgsOrgIdMembersGetRequest = (
-	args: ExtractArgs<OrgsOrgIdMembersGetModel>,
+	args: ExtractArgs<Models.OrgsOrgIdMembersGet>,
 ) => {
 	return {
 		endpoint: `/orgs/${String(args.params.orgId)}/members`,
@@ -416,18 +434,8 @@ const makeOrgsOrgIdMembersGetRequest = (
 	};
 };
 
-interface OrgsOrgIdMembersMemberIdPutModel {
-	body: {
-		role: "admin" | "editor" | "viewer";
-		status: "active" | "banned" | "inactive";
-	};
-	search?: Record<string, unknown>;
-	params: { memberId: string; orgId: string };
-	response: unknown;
-}
-
 const makeOrgsOrgIdMembersMemberIdPutRequest = (
-	args: ExtractArgs<OrgsOrgIdMembersMemberIdPutModel>,
+	args: ExtractArgs<Models.OrgsOrgIdMembersMemberIdPut>,
 ) => {
 	return {
 		endpoint: `/orgs/${String(args.params.orgId)}/members/${String(args.params.memberId)}`,
@@ -437,14 +445,8 @@ const makeOrgsOrgIdMembersMemberIdPutRequest = (
 	};
 };
 
-interface OrgsOrgIdMembersMemberIdDeleteModel {
-	search?: Record<string, unknown>;
-	params: { memberId: string; orgId: string };
-	response: unknown;
-}
-
 const makeOrgsOrgIdMembersMemberIdDeleteRequest = (
-	args: ExtractArgs<OrgsOrgIdMembersMemberIdDeleteModel>,
+	args: ExtractArgs<Models.OrgsOrgIdMembersMemberIdDelete>,
 ) => {
 	return {
 		endpoint: `/orgs/${String(args.params.orgId)}/members/${String(args.params.memberId)}`,
@@ -454,33 +456,33 @@ const makeOrgsOrgIdMembersMemberIdDeleteRequest = (
 };
 
 namespace Args {
-	export type Param1Param2Get = ExtractArgs<Param1Param2GetModel>;
-	export type HelloParam1Param2Get = ExtractArgs<HelloParam1Param2GetModel>;
-	export type WorldParam1Param2Get = ExtractArgs<WorldParam1Param2GetModel>;
-	export type LalalaParam1Param2Get = ExtractArgs<LalalaParam1Param2GetModel>;
-	export type YesyesParam2Get = ExtractArgs<YesyesParam2GetModel>;
-	export type OkayParam1LetsgoGet = ExtractArgs<OkayParam1LetsgoGetModel>;
-	export type DenemeParam1Param2Get = ExtractArgs<DenemeParam1Param2GetModel>;
-	export type WeGotThisGet = ExtractArgs<WeGotThisGetModel>;
-	export type OhmyohmyGet = ExtractArgs<OhmyohmyGetModel>;
-	export type _2brosGet = ExtractArgs<_2brosGetModel>;
-	export type ChillinInAHottubGet = ExtractArgs<ChillinInAHottubGetModel>;
+	export type Param1Param2Get = ExtractArgs<Models.Param1Param2Get>;
+	export type HelloParam1Param2Get = ExtractArgs<Models.HelloParam1Param2Get>;
+	export type WorldParam1Param2Get = ExtractArgs<Models.WorldParam1Param2Get>;
+	export type LalalaParam1Param2Get = ExtractArgs<Models.LalalaParam1Param2Get>;
+	export type YesyesParam2Get = ExtractArgs<Models.YesyesParam2Get>;
+	export type OkayParam1LetsgoGet = ExtractArgs<Models.OkayParam1LetsgoGet>;
+	export type DenemeParam1Param2Get = ExtractArgs<Models.DenemeParam1Param2Get>;
+	export type WeGotThisGet = ExtractArgs<Models.WeGotThisGet>;
+	export type OhmyohmyGet = ExtractArgs<Models.OhmyohmyGet>;
+	export type _2brosGet = ExtractArgs<Models._2brosGet>;
+	export type ChillinInAHottubGet = ExtractArgs<Models.ChillinInAHottubGet>;
 	export type _5FeetApartCuzTheyreNotGayGet =
-		ExtractArgs<_5FeetApartCuzTheyreNotGayGetModel>;
-	export type Verywild_Get = ExtractArgs<Verywild_GetModel>;
-	export type Craaaazy_Get = ExtractArgs<Craaaazy_GetModel>;
-	export type UsersPost = ExtractArgs<UsersPostModel>;
-	export type UsersGet = ExtractArgs<UsersGetModel>;
-	export type UsersIdGet = ExtractArgs<UsersIdGetModel>;
-	export type UsersIdPut = ExtractArgs<UsersIdPutModel>;
-	export type UsersIdDelete = ExtractArgs<UsersIdDeleteModel>;
-	export type UsersIdPostsPost = ExtractArgs<UsersIdPostsPostModel>;
-	export type OrgsPost = ExtractArgs<OrgsPostModel>;
-	export type OrgsOrgIdMembersGet = ExtractArgs<OrgsOrgIdMembersGetModel>;
+		ExtractArgs<Models._5FeetApartCuzTheyreNotGayGet>;
+	export type Verywild_Get = ExtractArgs<Models.Verywild_Get>;
+	export type Craaaazy_Get = ExtractArgs<Models.Craaaazy_Get>;
+	export type UsersPost = ExtractArgs<Models.UsersPost>;
+	export type UsersGet = ExtractArgs<Models.UsersGet>;
+	export type UsersIdGet = ExtractArgs<Models.UsersIdGet>;
+	export type UsersIdPut = ExtractArgs<Models.UsersIdPut>;
+	export type UsersIdDelete = ExtractArgs<Models.UsersIdDelete>;
+	export type UsersIdPostsPost = ExtractArgs<Models.UsersIdPostsPost>;
+	export type OrgsPost = ExtractArgs<Models.OrgsPost>;
+	export type OrgsOrgIdMembersGet = ExtractArgs<Models.OrgsOrgIdMembersGet>;
 	export type OrgsOrgIdMembersMemberIdPut =
-		ExtractArgs<OrgsOrgIdMembersMemberIdPutModel>;
+		ExtractArgs<Models.OrgsOrgIdMembersMemberIdPut>;
 	export type OrgsOrgIdMembersMemberIdDelete =
-		ExtractArgs<OrgsOrgIdMembersMemberIdDeleteModel>;
+		ExtractArgs<Models.OrgsOrgIdMembersMemberIdDelete>;
 }
 
 class CorpusApi {
@@ -516,237 +518,217 @@ class CorpusApi {
 	}
 
 	public readonly endpoints = {
-		param1Param2Get: (p: ExtractArgs<Param1Param2GetModel>["params"]) =>
+		param1Param2Get: (p: ExtractArgs<Models.Param1Param2Get>["params"]) =>
 			`/${String(p.param1)}/${String(p.param2)}`,
 		helloParam1Param2Get: (
-			p: ExtractArgs<HelloParam1Param2GetModel>["params"],
+			p: ExtractArgs<Models.HelloParam1Param2Get>["params"],
 		) => `/hello/${String(p.param1)}/${String(p.param2)}`,
 		worldParam1Param2Get: (
-			p: ExtractArgs<WorldParam1Param2GetModel>["params"],
+			p: ExtractArgs<Models.WorldParam1Param2Get>["params"],
 		) => `/world/${String(p.param1)}/${String(p.param2)}`,
 		lalalaParam1Param2Get: (
-			p: ExtractArgs<LalalaParam1Param2GetModel>["params"],
+			p: ExtractArgs<Models.LalalaParam1Param2Get>["params"],
 		) => `/lalala/${String(p.param1)}/${String(p.param2)}`,
-		yesyesParam2Get: (p: ExtractArgs<YesyesParam2GetModel>["params"]) =>
+		yesyesParam2Get: (p: ExtractArgs<Models.YesyesParam2Get>["params"]) =>
 			`/yesyes/${String(p.param2)}`,
-		okayParam1LetsgoGet: (p: ExtractArgs<OkayParam1LetsgoGetModel>["params"]) =>
-			`/okay/${String(p.param1)}/letsgo`,
+		okayParam1LetsgoGet: (
+			p: ExtractArgs<Models.OkayParam1LetsgoGet>["params"],
+		) => `/okay/${String(p.param1)}/letsgo`,
 		denemeParam1Param2Get: (
-			p: ExtractArgs<DenemeParam1Param2GetModel>["params"],
+			p: ExtractArgs<Models.DenemeParam1Param2Get>["params"],
 		) => `/deneme/${String(p.param1)}/${String(p.param2)}`,
 		weGotThisGet: "/we/got/this",
 		ohmyohmyGet: "/ohmyohmy",
 		_2brosGet: "/2bros",
 		chillinInAHottubGet: "/chillin/in/a/hottub",
 		_5FeetApartCuzTheyreNotGayGet: "/5/feet/apart/cuz/theyre/not/gay",
-		verywild_Get: (p: ExtractArgs<Verywild_GetModel>["params"]) =>
+		verywild_Get: (p: ExtractArgs<Models.Verywild_Get>["params"]) =>
 			`/verywild/${String(p["*"])}`,
-		craaaazy_Get: (p: ExtractArgs<Craaaazy_GetModel>["params"]) =>
+		craaaazy_Get: (p: ExtractArgs<Models.Craaaazy_Get>["params"]) =>
 			`/craaaazy/${String(p["*"])}`,
 		usersPost: "/users",
 		usersGet: "/users",
-		usersIdGet: (p: ExtractArgs<UsersIdGetModel>["params"]) =>
+		usersIdGet: (p: ExtractArgs<Models.UsersIdGet>["params"]) =>
 			`/users/${String(p.id)}`,
-		usersIdPut: (p: ExtractArgs<UsersIdPutModel>["params"]) =>
+		usersIdPut: (p: ExtractArgs<Models.UsersIdPut>["params"]) =>
 			`/users/${String(p.id)}`,
-		usersIdDelete: (p: ExtractArgs<UsersIdDeleteModel>["params"]) =>
+		usersIdDelete: (p: ExtractArgs<Models.UsersIdDelete>["params"]) =>
 			`/users/${String(p.id)}`,
-		usersIdPostsPost: (p: ExtractArgs<UsersIdPostsPostModel>["params"]) =>
+		usersIdPostsPost: (p: ExtractArgs<Models.UsersIdPostsPost>["params"]) =>
 			`/users/${String(p.id)}/posts`,
 		orgsPost: "/orgs",
-		orgsOrgIdMembersGet: (p: ExtractArgs<OrgsOrgIdMembersGetModel>["params"]) =>
-			`/orgs/${String(p.orgId)}/members`,
+		orgsOrgIdMembersGet: (
+			p: ExtractArgs<Models.OrgsOrgIdMembersGet>["params"],
+		) => `/orgs/${String(p.orgId)}/members`,
 		orgsOrgIdMembersMemberIdPut: (
-			p: ExtractArgs<OrgsOrgIdMembersMemberIdPutModel>["params"],
+			p: ExtractArgs<Models.OrgsOrgIdMembersMemberIdPut>["params"],
 		) => `/orgs/${String(p.orgId)}/members/${String(p.memberId)}`,
 		orgsOrgIdMembersMemberIdDelete: (
-			p: ExtractArgs<OrgsOrgIdMembersMemberIdDeleteModel>["params"],
+			p: ExtractArgs<Models.OrgsOrgIdMembersMemberIdDelete>["params"],
 		) => `/orgs/${String(p.orgId)}/members/${String(p.memberId)}`,
 	};
 
-	public param1Param2Get = (args: ExtractArgs<Param1Param2GetModel>) => {
-		return this.fetchFn<Param1Param2GetModel["response"]>(
+	public param1Param2Get = (args: ExtractArgs<Models.Param1Param2Get>) => {
+		return this.fetchFn<Models.Param1Param2Get["response"]>(
 			makeParam1Param2GetRequest(args),
 		);
 	};
 
 	public helloParam1Param2Get = (
-		args: ExtractArgs<HelloParam1Param2GetModel>,
+		args: ExtractArgs<Models.HelloParam1Param2Get>,
 	) => {
-		return this.fetchFn<HelloParam1Param2GetModel["response"]>(
+		return this.fetchFn<Models.HelloParam1Param2Get["response"]>(
 			makeHelloParam1Param2GetRequest(args),
 		);
 	};
 
 	public worldParam1Param2Get = (
-		args: ExtractArgs<WorldParam1Param2GetModel>,
+		args: ExtractArgs<Models.WorldParam1Param2Get>,
 	) => {
-		return this.fetchFn<WorldParam1Param2GetModel["response"]>(
+		return this.fetchFn<Models.WorldParam1Param2Get["response"]>(
 			makeWorldParam1Param2GetRequest(args),
 		);
 	};
 
 	public lalalaParam1Param2Get = (
-		args: ExtractArgs<LalalaParam1Param2GetModel>,
+		args: ExtractArgs<Models.LalalaParam1Param2Get>,
 	) => {
-		return this.fetchFn<LalalaParam1Param2GetModel["response"]>(
+		return this.fetchFn<Models.LalalaParam1Param2Get["response"]>(
 			makeLalalaParam1Param2GetRequest(args),
 		);
 	};
 
-	public yesyesParam2Get = (args: ExtractArgs<YesyesParam2GetModel>) => {
-		return this.fetchFn<YesyesParam2GetModel["response"]>(
+	public yesyesParam2Get = (args: ExtractArgs<Models.YesyesParam2Get>) => {
+		return this.fetchFn<Models.YesyesParam2Get["response"]>(
 			makeYesyesParam2GetRequest(args),
 		);
 	};
 
 	public okayParam1LetsgoGet = (
-		args: ExtractArgs<OkayParam1LetsgoGetModel>,
+		args: ExtractArgs<Models.OkayParam1LetsgoGet>,
 	) => {
-		return this.fetchFn<OkayParam1LetsgoGetModel["response"]>(
+		return this.fetchFn<Models.OkayParam1LetsgoGet["response"]>(
 			makeOkayParam1LetsgoGetRequest(args),
 		);
 	};
 
 	public denemeParam1Param2Get = (
-		args: ExtractArgs<DenemeParam1Param2GetModel>,
+		args: ExtractArgs<Models.DenemeParam1Param2Get>,
 	) => {
-		return this.fetchFn<DenemeParam1Param2GetModel["response"]>(
+		return this.fetchFn<Models.DenemeParam1Param2Get["response"]>(
 			makeDenemeParam1Param2GetRequest(args),
 		);
 	};
 
-	public weGotThisGet = (args: ExtractArgs<WeGotThisGetModel>) => {
-		return this.fetchFn<WeGotThisGetModel["response"]>(
+	public weGotThisGet = (args: ExtractArgs<Models.WeGotThisGet>) => {
+		return this.fetchFn<Models.WeGotThisGet["response"]>(
 			makeWeGotThisGetRequest(args),
 		);
 	};
 
-	public ohmyohmyGet = (args: ExtractArgs<OhmyohmyGetModel>) => {
-		return this.fetchFn<OhmyohmyGetModel["response"]>(
+	public ohmyohmyGet = (args: ExtractArgs<Models.OhmyohmyGet>) => {
+		return this.fetchFn<Models.OhmyohmyGet["response"]>(
 			makeOhmyohmyGetRequest(args),
 		);
 	};
 
-	public _2brosGet = (args: ExtractArgs<_2brosGetModel>) => {
-		return this.fetchFn<_2brosGetModel["response"]>(make_2brosGetRequest(args));
+	public _2brosGet = (args: ExtractArgs<Models._2brosGet>) => {
+		return this.fetchFn<Models._2brosGet["response"]>(
+			make_2brosGetRequest(args),
+		);
 	};
 
 	public chillinInAHottubGet = (
-		args: ExtractArgs<ChillinInAHottubGetModel>,
+		args: ExtractArgs<Models.ChillinInAHottubGet>,
 	) => {
-		return this.fetchFn<ChillinInAHottubGetModel["response"]>(
+		return this.fetchFn<Models.ChillinInAHottubGet["response"]>(
 			makeChillinInAHottubGetRequest(args),
 		);
 	};
 
 	public _5FeetApartCuzTheyreNotGayGet = (
-		args: ExtractArgs<_5FeetApartCuzTheyreNotGayGetModel>,
+		args: ExtractArgs<Models._5FeetApartCuzTheyreNotGayGet>,
 	) => {
-		return this.fetchFn<_5FeetApartCuzTheyreNotGayGetModel["response"]>(
+		return this.fetchFn<Models._5FeetApartCuzTheyreNotGayGet["response"]>(
 			make_5FeetApartCuzTheyreNotGayGetRequest(args),
 		);
 	};
 
-	public verywild_Get = (args: ExtractArgs<Verywild_GetModel>) => {
-		return this.fetchFn<Verywild_GetModel["response"]>(
+	public verywild_Get = (args: ExtractArgs<Models.Verywild_Get>) => {
+		return this.fetchFn<Models.Verywild_Get["response"]>(
 			makeVerywild_GetRequest(args),
 		);
 	};
 
-	public craaaazy_Get = (args: ExtractArgs<Craaaazy_GetModel>) => {
-		return this.fetchFn<Craaaazy_GetModel["response"]>(
+	public craaaazy_Get = (args: ExtractArgs<Models.Craaaazy_Get>) => {
+		return this.fetchFn<Models.Craaaazy_Get["response"]>(
 			makeCraaaazy_GetRequest(args),
 		);
 	};
 
-	public usersPost = (args: ExtractArgs<UsersPostModel>) => {
-		return this.fetchFn<UsersPostModel["response"]>(makeUsersPostRequest(args));
+	public usersPost = (args: ExtractArgs<Models.UsersPost>) => {
+		return this.fetchFn<Models.UsersPost["response"]>(
+			makeUsersPostRequest(args),
+		);
 	};
 
-	public usersGet = (args: ExtractArgs<UsersGetModel>) => {
-		return this.fetchFn<UsersGetModel["response"]>(makeUsersGetRequest(args));
+	public usersGet = (args: ExtractArgs<Models.UsersGet>) => {
+		return this.fetchFn<Models.UsersGet["response"]>(makeUsersGetRequest(args));
 	};
 
-	public usersIdGet = (args: ExtractArgs<UsersIdGetModel>) => {
-		return this.fetchFn<UsersIdGetModel["response"]>(
+	public usersIdGet = (args: ExtractArgs<Models.UsersIdGet>) => {
+		return this.fetchFn<Models.UsersIdGet["response"]>(
 			makeUsersIdGetRequest(args),
 		);
 	};
 
-	public usersIdPut = (args: ExtractArgs<UsersIdPutModel>) => {
-		return this.fetchFn<UsersIdPutModel["response"]>(
+	public usersIdPut = (args: ExtractArgs<Models.UsersIdPut>) => {
+		return this.fetchFn<Models.UsersIdPut["response"]>(
 			makeUsersIdPutRequest(args),
 		);
 	};
 
-	public usersIdDelete = (args: ExtractArgs<UsersIdDeleteModel>) => {
-		return this.fetchFn<UsersIdDeleteModel["response"]>(
+	public usersIdDelete = (args: ExtractArgs<Models.UsersIdDelete>) => {
+		return this.fetchFn<Models.UsersIdDelete["response"]>(
 			makeUsersIdDeleteRequest(args),
 		);
 	};
 
-	public usersIdPostsPost = (args: ExtractArgs<UsersIdPostsPostModel>) => {
-		return this.fetchFn<UsersIdPostsPostModel["response"]>(
+	public usersIdPostsPost = (args: ExtractArgs<Models.UsersIdPostsPost>) => {
+		return this.fetchFn<Models.UsersIdPostsPost["response"]>(
 			makeUsersIdPostsPostRequest(args),
 		);
 	};
 
-	public orgsPost = (args: ExtractArgs<OrgsPostModel>) => {
-		return this.fetchFn<OrgsPostModel["response"]>(makeOrgsPostRequest(args));
+	public orgsPost = (args: ExtractArgs<Models.OrgsPost>) => {
+		return this.fetchFn<Models.OrgsPost["response"]>(makeOrgsPostRequest(args));
 	};
 
 	public orgsOrgIdMembersGet = (
-		args: ExtractArgs<OrgsOrgIdMembersGetModel>,
+		args: ExtractArgs<Models.OrgsOrgIdMembersGet>,
 	) => {
-		return this.fetchFn<OrgsOrgIdMembersGetModel["response"]>(
+		return this.fetchFn<Models.OrgsOrgIdMembersGet["response"]>(
 			makeOrgsOrgIdMembersGetRequest(args),
 		);
 	};
 
 	public orgsOrgIdMembersMemberIdPut = (
-		args: ExtractArgs<OrgsOrgIdMembersMemberIdPutModel>,
+		args: ExtractArgs<Models.OrgsOrgIdMembersMemberIdPut>,
 	) => {
-		return this.fetchFn<OrgsOrgIdMembersMemberIdPutModel["response"]>(
+		return this.fetchFn<Models.OrgsOrgIdMembersMemberIdPut["response"]>(
 			makeOrgsOrgIdMembersMemberIdPutRequest(args),
 		);
 	};
 
 	public orgsOrgIdMembersMemberIdDelete = (
-		args: ExtractArgs<OrgsOrgIdMembersMemberIdDeleteModel>,
+		args: ExtractArgs<Models.OrgsOrgIdMembersMemberIdDelete>,
 	) => {
-		return this.fetchFn<OrgsOrgIdMembersMemberIdDeleteModel["response"]>(
+		return this.fetchFn<Models.OrgsOrgIdMembersMemberIdDelete["response"]>(
 			makeOrgsOrgIdMembersMemberIdDeleteRequest(args),
 		);
 	};
 }
-export type {
-	Param1Param2GetModel,
-	HelloParam1Param2GetModel,
-	WorldParam1Param2GetModel,
-	LalalaParam1Param2GetModel,
-	YesyesParam2GetModel,
-	OkayParam1LetsgoGetModel,
-	DenemeParam1Param2GetModel,
-	WeGotThisGetModel,
-	OhmyohmyGetModel,
-	_2brosGetModel,
-	ChillinInAHottubGetModel,
-	_5FeetApartCuzTheyreNotGayGetModel,
-	Verywild_GetModel,
-	Craaaazy_GetModel,
-	UsersPostModel,
-	UsersGetModel,
-	UsersIdGetModel,
-	UsersIdPutModel,
-	UsersIdDeleteModel,
-	UsersIdPostsPostModel,
-	OrgsPostModel,
-	OrgsOrgIdMembersGetModel,
-	OrgsOrgIdMembersMemberIdPutModel,
-	OrgsOrgIdMembersMemberIdDeleteModel,
-	Args,
-};
+export type { Models, Args };
 
 export {
 	makeParam1Param2GetRequest,

@@ -13,31 +13,6 @@ T.log.info(`Server up on ${BASE_URL}\n`);
 
 const api = new CorpusApi(BASE_URL);
 
-// async (args) => {
-// 	const url = new URL(args.endpoint, BASE_URL);
-// 	const headers = new Headers(args.headers);
-//
-// 	const method: RequestInit["method"] = args.method;
-// 	let body: RequestInit["body"];
-//
-// 	if (args.search) {
-// 		for (const [key, val] of Object.entries(args.search)) {
-// 			if (val != null) url.searchParams.append(key, String(val));
-// 		}
-// 	}
-//
-// 	if (args.body) {
-// 		if (!headers.has("Content-Type") || !headers.has("content-type")) {
-// 			headers.set("Content-Type", "application/json");
-// 		}
-// 		body = JSON.stringify(args.body);
-// 	}
-//
-// 	const res = await fetch(url, { method, headers, body, ...args.init });
-//
-// 	return C.Parser.parseBody(res);
-// }
-
 // ── Parameterised routes ──────────────────────────────────────────────────────
 
 {
@@ -262,9 +237,13 @@ const api = new CorpusApi(BASE_URL);
 }
 
 {
+	const formData = new FormData();
+	formData.set("role", "editor");
+	formData.set("status", "active");
+
 	const res = await api.orgsOrgIdMembersMemberIdPut({
 		params: { orgId: "org1", memberId: "m1" },
-		body: { role: "editor", status: "active" },
+		formData,
 	});
 	T.expect("orgsOrgIdMembersMemberIdPut has orgId", res).toHaveProperty(
 		"orgId",

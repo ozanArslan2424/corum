@@ -1,5 +1,11 @@
 # @ozanarslan/corpus-callosum
 
+## 0.4.7
+
+### Patch Changes
+
+- api client changes
+
 ## 0.4.6
 
 ### Patch Changes

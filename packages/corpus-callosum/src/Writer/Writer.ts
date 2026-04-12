@@ -81,6 +81,18 @@ export class Writer {
 		self.raw(w.read());
 	}
 
+	scope(body: B.BodyWriter): B.BodyWriter {
+		return (w) => {
+			w.inline("{");
+			body(w);
+			w.untab("}");
+		};
+	}
+
+	str(s: string): string {
+		return `"${s}"`;
+	}
+
 	$class(o: CWT.Class) {
 		this.variables.add(o.name);
 
@@ -247,7 +259,6 @@ export class Writer {
 
 	$if(...conditions: SWT.Condition[]): SWT.If {
 		const self = this;
-		self.line("");
 
 		return {
 			then(body) {

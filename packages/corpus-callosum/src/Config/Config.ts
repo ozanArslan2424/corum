@@ -28,13 +28,6 @@ export type Config = {
 	casing: "pascal" | "camel" | "kebab";
 
 	/**
-	 * Database client file path.
-	 *
-	 * @default null
-	 */
-	dbFilePath: string | null;
-
-	/**
 	 * Validation Library to generate models using.
 	 * Append version number with @ if you need a specific version.
 	 *
@@ -64,31 +57,18 @@ export type Config = {
 	output: string;
 
 	/**
-	 * Controls how the paths object is exported.
-	 *
-	 * @default "individual"
-	 *
-	 * @example
-	 * // pathsExport: "individual"
-	 * export { path1, path2 };
-	 *
-	 * @example
-	 * // pathsExport: "default"
-	 * export default { path1, path2 };
-	 *
-	 * @example
-	 * // pathsExport: "API" // or any other string for the object name
-	 * export const API = { path1, path2 };
-	 */
-	exportRoutesAs: "individual" | "default" | (string & {});
-
-	/**
 	 * Controls how the API Client is exported.
 	 * Set to false if you don't want the api client.
 	 *
 	 * @default "CorpusApi"
 	 */
-	exportClientAs: string | false;
+	exportClientAs: string;
+
+	/**
+	 * Generated method names use endpoint paths by default,
+	 * you can optionally ignore the global prefix.
+	 */
+	ignoreGlobalPrefix: boolean;
 
 	/**
 	 * Options forwarded to the appropriate JSON Schema conversion library for each route model.

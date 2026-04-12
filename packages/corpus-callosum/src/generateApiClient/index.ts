@@ -42,7 +42,7 @@ export async function generateApiClient(config: Config) {
 		}
 
 		const replacement = [
-			`const generator = new ${API_GENERATOR_CLASS_NAME}("${config.pkgPath}", $registry.docs, ${JSON.stringify(cliOverrides)});`,
+			`const generator = new ${API_GENERATOR_CLASS_NAME}($registry, ${JSON.stringify(cliOverrides)});`,
 			`await generator.generate();`,
 		].join("\n");
 

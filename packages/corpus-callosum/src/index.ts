@@ -3,7 +3,8 @@ import { generateApiClient } from "./generateApiClient";
 import { initialize } from "./initialize";
 
 const action = ConfigManager.getAction();
-const config = ConfigManager.getResolvedConfig();
+const config = await ConfigManager.getResolvedConfig();
+ConfigManager.writeConfigFile(config);
 
 if (action === "api") {
 	await generateApiClient(config);

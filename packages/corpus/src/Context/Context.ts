@@ -3,7 +3,7 @@ import type { Cookies } from "@/Cookies/Cookies";
 import type { CHeaders } from "@/CHeaders/CHeaders";
 import type { CRequest } from "@/CRequest/CRequest";
 import { CResponse } from "@/CResponse/CResponse";
-import { Parser } from "@/Model/Parser";
+import { Parser } from "@/Parser/Parser";
 import type { RouterReturn } from "@/Registry/RouterReturn";
 
 /**

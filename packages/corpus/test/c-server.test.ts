@@ -1,10 +1,10 @@
 import { TC, TX, $registryTesting } from "./_modules";
-import { describe, expect, it, afterEach } from "bun:test";
+import { describe, expect, it, beforeEach } from "bun:test";
 import { createTestServer } from "./utils/createTestServer";
 import { req } from "./utils/req";
 import net from "node:net";
 
-afterEach(() => $registryTesting.reset());
+beforeEach(() => $registryTesting.reset());
 
 describe("C.Server", () => {
 	// ─── handle() - routing ───────────────────────────────────────

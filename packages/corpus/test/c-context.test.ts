@@ -1,10 +1,10 @@
 import { $registryTesting, TC } from "./_modules";
-import { afterEach, describe, expect, it } from "bun:test";
+import { beforeEach, describe, expect, it } from "bun:test";
 import { createTestServer } from "./utils/createTestServer";
 import { req } from "./utils/req";
 import { type } from "arktype";
 
-afterEach(() => $registryTesting.reset());
+beforeEach(() => $registryTesting.reset());
 
 const s = createTestServer();
 

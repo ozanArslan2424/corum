@@ -1,7 +1,7 @@
 import { $registryTesting, TC } from "./_modules";
-import { afterEach, describe, expect, it } from "bun:test";
+import { beforeEach, describe, expect, it } from "bun:test";
 
-afterEach(() => $registryTesting.reset());
+beforeEach(() => $registryTesting.reset());
 
 describe("C.Request", () => {
 	const urlString = "http://localhost:4444";

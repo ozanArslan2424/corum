@@ -1,9 +1,9 @@
 import { $registryTesting, TC, TX } from "./_modules";
-import { afterEach, describe, expect, it } from "bun:test";
+import { beforeEach, describe, expect, it } from "bun:test";
 import { createTestServer } from "./utils/createTestServer";
 import { req } from "./utils/req";
 
-afterEach(() => $registryTesting.reset());
+beforeEach(() => $registryTesting.reset());
 
 describe("C.StaticRoute", () => {
 	const s = createTestServer();
@@ -173,7 +173,7 @@ describe("C.StaticRoute", () => {
 				| undefined = () => "";
 
 			override model?:
-				| TC.RouteModel<
+				| TC.RouteConfig<
 						unknown,
 						unknown,
 						unknown,

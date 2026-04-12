@@ -1,5 +1,5 @@
 import { Controller } from "@/Controller/Controller";
-import { DynamicRoute } from "@/Route/DynamicRoute";
+import { DynamicRoute } from "@/DynamicRoute/DynamicRoute";
 import type { MiddlewareInterface } from "@/Middleware/MiddlwareInterface";
 import { MiddlewareVariant } from "@/Middleware/MiddlewareVariant";
 import type { MiddlewareHandler } from "@/Middleware/MiddlewareHandler";

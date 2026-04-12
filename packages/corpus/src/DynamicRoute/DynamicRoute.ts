@@ -1,7 +1,7 @@
-import type { RouteModel } from "@/Model/RouteModel";
-import type { DynamicRouteDefinition } from "@/Route/DynamicRouteDefinition";
-import { DynamicRouteAbstract } from "@/Route/DynamicRouteAbstract";
-import type { DynamicRouteCallback } from "@/Route/DynamicRouteCallback";
+import type { RouteConfig } from "@/Route/RouteConfig";
+import type { DynamicRouteDefinition } from "@/DynamicRoute/DynamicRouteDefinition";
+import { DynamicRouteAbstract } from "@/DynamicRoute/DynamicRouteAbstract";
+import type { DynamicRouteCallback } from "@/DynamicRoute/DynamicRouteCallback";
 
 /**
  * Defines an HTTP endpoint. Accepts a {@link DynamicRouteDefinition} which can either be a plain
@@ -12,7 +12,7 @@ import type { DynamicRouteCallback } from "@/Route/DynamicRouteCallback";
  * Returned data is automatically serialized by {@link CResponse} — plain objects become JSON,
  * primitives become plain text, and so on.
  *
- * An optional {@link RouteModel} can be provided to validate and parse the request body,
+ * An optional {@link RouteConfig} can be provided to validate and parse the request body,
  * URL params, and search params — the parsed results are typed and available on the context.
  *
  * Route instantiation automatically registers to the router.
@@ -37,7 +37,7 @@ export class DynamicRoute<
 	constructor(
 		readonly definition: DynamicRouteDefinition<E>,
 		readonly callback: DynamicRouteCallback<B, S, P, R>,
-		readonly model?: RouteModel<B, S, P, R>,
+		readonly model?: RouteConfig<B, S, P, R>,
 	) {
 		super();
 		this.register();

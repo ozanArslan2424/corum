@@ -4,6 +4,75 @@ import { createTestServer } from "./utils/createTestServer";
 import { createTestController } from "./utils/createTestController";
 import { req } from "./utils/req";
 
+beforeEach(() => {
+	$registryTesting.reset();
+	testLogSpy.mockClear();
+
+	const r1 = new TC.Route("/r1", (c) => c.data);
+	new TC.Route("r2", (c) => c.data);
+	const r3 = new TC.Route("/r3", (c) => c.data);
+	const r4 = new TC.Route("/r4", (c) => c.data);
+	const r5 = new TC.Route("/r5", (c) => c.data);
+	const c1 = createTestController("c1");
+
+	new TC.Middleware({
+		useOn: [r1, c1.cr1],
+		handler: (c) => {
+			c.data = middlewareData;
+		},
+	});
+
+	new TC.Middleware({
+		useOn: [r3],
+		handler: (c) => {
+			c.data = { user: "john", role: "admin", count: 1 };
+		},
+	});
+
+	new TC.Middleware({
+		useOn: [r4],
+		handler: (c) => {
+			c.data = { user: "john", role: "admin", count: 1 };
+		},
+	});
+
+	new TC.Middleware({
+		useOn: [r4],
+		handler: (c) => {
+			(c.data as Record<string, unknown>).role = "superadmin";
+			(c.data as Record<string, unknown>).count = 2;
+		},
+	});
+
+	new TC.Middleware({
+		useOn: "*",
+		handler: (c) => {
+			testLog.log(c.url.pathname);
+		},
+	});
+
+	new TC.Middleware({
+		useOn: [r5],
+		handler: (c) => {
+			c.data = overrideData;
+		},
+	});
+
+	const c_r1 = new TC.Route("/c-r1", (c) => c.data);
+	new TC.Route("c-r2", (c) => c.data);
+	const c_r3 = new TC.Route("/c-r3", (c) => c.data);
+	const c_r4 = new TC.Route("/c-r4", (c) => c.data);
+	const c_r5 = new TC.Route("/c-r5", (c) => c.data);
+	const c_c1 = createTestController("c-c1");
+
+	new M1([c_r1, c_c1.cr1]);
+	new M2([c_r3]);
+	new M3([c_r4]);
+	new M4([c_r4]);
+	new M5("*");
+	new M6([c_r5]);
+});
+
 const s = createTestServer();
 const middlewareData = "Hello";
 const overrideData = "world";
@@ -171,72 +240,3 @@ class M6 extends TC.MiddlewareAbstract {
 		c.data = overrideData;
 	};
 }
-
-beforeEach(() => {
-	$registryTesting.reset();
-	testLogSpy.mockClear();
-
-	const r1 = new TC.Route("/r1", (c) => c.data);
-	new TC.Route("r2", (c) => c.data);
-	const r3 = new TC.Route("/r3", (c) => c.data);
-	const r4 = new TC.Route("/r4", (c) => c.data);
-	const r5 = new TC.Route("/r5", (c) => c.data);
-	const c1 = createTestController("c1");
-
-	new TC.Middleware({
-		useOn: [r1, c1.cr1],
-		handler: (c) => {
-			c.data = middlewareData;
-		},
-	});
-
-	new TC.Middleware({
-		useOn: [r3],
-		handler: (c) => {
-			c.data = { user: "john", role: "admin", count: 1 };
-		},
-	});
-
-	new TC.Middleware({
-		useOn: [r4],
-		handler: (c) => {
-			c.data = { user: "john", role: "admin", count: 1 };
-		},
-	});
-
-	new TC.Middleware({
-		useOn: [r4],
-		handler: (c) => {
-			(c.data as Record<string, unknown>).role = "superadmin";
-			(c.data as Record<string, unknown>).count = 2;
-		},
-	});
-
-	new TC.Middleware({
-		useOn: "*",
-		handler: (c) => {
-			testLog.log(c.url.pathname);
-		},
-	});
-
-	new TC.Middleware({
-		useOn: [r5],
-		handler: (c) => {
-			c.data = overrideData;
-		},
-	});
-
-	const c_r1 = new TC.Route("/c-r1", (c) => c.data);
-	new TC.Route("c-r2", (c) => c.data);
-	const c_r3 = new TC.Route("/c-r3", (c) => c.data);
-	const c_r4 = new TC.Route("/c-r4", (c) => c.data);
-	const c_r5 = new TC.Route("/c-r5", (c) => c.data);
-	const c_c1 = createTestController("c-c1");
-
-	new M1([c_r1, c_c1.cr1]);
-	new M2([c_r3]);
-	new M3([c_r4]);
-	new M4([c_r4]);
-	new M5("*");
-	new M6([c_r5]);
-});

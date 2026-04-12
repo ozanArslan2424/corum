@@ -1,7 +1,7 @@
 import { $registryTesting, TC } from "./_modules";
-import { afterEach, describe, expect, it } from "bun:test";
+import { beforeEach, describe, expect, it } from "bun:test";
 
-afterEach(() => $registryTesting.reset());
+beforeEach(() => $registryTesting.reset());
 
 describe("C.Headers", () => {
 	const authHeader = TC.CommonHeaders.Authorization;

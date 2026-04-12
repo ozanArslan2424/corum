@@ -1,14 +1,14 @@
 import { MiddlewareRegistry } from "@/Registry/MiddlewareRegistry";
 import type { Router } from "@/Registry/Router";
 import type { XCors } from "@/XCors/XCors";
-import type { RouteModel } from "@/Model/RouteModel";
+import type { RouteConfig } from "@/Route/RouteConfig";
 import { logFatal } from "corpus-utils/internalLog";
 
 type DocEntry = {
 	id: string;
 	endpoint: string;
 	method: string;
-	model: RouteModel<any, any, any, any> | undefined;
+	model: RouteConfig<any, any, any, any> | undefined;
 };
 
 export class Registry {

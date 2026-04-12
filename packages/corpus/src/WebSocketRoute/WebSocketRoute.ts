@@ -1,5 +1,5 @@
-import type { WebSocketRouteDefinition } from "@/Route/WebSocketRouteDefinition";
-import { WebSocketRouteAbstract } from "@/Route/WebSocketRouteAbstract";
+import type { WebSocketRouteDefinition } from "@/WebSocketRoute/WebSocketRouteDefinition";
+import { WebSocketRouteAbstract } from "@/WebSocketRoute/WebSocketRouteAbstract";
 
 export class WebSocketRoute<
 	E extends string = string,

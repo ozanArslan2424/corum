@@ -3,17 +3,18 @@ import { CRequest } from "@/CRequest/CRequest";
 import { Status } from "@/CResponse/Status";
 import { ServerAbstract } from "@/Server/ServerAbstract";
 import type { ServeArgs } from "@/Server/ServeArgs";
-import { WebSocketRoute } from "@/Route/WebSocketRoute";
+import { WebSocketRoute } from "@/WebSocketRoute/WebSocketRoute";
 import { CError } from "@/CError/CError";
+import type { ServerApp } from "@/Server/ServerApp";
+import type { ServerWebSocketHandler } from "@/Server/ServerWebSocketHandler";
 
 /**
  * Server is the entrypoint to the app. It must be initialized before registering routes and middlewares.
  * ".listen()" to start listening.
  */
-type App = Bun.Server<WebSocketRoute>;
 
 export class Server extends ServerAbstract {
-	private app: App | undefined;
+	private app: ServerApp | undefined;
 
 	serve(args: ServeArgs): void {
 		this.app = this.createApp(args);
@@ -29,7 +30,7 @@ export class Server extends ServerAbstract {
 		}
 	}
 
-	private createApp(options: ServeArgs): App {
+	private createApp(options: ServeArgs): ServerApp {
 		return Bun.serve<WebSocketRoute>({
 			port: options.port,
 			hostname: options.hostname,
@@ -42,7 +43,7 @@ export class Server extends ServerAbstract {
 
 	private async fetch(
 		request: Request,
-		server: App,
+		server: ServerApp,
 	): Promise<Response | undefined> {
 		const req = new CRequest(request);
 		const res = await this.handleRequest(req, (wsRoute) => {
@@ -55,7 +56,7 @@ export class Server extends ServerAbstract {
 		return res?.response;
 	}
 
-	private websocket: Bun.WebSocketHandler<WebSocketRoute> = {
+	private websocket: ServerWebSocketHandler = {
 		async open(ws) {
 			await ws.data.onOpen?.(ws);
 		},

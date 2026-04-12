@@ -3,9 +3,7 @@ import { RouteAbstract } from "@/Route/RouteAbstract";
 import { RouteVariant } from "@/Route/RouteVariant";
 import type { Context } from "@/Context/Context";
 import { Method } from "@/CRequest/Method";
-import type { WebSocketOnOpen } from "@/Route/WebSocketOnOpen";
-import type { WebSocketOnClose } from "@/Route/WebSocketOnClose";
-import type { WebSocketOnMessage } from "@/Route/WebSocketOnMessage";
+import type { WebSocketRouteDefinition } from "@/WebSocketRoute/WebSocketRouteDefinition";
 import type { Func } from "corpus-utils/Func";
 import { joinPathSegments } from "corpus-utils/joinPathSegments";
 
@@ -17,11 +15,11 @@ export abstract class WebSocketRouteAbstract<
 	// FROM CONSTRUCTOR
 	abstract readonly path: E;
 
-	abstract readonly onOpen?: WebSocketOnOpen;
+	abstract readonly onOpen?: WebSocketRouteDefinition["onOpen"];
 
-	abstract readonly onClose?: WebSocketOnClose;
+	abstract readonly onClose?: WebSocketRouteDefinition["onClose"];
 
-	abstract readonly onMessage: WebSocketOnMessage;
+	abstract readonly onMessage: WebSocketRouteDefinition["onMessage"];
 
 	// BASE ROUTE PROPERTIES
 	variant: RouteVariant = RouteVariant.websocket;

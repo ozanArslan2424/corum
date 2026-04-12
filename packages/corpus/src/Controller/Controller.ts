@@ -1,8 +1,9 @@
-import { DynamicRoute } from "@/Route/DynamicRoute";
-import { StaticRoute } from "@/Route/StaticRoute";
+import { DynamicRoute } from "@/DynamicRoute/DynamicRoute";
+import { StaticRoute } from "@/StaticRoute/StaticRoute";
 import { Method } from "@/CRequest/Method";
 import { joinPathSegments } from "corpus-utils/joinPathSegments";
 import type { MiddlewareHandler } from "@/Middleware/MiddlewareHandler";
+import { WebSocketRoute } from "@/WebSocketRoute/WebSocketRoute";
 
 /**
  * Base class for grouping related routes under a shared prefix and optional middleware.
@@ -52,7 +53,6 @@ export abstract class Controller {
 			this.prefix,
 			typeof def === "string" ? def : def.path,
 		);
-
 		const route = new DynamicRoute(
 			{ method, path },
 			async (ctx) => {
@@ -77,13 +77,23 @@ export abstract class Controller {
 	>(
 		...args: ConstructorParameters<typeof StaticRoute<B, S, P, E>>
 	): StaticRoute<B, S, P, E> {
-		const [path, filePath, handler, model] = args;
-		const route = new StaticRoute(
-			joinPathSegments<E>(this.prefix, path),
-			filePath,
-			handler,
-			model,
-		);
+		const [path, ...rest] = args;
+		const endpoint = joinPathSegments<E>(this.prefix, path);
+		const route = new StaticRoute(endpoint, ...rest);
+		this.routeIds.add(route.id);
+		return route;
+	}
+
+	/**
+	 * Registers a websocket route under this controller. Behaves identically to {@link WebSocketRoute}
+	 * but automatically prepends the controller prefix.
+	 */
+	protected websocketRoute<E extends string = string>(
+		...args: ConstructorParameters<typeof WebSocketRoute<E>>
+	) {
+		const [path, ...rest] = args;
+		const endpoint = joinPathSegments<E>(this.prefix, path);
+		const route = new WebSocketRoute(endpoint, ...rest);
 		this.routeIds.add(route.id);
 		return route;
 	}

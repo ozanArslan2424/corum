@@ -7,8 +7,8 @@ import { XFile } from "@/XFile/XFile";
 import { Status } from "@/CResponse/Status";
 import { CommonHeaders } from "@/CHeaders/CommonHeaders";
 import type { Context } from "@/Context/Context";
-import type { StaticRouteDefinition } from "@/Route/StaticRouteDefinition";
-import type { StaticRouteCallback } from "@/Route/StaticRouteCallback";
+import type { StaticRouteDefinition } from "@/StaticRoute/StaticRouteDefinition";
+import type { StaticRouteCallback } from "@/StaticRoute/StaticRouteCallback";
 import type { Func } from "corpus-utils/Func";
 import type { MaybePromise } from "corpus-utils/MaybePromise";
 

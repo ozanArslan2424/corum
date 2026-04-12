@@ -11,7 +11,7 @@ export function createTestWebSocketRoute(log: Log, withAbstract: boolean) {
 
 			path: string = "/ws";
 
-			onOpen?: TC.WebSocketOnOpen | undefined = (ws) => {
+			onOpen?: TC.WebSocketRouteDefinition["onOpen"] | undefined = (ws) => {
 				log.info(
 					`[ws] New connection opened — remoteAddress: ${ws.remoteAddress}`,
 				);
@@ -24,13 +24,17 @@ export function createTestWebSocketRoute(log: Log, withAbstract: boolean) {
 				log.debug(`[ws] Sent connected greeting to ${ws.remoteAddress}`);
 			};
 
-			onClose?: TC.WebSocketOnClose | undefined = (_ws, code, reason) => {
+			onClose?: TC.WebSocketRouteDefinition["onClose"] | undefined = (
+				_ws,
+				code,
+				reason,
+			) => {
 				log.info(
 					`[ws] Connection closed — code=${code} reason=${reason || "no reason provided"}`,
 				);
 			};
 
-			onMessage: TC.WebSocketOnMessage = (ws, message) => {
+			onMessage: TC.WebSocketRouteDefinition["onMessage"] = (ws, message) => {
 				// oxlint-disable-next-line typescript/restrict-template-expressions
 				log.debug(`[ws] Received message: ${message}`);
 				const msg = JSON.parse(message as string) as {

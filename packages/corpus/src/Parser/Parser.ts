@@ -4,7 +4,7 @@ import { CommonHeaders } from "@/CHeaders/CommonHeaders";
 import { CError } from "@/CError/CError";
 import type { CRequest } from "@/CRequest/CRequest";
 import type { CResponse } from "@/CResponse/CResponse";
-import type { SchemaValidator, ValidationIssues } from "@/Model/Schema";
+import type { SchemaValidator, ValidationIssues } from "corpus-utils/Schema";
 import type { UnknownObject } from "corpus-utils/UnknownObject";
 import { arrIncludes } from "corpus-utils/arrIncludes";
 import { isObjectWith } from "corpus-utils/isObjectWith";

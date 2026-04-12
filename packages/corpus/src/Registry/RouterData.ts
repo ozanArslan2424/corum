@@ -1,7 +1,7 @@
 import type { Method } from "@/CRequest/Method";
 import type { RouteVariant } from "@/Route/RouteVariant";
 import type { RouteHandler } from "@/Route/RouteHandler";
-import type { SchemaValidator } from "@/Model/Schema";
+import type { SchemaValidator } from "corpus-utils/Schema";
 
 export type RouterData = {
 	variant: RouteVariant;

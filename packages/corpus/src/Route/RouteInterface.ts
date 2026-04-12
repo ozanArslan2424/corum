@@ -1,10 +1,7 @@
 import type { Method } from "@/CRequest/Method";
-import type { RouteModel } from "@/Model/RouteModel";
+import type { RouteConfig } from "@/Route/RouteConfig";
 import type { RouteVariant } from "@/Route/RouteVariant";
-import type { Context } from "@/Context/Context";
-import type { RouterData } from "@/Registry/RouterData";
-import type { Func } from "corpus-utils/Func";
-import type { MaybePromise } from "corpus-utils/MaybePromise";
+import type { RouteHandler } from "@/Route/RouteHandler";
 
 export interface RouteInterface<
 	B = unknown,
@@ -14,11 +11,10 @@ export interface RouteInterface<
 	E extends string = string,
 > {
 	get id(): string;
-	get handler(): Func<[Context<B, S, P, R>], MaybePromise<R>>;
+	get handler(): RouteHandler<B, S, P, R>;
 	get endpoint(): E;
 	get method(): Method;
 	readonly variant: RouteVariant;
-	readonly model?: RouteModel<B, S, P, R>;
+	readonly model?: RouteConfig<B, S, P, R>;
 	register(): void;
-	toRouterData(): RouterData;
 }

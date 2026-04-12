@@ -1,8 +1,8 @@
 import { createTestServer } from "./utils/createTestServer";
 import { $registryTesting, TC } from "./_modules";
-import { afterEach, describe, expect, it } from "bun:test";
+import { beforeEach, describe, expect, it } from "bun:test";
 
-afterEach(() => $registryTesting.reset());
+beforeEach(() => $registryTesting.reset());
 
 describe("MemoiristAdapter - Route Collision Detection", () => {
 	createTestServer({

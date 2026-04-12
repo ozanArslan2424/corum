@@ -1,13 +1,13 @@
 import { $registryTesting, TC } from "./_modules";
-import { afterEach, describe, expect, it } from "bun:test";
+import { beforeEach, describe, expect, it } from "bun:test";
 import { createTestServer } from "./utils/createTestServer";
 import { type } from "arktype";
 import * as z from "zod";
 import { reqPath } from "./utils/req";
 import { joinPathSegments } from "corpus-utils/joinPathSegments";
-import type { Schema } from "@/index";
+import type { Schema } from "corpus-utils/Schema";
 
-afterEach(() => $registryTesting.reset());
+beforeEach(() => $registryTesting.reset());
 
 const s = createTestServer();
 
@@ -82,8 +82,6 @@ class Model {
 
 class Controller extends TC.Controller {
 	prefix = "/controller";
-
-	override beforeEach?: TC.MiddlewareHandler | undefined;
 
 	arkRoute = this.route(
 		{ method: "POST", path: "/arkRoute/:hello" },

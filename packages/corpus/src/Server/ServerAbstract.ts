@@ -10,7 +10,7 @@ import type { ServeArgs } from "@/Server/ServeArgs";
 import type { ServerInterface } from "@/Server/ServerInterface";
 import { Router } from "@/Registry/Router";
 import type { ServerOptions } from "@/Server/ServerOptions";
-import { WebSocketRoute } from "@/Route/WebSocketRoute";
+import { WebSocketRoute } from "@/WebSocketRoute/WebSocketRoute";
 import type { RouterData } from "@/Registry/RouterData";
 import { RouteVariant } from "@/Route/RouteVariant";
 import type { MaybePromise } from "corpus-utils/MaybePromise";

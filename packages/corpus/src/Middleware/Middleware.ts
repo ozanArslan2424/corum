@@ -13,15 +13,13 @@ export class Middleware extends MiddlewareAbstract {
 	constructor(opts: MiddlewareOptions) {
 		super();
 		this.variant = opts.variant ?? MiddlewareVariant.inbound;
+		this.handler = opts.handler;
 		if (opts.useOn) {
 			this.useOn = opts.useOn;
-		}
-		if (opts.handler) {
-			this.handler = opts.handler;
 		}
 		this.register();
 	}
 
 	readonly useOn: Required<MiddlewareOptions>["useOn"] = "*";
-	readonly handler: Required<MiddlewareOptions>["handler"] = () => {};
+	readonly handler: Required<MiddlewareOptions>["handler"];
 }

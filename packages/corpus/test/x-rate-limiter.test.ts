@@ -1,9 +1,11 @@
 import { $registryTesting, TC, TX } from "./_modules";
-import { afterEach, describe, expect, it } from "bun:test";
+import { beforeEach, describe, expect, it } from "bun:test";
 import { createTestServer } from "./utils/createTestServer";
 import { req } from "./utils/req";
 
-afterEach(() => $registryTesting.reset());
+beforeEach(() => $registryTesting.reset());
+
+const s = createTestServer();
 
 describe("X.RateLimiter", () => {
 	const makeIpReq = (path: string, ip = "1.2.3.4") =>
@@ -15,7 +17,6 @@ describe("X.RateLimiter", () => {
 	// ─── Response Headers ─────────────────────────────────────────
 
 	it("HEADERS - SETS RATELIMIT-LIMIT HEADER ON RESPONSE", async () => {
-		const s = createTestServer();
 		new TX.RateLimiter({ limits: { u: 120, i: 60, f: 20 } });
 		new TC.Route("/rl-limit-header", () => "ok");
 
@@ -24,7 +25,6 @@ describe("X.RateLimiter", () => {
 	});
 
 	it("HEADERS - SETS RATELIMIT-REMAINING HEADER ON RESPONSE", async () => {
-		const s = createTestServer();
 		new TX.RateLimiter({ limits: { u: 120, i: 60, f: 20 } });
 		new TC.Route("/rl-remaining-header", () => "ok");
 
@@ -33,7 +33,6 @@ describe("X.RateLimiter", () => {
 	});
 
 	it("HEADERS - SETS RATELIMIT-RESET HEADER ON RESPONSE", async () => {
-		const s = createTestServer();
 		new TX.RateLimiter({ limits: { u: 120, i: 60, f: 20 } });
 		new TC.Route("/rl-reset-header", () => "ok");
 
@@ -44,7 +43,6 @@ describe("X.RateLimiter", () => {
 	// ─── Remaining Count ──────────────────────────────────────────
 
 	it("REMAINING - DECREMENTS WITH EACH REQUEST", async () => {
-		const s = createTestServer();
 		new TX.RateLimiter({ limits: { u: 120, i: 10, f: 20 } });
 		new TC.Route("/rl-decrement", () => "ok");
 
@@ -57,7 +55,6 @@ describe("X.RateLimiter", () => {
 	});
 
 	it("REMAINING - IS ZERO WHEN LIMIT IS REACHED", async () => {
-		const s = createTestServer();
 		new TX.RateLimiter({ limits: { u: 120, i: 2, f: 20 } });
 		new TC.Route("/rl-zero-remaining", () => "ok");
 
@@ -69,7 +66,6 @@ describe("X.RateLimiter", () => {
 	});
 
 	it("REMAINING - NEVER GOES BELOW ZERO", async () => {
-		const s = createTestServer();
 		new TX.RateLimiter({ limits: { u: 120, i: 1, f: 20 } });
 		new TC.Route("/rl-no-negative", () => "ok");
 
@@ -86,7 +82,6 @@ describe("X.RateLimiter", () => {
 	// ─── Rate Limiting (429) ──────────────────────────────────────
 
 	it("LIMIT - ALLOWS REQUEST WITHIN LIMIT", async () => {
-		const s = createTestServer();
 		new TX.RateLimiter({ limits: { u: 120, i: 5, f: 20 } });
 		new TC.Route("/rl-allow", () => "ok");
 
@@ -95,7 +90,6 @@ describe("X.RateLimiter", () => {
 	});
 
 	it("LIMIT - BLOCKS REQUEST WHEN LIMIT EXCEEDED", async () => {
-		const s = createTestServer();
 		new TX.RateLimiter({ limits: { u: 120, i: 2, f: 20 } });
 		new TC.Route("/rl-block", () => "ok");
 
@@ -107,7 +101,6 @@ describe("X.RateLimiter", () => {
 	});
 
 	it("LIMIT - SETS RETRY-AFTER HEADER WHEN BLOCKED", async () => {
-		const s = createTestServer();
 		new TX.RateLimiter({ limits: { u: 120, i: 1, f: 20 } });
 		new TC.Route("/rl-retry-after", () => "ok");
 
@@ -119,7 +112,6 @@ describe("X.RateLimiter", () => {
 	});
 
 	it("LIMIT - DOES NOT SET RETRY-AFTER WHEN REQUEST IS ALLOWED", async () => {
-		const s = createTestServer();
 		new TX.RateLimiter({ limits: { u: 120, i: 10, f: 20 } });
 		new TC.Route("/rl-no-retry-after", () => "ok");
 
@@ -130,7 +122,6 @@ describe("X.RateLimiter", () => {
 	// ─── Identity - IP ────────────────────────────────────────────
 
 	it("IP - TRACKS DIFFERENT IPs INDEPENDENTLY", async () => {
-		const s = createTestServer();
 		new TX.RateLimiter({ limits: { u: 120, i: 1, f: 20 } });
 		new TC.Route("/rl-ip-separate", () => "ok");
 
@@ -141,7 +132,6 @@ describe("X.RateLimiter", () => {
 	});
 
 	it("IP - USES CF-CONNECTING-IP HEADER WHEN PRESENT", async () => {
-		const s = createTestServer();
 		new TX.RateLimiter({ limits: { u: 120, i: 1, f: 20 } });
 		new TC.Route("/rl-cf-ip", () => "ok");
 
@@ -156,7 +146,6 @@ describe("X.RateLimiter", () => {
 	});
 
 	it("IP - USES X-REAL-IP HEADER WHEN PRESENT", async () => {
-		const s = createTestServer();
 		new TX.RateLimiter({ limits: { u: 120, i: 1, f: 20 } });
 		new TC.Route("/rl-real-ip", () => "ok");
 
@@ -169,7 +158,6 @@ describe("X.RateLimiter", () => {
 	});
 
 	it("IP - IGNORES INVALID IP AND FALLS BACK TO FINGERPRINT", async () => {
-		const s = createTestServer();
 		new TX.RateLimiter({ limits: { u: 120, i: 60, f: 1 } });
 		new TC.Route("/rl-invalid-ip", () => "ok");
 
@@ -190,7 +178,6 @@ describe("X.RateLimiter", () => {
 	// ─── Identity - Auth Token ────────────────────────────────────
 
 	it("AUTH - TRACKS BY TOKEN INDEPENDENTLY FROM IP", async () => {
-		const s = createTestServer();
 		new TX.RateLimiter({ limits: { u: 5, i: 1, f: 20 } });
 		new TC.Route("/rl-auth-separate", () => "ok");
 
@@ -206,7 +193,6 @@ describe("X.RateLimiter", () => {
 	});
 
 	it("AUTH - APPLIES HIGHER LIMIT FOR AUTHENTICATED USERS", async () => {
-		const s = createTestServer();
 		new TX.RateLimiter({ limits: { u: 5, i: 1, f: 20 } });
 		new TC.Route("/rl-auth-limit", () => "ok");
 
@@ -219,7 +205,6 @@ describe("X.RateLimiter", () => {
 	});
 
 	it("AUTH - IGNORES TOKEN SHORTER THAN 20 CHARS", async () => {
-		const s = createTestServer();
 		new TX.RateLimiter({ limits: { u: 120, i: 1, f: 20 } });
 		new TC.Route("/rl-short-token", () => "ok");
 
@@ -236,7 +221,6 @@ describe("X.RateLimiter", () => {
 	// ─── Custom Header Names ──────────────────────────────────────
 
 	it("CONFIG - USES CUSTOM HEADER NAMES WHEN PROVIDED", async () => {
-		const s = createTestServer();
 		new TX.RateLimiter({
 			limits: { u: 120, i: 60, f: 20 },
 			headerNames: {
@@ -258,7 +242,6 @@ describe("X.RateLimiter", () => {
 	// ─── Combined ─────────────────────────────────────────────────
 
 	it("COMBINED - ALL HEADERS PRESENT WITH CORRECT VALUES ON FIRST REQUEST", async () => {
-		const s = createTestServer();
 		new TX.RateLimiter({
 			limits: { u: 120, i: 10, f: 20 },
 			windowMs: 60_000,

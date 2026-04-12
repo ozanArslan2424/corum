@@ -1,5 +1,5 @@
 import { $registry } from "@/index";
-import type { CorsOptions } from "@/XCors/CorsOptions";
+import type { XCorsOptions } from "@/XCors/XCorsOptions";
 import { MiddlewareVariant } from "@/Middleware/MiddlewareVariant";
 import { MiddlewareAbstract } from "@/Middleware/MiddlewareAbstract";
 import type { MiddlewareUseOn } from "@/Middleware/MiddlewareUseOn";
@@ -13,7 +13,7 @@ import { isSomeArray } from "corpus-utils/isSomeArray";
 
 /** Simple cors helper to set CORS headers. Also provides a preflight handler for the Server. */
 export class XCors extends MiddlewareAbstract {
-	constructor(private readonly opts: CorsOptions | undefined) {
+	constructor(private readonly opts: XCorsOptions | undefined) {
 		super();
 		$registry.cors = this;
 	}

@@ -1,11 +1,10 @@
-import type { InferSchema } from "@/Model/Schema";
-import type { RouteModel } from "@/Model/RouteModel";
-import type { Schema } from "@/Model/Schema";
+import type { InferSchema, Schema } from "corpus-utils/Schema";
+import type { RouteConfig } from "@/Route/RouteConfig";
 import type { Prettify } from "corpus-utils/Prettify";
 
 /** If you prefer to put all schemas into a single object, this will be helpful */
 export type XInferModel<T extends Record<string, any>> = {
-	[K in keyof T as K extends "prototype" ? never : K]: T[K] extends RouteModel<
+	[K in keyof T as K extends "prototype" ? never : K]: T[K] extends RouteConfig<
 		any,
 		any,
 		any,

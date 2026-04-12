@@ -5,5 +5,5 @@ import type { MiddlewareUseOn } from "@/Middleware/MiddlewareUseOn";
 export type MiddlewareOptions = {
 	variant?: MiddlewareVariant;
 	useOn?: MiddlewareUseOn;
-	handler?: MiddlewareHandler;
+	handler: MiddlewareHandler;
 };

@@ -5,7 +5,7 @@ import type { RouterReturn } from "@/Registry/RouterReturn";
 import type { RouterData } from "@/Registry/RouterData";
 import type { RouteInterface } from "@/Route/RouteInterface";
 import { BranchAdapter } from "@/Registry/BranchAdapter";
-import type { RouteModel } from "@/Model/RouteModel";
+import type { RouteConfig } from "@/Route/RouteConfig";
 import { log } from "corpus-utils/internalLog";
 import { internFunc } from "corpus-utils/internFunc";
 import { objGetKeys } from "corpus-utils/objGetKeys";
@@ -19,13 +19,13 @@ export class Router {
 	private funcMap = new Map<string, Func>();
 
 	add(route: RouteInterface<any, any, any, any, string>): void {
-		const data = route.toRouterData();
+		const data = this.routeToRouterData(route);
 		if (route.model) {
 			if (!data.model) {
 				data.model = {};
 			}
 			// const modelData: RouterData["model"] = {};
-			for (const key of objGetKeys<keyof RouteModel>(route.model)) {
+			for (const key of objGetKeys<keyof RouteConfig>(route.model)) {
 				if (key === "response") continue;
 				const schema = route.model[key];
 				if (!schema) continue;
@@ -61,5 +61,17 @@ export class Router {
 			);
 		}
 		return fn?.() ?? [];
+	}
+
+	private routeToRouterData(
+		route: RouteInterface<any, any, any, any, string>,
+	): RouterData {
+		return {
+			id: route.id,
+			endpoint: route.endpoint,
+			method: route.method,
+			handler: route.handler,
+			variant: route.variant,
+		};
 	}
 }

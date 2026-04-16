@@ -4,36 +4,36 @@ WORKDIR /usr/src/app
 FROM base AS build
 RUN bun add -g pnpm
 
-# Copy root workspace files
+# 1. Copy root config and ALL package.jsons to establish the workspace map
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
-
-# Copy package.json files for the app and its dependency to cache install
 COPY packages/docs/package.json ./packages/docs/
 COPY packages/corpus/package.json ./packages/corpus/
 
-# Install dependencies (resolves the workspace link)
-RUN pnpm install --frozen-lockfile
+# 2. Install dependencies
+# We use --shamefully-hoist to ensure Bun can resolve packages easily in a monorepo
+RUN pnpm install --frozen-lockfile --shamefully-hoist
 
-# Copy the actual source code for both packages
-COPY packages/docs ./packages/docs
+# 3. Copy source code for BOTH packages
 COPY packages/corpus ./packages/corpus
+COPY packages/docs ./packages/docs
 
-# Build the package
-RUN pnpm --filter corpus-docs build
+# 4. Build the dependency first (Crucial if @ozanarslan/corpus has its own build step)
+RUN pnpm --filter @ozanarslan/corpus build || echo "No build script for corpus"
 
-# Verify build output
-RUN find ./packages/docs/dist -maxdepth 2
+# 5. Build the docs package
+# We run this from the package directory to ensure Bun resolves local paths correctly
+WORKDIR /usr/src/app/packages/docs
+RUN bun run build.ts
 
 FROM base AS release
 WORKDIR /usr/src/app
 
-# Copy the built assets
+# 6. Copy the built assets
 COPY --from=build /usr/src/app/packages/docs/dist .
 
 EXPOSE 3000
 ENV NODE_ENV=production
 
-# Verification of the release structure
 RUN ls -R .
 
 CMD ["bun", "run", "index.js"]

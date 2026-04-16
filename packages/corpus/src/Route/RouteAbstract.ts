@@ -1,7 +1,7 @@
 import { $registry } from "@/index";
 import { Method } from "@/CRequest/Method";
 import { RouteVariant } from "@/Route/RouteVariant";
-import type { RouteConfig } from "@/Route/RouteConfig";
+import type { RouteModel } from "@/Route/RouteModel";
 import type { RouteInterface } from "@/Route/RouteInterface";
 import type { RouteHandler } from "@/Route/RouteHandler";
 
@@ -24,7 +24,7 @@ export abstract class RouteAbstract<
 
 	abstract readonly variant: RouteVariant;
 
-	abstract readonly model?: RouteConfig<B, S, P, R>;
+	abstract readonly model?: RouteModel<B, S, P, R>;
 
 	register(): void {
 		$registry.router.add(this);

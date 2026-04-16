@@ -12,7 +12,7 @@ import { XConfig } from "@/XConfig/XConfig";
 import type { CacheDirective } from "@/CHeaders/CacheDirective";
 import type { BundleRouteConfig } from "@/BundleRoute/BundleRouteConfig";
 import { CommonHeaders } from "@/CHeaders/CommonHeaders";
-import type { RouteConfig } from "@/C";
+import type { RouteModel } from "@/C";
 
 type R = CResponse | string;
 
@@ -56,7 +56,7 @@ export abstract class BundleRouteAbstract<
 
 	// ROUTE BASE PROPERTIES
 	readonly variant: RouteVariant = RouteVariant.bundle;
-	readonly model?: RouteConfig<B, S, P, R> | undefined = undefined;
+	readonly model?: RouteModel<B, S, P, R> | undefined = undefined;
 
 	get endpoint(): E {
 		return this.path;

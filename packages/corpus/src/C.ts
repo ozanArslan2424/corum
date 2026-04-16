@@ -32,7 +32,7 @@ export type { CResponseInit as ResponseInit } from "./CResponse/CResponseInit";
 export { CResponse as Response } from "./CResponse/CResponse";
 
 export * from "./Route/RouteInterface";
-export * from "./Route/RouteConfig";
+export * from "./Route/RouteModel";
 
 export { DynamicRoute as Route } from "./DynamicRoute/DynamicRoute";
 export { DynamicRouteAbstract as RouteAbstract } from "./DynamicRoute/DynamicRouteAbstract";

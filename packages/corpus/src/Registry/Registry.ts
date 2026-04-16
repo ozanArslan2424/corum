@@ -1,7 +1,7 @@
 import { MiddlewareStore } from "@/Registry/MiddlewareStore";
 import type { Router } from "@/Registry/Router";
 import type { XCors } from "@/XCors/XCors";
-import type { RouteConfig } from "@/Route/RouteConfig";
+import type { RouteModel } from "@/Route/RouteModel";
 import { logFatal } from "corpus-utils/internalLog";
 import { EntityStore } from "@/Registry/EntityStore";
 
@@ -9,7 +9,7 @@ type DocEntry = {
 	id: string;
 	endpoint: string;
 	method: string;
-	model: RouteConfig<any, any, any, any> | undefined;
+	model: RouteModel<any, any, any, any> | undefined;
 };
 
 export class Registry {

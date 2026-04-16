@@ -1,5 +1,5 @@
 import type { Method } from "@/CRequest/Method";
-import type { RouteConfig } from "@/Route/RouteConfig";
+import type { RouteModel } from "@/Route/RouteModel";
 import type { RouteVariant } from "@/Route/RouteVariant";
 import type { RouteHandler } from "@/Route/RouteHandler";
 
@@ -15,6 +15,6 @@ export interface RouteInterface<
 	get endpoint(): E;
 	get method(): Method;
 	readonly variant: RouteVariant;
-	readonly model?: RouteConfig<B, S, P, R>;
+	readonly model?: RouteModel<B, S, P, R>;
 	register(): void;
 }

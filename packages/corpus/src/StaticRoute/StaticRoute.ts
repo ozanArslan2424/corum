@@ -1,5 +1,5 @@
 import { CResponse } from "@/CResponse/CResponse";
-import type { RouteConfig } from "@/Route/RouteConfig";
+import type { RouteModel } from "@/Route/RouteModel";
 import type { StaticRouteDefinition } from "@/StaticRoute/StaticRouteDefinition";
 import { StaticRouteAbstract } from "@/StaticRoute/StaticRouteAbstract";
 import type { StaticRouteCallback } from "@/StaticRoute/StaticRouteCallback";
@@ -40,7 +40,7 @@ export class StaticRoute<
 		readonly path: E,
 		readonly definition: StaticRouteDefinition,
 		readonly callback?: StaticRouteCallback<B, S, P>,
-		readonly model?: RouteConfig<B, S, P, R>,
+		readonly model?: RouteModel<B, S, P, R>,
 	) {
 		super();
 		this.register();

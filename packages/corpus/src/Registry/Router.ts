@@ -5,7 +5,7 @@ import type { RouterReturn } from "@/Registry/RouterReturn";
 import type { RouterData } from "@/Registry/RouterData";
 import type { RouteInterface } from "@/Route/RouteInterface";
 import { BranchAdapter } from "@/Registry/BranchAdapter";
-import type { RouteConfig } from "@/Route/RouteConfig";
+import type { RouteModel } from "@/Route/RouteModel";
 import { log } from "corpus-utils/internalLog";
 import { internFunc } from "corpus-utils/internFunc";
 import { objGetKeys } from "corpus-utils/objGetKeys";
@@ -25,7 +25,7 @@ export class Router {
 				data.model = {};
 			}
 			// const modelData: RouterData["model"] = {};
-			for (const key of objGetKeys<keyof RouteConfig>(route.model)) {
+			for (const key of objGetKeys<keyof RouteModel>(route.model)) {
 				if (key === "response") continue;
 				const schema = route.model[key];
 				if (!schema) continue;

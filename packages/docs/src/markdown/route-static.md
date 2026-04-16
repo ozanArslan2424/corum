@@ -160,13 +160,14 @@ type RouteModel<B = unknown, S = unknown, P = unknown, R = unknown> = {
 
 All constructor options are stored as readonly properties after resolve methods:
 
-| Property   | Type                                                   | Description                                       |
-| ---------- | ------------------------------------------------------ | ------------------------------------------------- |
-| `id`       | `string`                                               | Unique route identifier (`{method}:{endpoint}`)   |
-| `method`   | `Method`                                               | Fixed to `Method.GET`                             |
-| `endpoint` | `E`                                                    | Resolved path                                     |
-| `handler`  | `Func<[Context<B, S, P, R>, string], MaybePromise<R>>` | The route handler function (file serve or custom) |
-| `model`    | `RouteModel \| undefined`                              | Validation model if provided                      |
-| `variant`  | `RouteVariant.static`                                  | Fixed to `static` for this class                  |
+| Property         | Type                                                   | Description                                       |
+| ---------------- | ------------------------------------------------------ | ------------------------------------------------- | ------------------------------------------ |
+| `id`             | `string`                                               | Unique route identifier (`{method}:{endpoint}`)   |
+| `method`         | `Method`                                               | Fixed to `Method.GET`                             |
+| `endpoint`       | `E`                                                    | Resolved path                                     |
+| `handler`        | `Func<[Context<B, S, P, R>, string], MaybePromise<R>>` | The route handler function (file serve or custom) |
+| `model`          | `RouteModel \| undefined`                              | Validation model if provided                      |
+| `variant`        | `RouteVariant.static`                                  | Fixed to `static` for this class                  |
+| `onFileNotFound` | `Func<[],Promise<CResponse                             | never>>`                                          | override to change file not found behavior |
 
 </section>

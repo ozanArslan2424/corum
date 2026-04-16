@@ -14,6 +14,8 @@ import type { MiddlewareUseOn } from "@/Middleware/MiddlewareUseOn";
 import { logFatal } from "corpus-utils/internalLog";
 import { strIsDefined } from "corpus-utils/strIsDefined";
 import crypto from "crypto";
+import { $registry } from "@/index";
+import { RouteVariant } from "@/Route/RouteVariant";
 
 export class XRateLimiter extends MiddlewareAbstract {
 	constructor(config: Partial<RateLimitConfig> = {}) {
@@ -26,7 +28,12 @@ export class XRateLimiter extends MiddlewareAbstract {
 	}
 
 	override variant: MiddlewareVariant = MiddlewareVariant.inbound;
-	override useOn: MiddlewareUseOn = "*";
+	override get useOn(): MiddlewareUseOn {
+		return $registry.router
+			.list()
+			.filter((r) => r.variant !== RouteVariant.bundle)
+			.map((r) => r.id);
+	}
 	override handler: MiddlewareHandler = async (c) => {
 		const result = await this.getResult(c.headers);
 		c.res.headers.innerCombine(result.headers);

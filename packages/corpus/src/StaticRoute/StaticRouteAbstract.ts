@@ -27,6 +27,12 @@ export abstract class StaticRouteAbstract<
 
 	abstract readonly callback?: StaticRouteCallback<B, S, P>;
 
+	// PROTECTED
+
+	protected onFileNotFound: Func<[], Promise<CResponse | never>> = () => {
+		throw new CError(Status.NOT_FOUND.toString(), Status.NOT_FOUND);
+	};
+
 	protected get filePath(): string {
 		return typeof this.definition === "string"
 			? this.definition
@@ -52,7 +58,7 @@ export abstract class StaticRouteAbstract<
 				const file = new XFile(this.filePath);
 				const exists = await file.exists();
 				if (!exists) {
-					throw new CError(Status.NOT_FOUND.toString(), Status.NOT_FOUND);
+					return await this.onFileNotFound();
 				}
 				const content = await file.text();
 				c.res.headers.setMany({

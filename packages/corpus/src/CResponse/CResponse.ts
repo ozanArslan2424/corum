@@ -153,20 +153,35 @@ export class CResponse<R = unknown> {
 		return res;
 	}
 
+	private static async resolveFile(
+		fileOrPath: XFile | string,
+		init?: Omit<CResponseInit, "status">,
+	): Promise<XFile> {
+		let file: XFile;
+
+		if (fileOrPath instanceof XFile) {
+			file = fileOrPath;
+		} else {
+			file = new XFile(fileOrPath);
+			const exists = await file.exists();
+			if (!exists) {
+				throw new CError(
+					Status.NOT_FOUND.toString(),
+					Status.NOT_FOUND,
+					new CResponse({ filePath: fileOrPath }, init),
+				);
+			}
+		}
+
+		return file;
+	}
+
 	static async streamFile(
-		filePath: string,
+		fileOrPath: XFile | string,
 		disposition: "attachment" | "inline" = "attachment",
 		init?: Omit<CResponseInit, "status">,
 	): Promise<CResponse<ReadableStream>> {
-		const file = new XFile(filePath);
-		const exists = await file.exists();
-		if (!exists) {
-			throw new CError(
-				Status.NOT_FOUND.toString(),
-				Status.NOT_FOUND,
-				new CResponse({ filePath }, init),
-			);
-		}
+		const file = await this.resolveFile(fileOrPath, init);
 		const stream = file.stream();
 		const res = new CResponse(stream, { ...init, status: Status.OK });
 		res.headers.setMany({
@@ -177,18 +192,10 @@ export class CResponse<R = unknown> {
 	}
 
 	static async file(
-		filePath: string,
+		fileOrPath: XFile | string,
 		init?: CResponseInit,
 	): Promise<CResponse<string>> {
-		const file = new XFile(filePath);
-		const exists = await file.exists();
-		if (!exists) {
-			throw new CError(
-				Status.NOT_FOUND.toString(),
-				Status.NOT_FOUND,
-				new CResponse({ filePath }, init),
-			);
-		}
+		const file = await this.resolveFile(fileOrPath, init);
 		const content = await file.text();
 		const res = new CResponse(content, init);
 		res.headers.setMany({

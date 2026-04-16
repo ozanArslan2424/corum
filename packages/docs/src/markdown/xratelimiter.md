@@ -17,6 +17,8 @@ The `XRateLimiter` class provides intelligent rate limiting with tiered identifi
 
 ## Usage
 
+> Normally instantiation of middlewares before routes is accepted and middlewares are correctly applied. However, RateLimiter ignores bundle routes by default and MUST be instantiated after all routes are registered.
+
 <section>
 
 ### Basic setup

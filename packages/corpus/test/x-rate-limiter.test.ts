@@ -17,24 +17,24 @@ describe("X.RateLimiter", () => {
 	// ─── Response Headers ─────────────────────────────────────────
 
 	it("HEADERS - SETS RATELIMIT-LIMIT HEADER ON RESPONSE", async () => {
-		new TX.RateLimiter({ limits: { u: 120, i: 60, f: 20 } });
 		new TC.Route("/rl-limit-header", () => "ok");
+		new TX.RateLimiter({ limits: { u: 120, i: 60, f: 20 } });
 
 		const res = await s.handle(makeIpReq("/rl-limit-header"));
 		expect(res.headers.get("RateLimit-Limit")).not.toBeNull();
 	});
 
 	it("HEADERS - SETS RATELIMIT-REMAINING HEADER ON RESPONSE", async () => {
-		new TX.RateLimiter({ limits: { u: 120, i: 60, f: 20 } });
 		new TC.Route("/rl-remaining-header", () => "ok");
+		new TX.RateLimiter({ limits: { u: 120, i: 60, f: 20 } });
 
 		const res = await s.handle(makeIpReq("/rl-remaining-header"));
 		expect(res.headers.get("RateLimit-Remaining")).not.toBeNull();
 	});
 
 	it("HEADERS - SETS RATELIMIT-RESET HEADER ON RESPONSE", async () => {
-		new TX.RateLimiter({ limits: { u: 120, i: 60, f: 20 } });
 		new TC.Route("/rl-reset-header", () => "ok");
+		new TX.RateLimiter({ limits: { u: 120, i: 60, f: 20 } });
 
 		const res = await s.handle(makeIpReq("/rl-reset-header"));
 		expect(res.headers.get("RateLimit-Reset")).not.toBeNull();
@@ -43,8 +43,8 @@ describe("X.RateLimiter", () => {
 	// ─── Remaining Count ──────────────────────────────────────────
 
 	it("REMAINING - DECREMENTS WITH EACH REQUEST", async () => {
-		new TX.RateLimiter({ limits: { u: 120, i: 10, f: 20 } });
 		new TC.Route("/rl-decrement", () => "ok");
+		new TX.RateLimiter({ limits: { u: 120, i: 10, f: 20 } });
 
 		const res1 = await s.handle(makeIpReq("/rl-decrement"));
 		const res2 = await s.handle(makeIpReq("/rl-decrement"));
@@ -55,8 +55,8 @@ describe("X.RateLimiter", () => {
 	});
 
 	it("REMAINING - IS ZERO WHEN LIMIT IS REACHED", async () => {
-		new TX.RateLimiter({ limits: { u: 120, i: 2, f: 20 } });
 		new TC.Route("/rl-zero-remaining", () => "ok");
+		new TX.RateLimiter({ limits: { u: 120, i: 2, f: 20 } });
 
 		await s.handle(makeIpReq("/rl-zero-remaining"));
 		await s.handle(makeIpReq("/rl-zero-remaining"));
@@ -66,8 +66,8 @@ describe("X.RateLimiter", () => {
 	});
 
 	it("REMAINING - NEVER GOES BELOW ZERO", async () => {
-		new TX.RateLimiter({ limits: { u: 120, i: 1, f: 20 } });
 		new TC.Route("/rl-no-negative", () => "ok");
+		new TX.RateLimiter({ limits: { u: 120, i: 1, f: 20 } });
 
 		for (let i = 0; i < 5; i++) {
 			await s.handle(makeIpReq("/rl-no-negative"));
@@ -82,16 +82,16 @@ describe("X.RateLimiter", () => {
 	// ─── Rate Limiting (429) ──────────────────────────────────────
 
 	it("LIMIT - ALLOWS REQUEST WITHIN LIMIT", async () => {
-		new TX.RateLimiter({ limits: { u: 120, i: 5, f: 20 } });
 		new TC.Route("/rl-allow", () => "ok");
+		new TX.RateLimiter({ limits: { u: 120, i: 5, f: 20 } });
 
 		const res = await s.handle(makeIpReq("/rl-allow"));
 		expect(res.status).toBe(200);
 	});
 
 	it("LIMIT - BLOCKS REQUEST WHEN LIMIT EXCEEDED", async () => {
-		new TX.RateLimiter({ limits: { u: 120, i: 2, f: 20 } });
 		new TC.Route("/rl-block", () => "ok");
+		new TX.RateLimiter({ limits: { u: 120, i: 2, f: 20 } });
 
 		await s.handle(makeIpReq("/rl-block"));
 		await s.handle(makeIpReq("/rl-block"));
@@ -101,8 +101,8 @@ describe("X.RateLimiter", () => {
 	});
 
 	it("LIMIT - SETS RETRY-AFTER HEADER WHEN BLOCKED", async () => {
-		new TX.RateLimiter({ limits: { u: 120, i: 1, f: 20 } });
 		new TC.Route("/rl-retry-after", () => "ok");
+		new TX.RateLimiter({ limits: { u: 120, i: 1, f: 20 } });
 
 		await s.handle(makeIpReq("/rl-retry-after"));
 		const res = await s.handle(makeIpReq("/rl-retry-after"));
@@ -112,8 +112,8 @@ describe("X.RateLimiter", () => {
 	});
 
 	it("LIMIT - DOES NOT SET RETRY-AFTER WHEN REQUEST IS ALLOWED", async () => {
-		new TX.RateLimiter({ limits: { u: 120, i: 10, f: 20 } });
 		new TC.Route("/rl-no-retry-after", () => "ok");
+		new TX.RateLimiter({ limits: { u: 120, i: 10, f: 20 } });
 
 		const res = await s.handle(makeIpReq("/rl-no-retry-after"));
 		expect(res.headers.get("Retry-After")).toBeNull();
@@ -122,8 +122,8 @@ describe("X.RateLimiter", () => {
 	// ─── Identity - IP ────────────────────────────────────────────
 
 	it("IP - TRACKS DIFFERENT IPs INDEPENDENTLY", async () => {
-		new TX.RateLimiter({ limits: { u: 120, i: 1, f: 20 } });
 		new TC.Route("/rl-ip-separate", () => "ok");
+		new TX.RateLimiter({ limits: { u: 120, i: 1, f: 20 } });
 
 		await s.handle(makeIpReq("/rl-ip-separate", "1.2.3.4"));
 		const res = await s.handle(makeIpReq("/rl-ip-separate", "9.8.7.6"));
@@ -132,8 +132,8 @@ describe("X.RateLimiter", () => {
 	});
 
 	it("IP - USES CF-CONNECTING-IP HEADER WHEN PRESENT", async () => {
-		new TX.RateLimiter({ limits: { u: 120, i: 1, f: 20 } });
 		new TC.Route("/rl-cf-ip", () => "ok");
+		new TX.RateLimiter({ limits: { u: 120, i: 1, f: 20 } });
 
 		await s.handle(
 			req("/rl-cf-ip", { headers: { "cf-connecting-ip": "5.5.5.5" } }),
@@ -146,8 +146,8 @@ describe("X.RateLimiter", () => {
 	});
 
 	it("IP - USES X-REAL-IP HEADER WHEN PRESENT", async () => {
-		new TX.RateLimiter({ limits: { u: 120, i: 1, f: 20 } });
 		new TC.Route("/rl-real-ip", () => "ok");
+		new TX.RateLimiter({ limits: { u: 120, i: 1, f: 20 } });
 
 		await s.handle(req("/rl-real-ip", { headers: { "x-real-ip": "6.6.6.6" } }));
 		const res = await s.handle(
@@ -158,8 +158,8 @@ describe("X.RateLimiter", () => {
 	});
 
 	it("IP - IGNORES INVALID IP AND FALLS BACK TO FINGERPRINT", async () => {
-		new TX.RateLimiter({ limits: { u: 120, i: 60, f: 1 } });
 		new TC.Route("/rl-invalid-ip", () => "ok");
+		new TX.RateLimiter({ limits: { u: 120, i: 60, f: 1 } });
 
 		await s.handle(
 			req("/rl-invalid-ip", {
@@ -178,8 +178,8 @@ describe("X.RateLimiter", () => {
 	// ─── Identity - Auth Token ────────────────────────────────────
 
 	it("AUTH - TRACKS BY TOKEN INDEPENDENTLY FROM IP", async () => {
-		new TX.RateLimiter({ limits: { u: 5, i: 1, f: 20 } });
 		new TC.Route("/rl-auth-separate", () => "ok");
+		new TX.RateLimiter({ limits: { u: 5, i: 1, f: 20 } });
 
 		// Exhaust IP limit
 		await s.handle(makeIpReq("/rl-auth-separate", "7.7.7.7"));
@@ -193,8 +193,8 @@ describe("X.RateLimiter", () => {
 	});
 
 	it("AUTH - APPLIES HIGHER LIMIT FOR AUTHENTICATED USERS", async () => {
-		new TX.RateLimiter({ limits: { u: 5, i: 1, f: 20 } });
 		new TC.Route("/rl-auth-limit", () => "ok");
+		new TX.RateLimiter({ limits: { u: 5, i: 1, f: 20 } });
 
 		const token = "b".repeat(20);
 		// IP limit is 1, auth limit is 5 — do 3 requests, expect all to pass
@@ -205,8 +205,8 @@ describe("X.RateLimiter", () => {
 	});
 
 	it("AUTH - IGNORES TOKEN SHORTER THAN 20 CHARS", async () => {
-		new TX.RateLimiter({ limits: { u: 120, i: 1, f: 20 } });
 		new TC.Route("/rl-short-token", () => "ok");
+		new TX.RateLimiter({ limits: { u: 120, i: 1, f: 20 } });
 
 		// Short token — should fall back to IP or fingerprint, not u: limit
 		await s.handle(makeAuthReq("/rl-short-token", "tooshort"));
@@ -221,6 +221,7 @@ describe("X.RateLimiter", () => {
 	// ─── Custom Header Names ──────────────────────────────────────
 
 	it("CONFIG - USES CUSTOM HEADER NAMES WHEN PROVIDED", async () => {
+		new TC.Route("/rl-custom-headers", () => "ok");
 		new TX.RateLimiter({
 			limits: { u: 120, i: 60, f: 20 },
 			headerNames: {
@@ -230,7 +231,6 @@ describe("X.RateLimiter", () => {
 				retryAfter: "X-My-Retry-After",
 			},
 		});
-		new TC.Route("/rl-custom-headers", () => "ok");
 
 		const res = await s.handle(makeIpReq("/rl-custom-headers"));
 		expect(res.headers.get("X-My-Limit")).not.toBeNull();
@@ -242,11 +242,11 @@ describe("X.RateLimiter", () => {
 	// ─── Combined ─────────────────────────────────────────────────
 
 	it("COMBINED - ALL HEADERS PRESENT WITH CORRECT VALUES ON FIRST REQUEST", async () => {
+		new TC.Route("/rl-combined", () => "ok");
 		new TX.RateLimiter({
 			limits: { u: 120, i: 10, f: 20 },
 			windowMs: 60_000,
 		});
-		new TC.Route("/rl-combined", () => "ok");
 
 		const res = await s.handle(makeIpReq("/rl-combined"));
 

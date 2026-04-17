@@ -1,5 +1,4 @@
 import { isNil } from "corpus-utils/isNil";
-import { isPlainObject } from "corpus-utils/isPlainObject";
 import { isPrimitive } from "corpus-utils/isPrimitive";
 
 import { CError } from "@/CError/CError";
@@ -287,7 +286,7 @@ export class CResponse<R = unknown> {
 			return this.data.toISOString();
 		}
 
-		if (Array.isArray(this.data) || isPlainObject(this.data)) {
+		if (Array.isArray(this.data) || typeof this.data === "object") {
 			this.setContentType("application/json");
 			return JSON.stringify(this.data);
 		}

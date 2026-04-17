@@ -1,5 +1,11 @@
 # @ozanarslan/corpus
 
+## 0.5.1
+
+### Patch Changes
+
+- bugfix: response body parsing
+
 ## 0.5.0
 
 ### Minor Changes

@@ -47,39 +47,6 @@ describe("C.Response", () => {
 		return;
 	}
 
-	it("EMPTY BODY", async () => {
-		const res = new TC.Response();
-		const response = res.response;
-		const data = await response.text();
-		await expectData({
-			res,
-			response,
-			data,
-		});
-	});
-
-	it("NULL BODY", async () => {
-		const res = new TC.Response(null);
-		const response = res.response;
-		const data = await response.text();
-		await expectData({
-			res,
-			response,
-			data,
-		});
-	});
-
-	it("UNDEFINED BODY", async () => {
-		const res = new TC.Response(undefined);
-		const response = res.response;
-		const data = await response.text();
-		await expectData({
-			res,
-			response,
-			data,
-		});
-	});
-
 	it("REDIRECT BY INIT HEADERS", async () => {
 		const res = new TC.Response(undefined, { headers: [[locHeader, locUrl]] });
 		expect(res.headers.get(locHeader)).toBe(locUrl);
@@ -228,55 +195,6 @@ describe("C.Response", () => {
 		expect(cleaned).toBe(true);
 	});
 
-	it("ARRAYBUFFER BODY", async () => {
-		const buffer = new TextEncoder().encode("hello").buffer;
-		const res = new TC.Response(buffer);
-		const response = res.response;
-
-		expect(res.body).toBeInstanceOf(ArrayBuffer);
-		expect(res.headers.get(ctHeader)).toBe("application/octet-stream");
-		expect(res.status).toBe(TC.Status.OK);
-		const text = await response.text();
-		expect(text).toBe("hello");
-	});
-
-	it("BLOB BODY", async () => {
-		const blob = new Blob(["hello"], { type: "text/html" });
-		const res = new TC.Response(blob);
-		const response = res.response;
-
-		expect(res.body).toBeInstanceOf(Blob);
-		expect(res.status).toBe(TC.Status.OK);
-		const text = await response.text();
-		expect(text).toBe("hello");
-		expect(response.headers.get(ctHeader)).toContain("text/html");
-	});
-
-	it("FORMDATA BODY", async () => {
-		const form = new FormData();
-		form.append("name", "corpus");
-		const res = new TC.Response(form);
-		const response = res.response;
-
-		expect(res.body).toBeInstanceOf(FormData);
-		expect(res.status).toBe(TC.Status.OK);
-		const text = await response.text();
-		expect(text).toContain("corpus");
-		expect(response.headers.get(ctHeader)).toContain("multipart/form-data");
-	});
-
-	it("URLSEARCHPARAMS BODY", async () => {
-		const params = new URLSearchParams({ name: "corpus" });
-		const res = new TC.Response(params);
-		const response = res.response;
-
-		expect(res.body).toBeInstanceOf(URLSearchParams);
-		expect(res.status).toBe(TC.Status.OK);
-		const text = await response.text();
-		expect(text).toBe("name=corpus");
-		expect(response.headers.get(ctHeader)).toContain("application/x-www-form-urlencoded");
-	});
-
 	it("NDJSON - RETURNS STREAM WITH CORRECT HEADERS", async () => {
 		const res = TC.Response.ndjson((send) => {
 			send({ id: 1 });
@@ -361,5 +279,234 @@ describe("C.Response", () => {
 		const res = await TC.Response.streamFile("test/fixtures/sample.txt");
 		const text = await res.response.text();
 		expect(text.length).toBeGreaterThan(0);
+	});
+
+	// ─── Primitives ───────────────────────────────────────────────────────────────
+
+	it("EMPTY BODY", async () => {
+		const res = new TC.Response();
+		const response = res.response;
+		const data = await response.text();
+		await expectData({
+			res,
+			response,
+			data,
+		});
+	});
+
+	it("NULL BODY", async () => {
+		const res = new TC.Response(null);
+		const response = res.response;
+		const data = await response.text();
+		await expectData({
+			res,
+			response,
+			data,
+		});
+	});
+
+	it("UNDEFINED BODY", async () => {
+		const res = new TC.Response(undefined);
+		const response = res.response;
+		const data = await response.text();
+		await expectData({
+			res,
+			response,
+			data,
+		});
+	});
+
+	it("ARRAYBUFFER BODY", async () => {
+		const buffer = new TextEncoder().encode("hello").buffer;
+		const res = new TC.Response(buffer);
+		const response = res.response;
+
+		expect(res.body).toBeInstanceOf(ArrayBuffer);
+		expect(res.headers.get(ctHeader)).toBe("application/octet-stream");
+		expect(res.status).toBe(TC.Status.OK);
+		const text = await response.text();
+		expect(text).toBe("hello");
+	});
+
+	it("BLOB BODY", async () => {
+		const blob = new Blob(["hello"], { type: "text/html" });
+		const res = new TC.Response(blob);
+		const response = res.response;
+
+		expect(res.body).toBeInstanceOf(Blob);
+		expect(res.status).toBe(TC.Status.OK);
+		const text = await response.text();
+		expect(text).toBe("hello");
+		expect(response.headers.get(ctHeader)).toContain("text/html");
+	});
+
+	it("CUSTOM OBJECT BODY", async () => {
+		class Obj {
+			public readonly key = "value";
+		}
+		const res = new TC.Response(new Obj());
+		const response = res.response;
+
+		expect(res.status).toBe(TC.Status.OK);
+		const data = await response.json();
+		expect(data).toEqual({ key: "value" });
+		expect(response.headers.get(ctHeader)).toContain("application/json");
+	});
+
+	it("FORMDATA BODY", async () => {
+		const form = new FormData();
+		form.append("name", "corpus");
+		const res = new TC.Response(form);
+		const response = res.response;
+
+		expect(res.body).toBeInstanceOf(FormData);
+		expect(res.status).toBe(TC.Status.OK);
+		const text = await response.text();
+		expect(text).toContain("corpus");
+		expect(response.headers.get(ctHeader)).toContain("multipart/form-data");
+	});
+
+	it("URLSEARCHPARAMS BODY", async () => {
+		const params = new URLSearchParams({ name: "corpus" });
+		const res = new TC.Response(params);
+		const response = res.response;
+
+		expect(res.body).toBeInstanceOf(URLSearchParams);
+		expect(res.status).toBe(TC.Status.OK);
+		const text = await response.text();
+		expect(text).toBe("name=corpus");
+		expect(response.headers.get(ctHeader)).toContain("application/x-www-form-urlencoded");
+	});
+
+	it("STRING BODY", async () => {
+		const res = new TC.Response("hello");
+		const response = res.response;
+		expect(res.body).toBe("hello");
+		expect(res.headers.get(ctHeader)).toBe("text/plain");
+		expect(await response.text()).toBe("hello");
+	});
+
+	it("EMPTY STRING BODY", async () => {
+		const res = new TC.Response("");
+		const response = res.response;
+		expect(res.body).toBe("");
+		expect(res.headers.get(ctHeader)).toBe("text/plain");
+		expect(await response.text()).toBe("");
+	});
+
+	it("NUMBER BODY", async () => {
+		const res = new TC.Response(42);
+		const response = res.response;
+		expect(res.body).toBe("42");
+		expect(res.headers.get(ctHeader)).toBe("text/plain");
+		expect(await response.text()).toBe("42");
+	});
+
+	it("ZERO BODY", async () => {
+		const res = new TC.Response(0);
+		const response = res.response;
+		expect(res.body).toBe("0");
+		expect(res.headers.get(ctHeader)).toBe("text/plain");
+		expect(await response.text()).toBe("0");
+	});
+
+	it("BOOLEAN TRUE BODY", async () => {
+		const res = new TC.Response(true);
+		const response = res.response;
+		expect(res.body).toBe("true");
+		expect(res.headers.get(ctHeader)).toBe("text/plain");
+		expect(await response.text()).toBe("true");
+	});
+
+	it("BOOLEAN FALSE BODY", async () => {
+		const res = new TC.Response(false);
+		const response = res.response;
+		expect(res.body).toBe("false");
+		expect(res.headers.get(ctHeader)).toBe("text/plain");
+		expect(await response.text()).toBe("false");
+	});
+
+	it("BIGINT BODY", async () => {
+		const res = new TC.Response(9007199254740993n);
+		const response = res.response;
+		expect(res.body).toBe("9007199254740993");
+		expect(res.headers.get(ctHeader)).toBe("text/plain");
+		expect(await response.text()).toBe("9007199254740993");
+	});
+
+	it("DATE BODY", async () => {
+		const date = new Date("2024-01-01T00:00:00.000Z");
+		const res = new TC.Response(date);
+		const response = res.response;
+		expect(res.body).toBe(date.toISOString());
+		expect(res.headers.get(ctHeader)).toBe("text/plain");
+		expect(await response.text()).toBe("2024-01-01T00:00:00.000Z");
+	});
+
+	it("PLAIN OBJECT BODY", async () => {
+		const obj = { a: 1, b: "two", c: true };
+		const res = new TC.Response(obj);
+		const response = res.response;
+		expect(res.body).toBe(JSON.stringify(obj));
+		expect(res.headers.get(ctHeader)).toBe("application/json");
+		expect(await response.json()).toEqual(obj);
+	});
+
+	it("EMPTY OBJECT BODY", async () => {
+		const res = new TC.Response({});
+		const response = res.response;
+		expect(res.body).toBe("{}");
+		expect(res.headers.get(ctHeader)).toBe("application/json");
+		expect(await response.json()).toEqual({});
+	});
+
+	it("NESTED OBJECT BODY", async () => {
+		const obj = { a: { b: { c: [1, 2, 3] } } };
+		const res = new TC.Response(obj);
+		const response = res.response;
+		expect(res.body).toBe(JSON.stringify(obj));
+		expect(res.headers.get(ctHeader)).toBe("application/json");
+		expect(await response.json()).toEqual(obj);
+	});
+
+	it("ARRAY BODY", async () => {
+		const arr = [1, "two", true, null];
+		const res = new TC.Response(arr);
+		const response = res.response;
+		expect(res.body).toBe(JSON.stringify(arr));
+		expect(res.headers.get(ctHeader)).toBe("application/json");
+		expect(await response.json()).toEqual(arr);
+	});
+
+	it("EMPTY ARRAY BODY", async () => {
+		const res = new TC.Response([]);
+		const response = res.response;
+		expect(res.body).toBe("[]");
+		expect(res.headers.get(ctHeader)).toBe("application/json");
+		expect(await response.json()).toEqual([]);
+	});
+
+	it("ARRAY OF OBJECTS BODY", async () => {
+		const arr = [{ id: 1 }, { id: 2 }];
+		const res = new TC.Response(arr);
+		const response = res.response;
+		expect(res.body).toBe(JSON.stringify(arr));
+		expect(res.headers.get(ctHeader)).toBe("application/json");
+		expect(await response.json()).toEqual(arr);
+	});
+
+	it("READABLE STREAM BODY", async () => {
+		const encoder = new TextEncoder();
+		const stream = new ReadableStream({
+			start(controller) {
+				controller.enqueue(encoder.encode("chunk1"));
+				controller.enqueue(encoder.encode("chunk2"));
+				controller.close();
+			},
+		});
+		const res = new TC.Response(stream);
+		const response = res.response;
+		expect(res.body).toBeInstanceOf(ReadableStream);
+		expect(await response.text()).toBe("chunk1chunk2");
 	});
 });

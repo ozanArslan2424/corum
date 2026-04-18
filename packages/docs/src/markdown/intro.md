@@ -103,7 +103,7 @@ export class AuthMiddleware extends C.Middleware {
 Corpus works best when you follow this structure:
 
 1. **Models** — Define your data shape using a schema library
-2. **Repository** — Extend `X.Repository` for database queries
+2. **Repository** — Your own repository code.
 3. **Service** — Business logic that uses the repository
 4. **Controller** — HTTP handlers that call the service
 
@@ -115,7 +115,7 @@ This keeps your code testable and organized without forcing a specific DI system
 - **Schema Validation** — Works with any Standard Schema library (arktype, zod, etc.).
 - **Static Routes** — Serve static files with StaticRoute or via Controller.
 - **Middleware** — Register global or route-specific middleware easily.
-- **Extras Module** — CORS, Repository base class, router adapters, and utilities like env helper.
+- **Extras Module** — CORS, router adapters, and utilities like env helper.
 - **Error Handling** — Structured error responses with CError and built-in status codes.
 
 ## What You Don't Get (And That's Okay)
@@ -141,7 +141,6 @@ You can extend several interfaces to customize behavior:
 declare module "@ozanarslan/corpus" {
 	interface Env {} // X.Config env interface
 	interface ContextDataInterface {} // Context data shape (c.data)
-	interface DatabaseClientInterface {} // X.Repository db dependency
 }
 ```
 

@@ -43,7 +43,7 @@ That's it. Your barebones backend is running.
 - Request handling using `RouteContext` (the `(c) => {}` callback pattern)
 - Loading env variables using `Config`
 - Other utilities such as setting cors, global prefix, error handling etc.
-- The package exports two modules: `C` (default) for the core API, and `X` - also importable as `Extra` - for additional utilities like Cors, Repository, router adapters etc.
+- The package exports two modules: `C` (default) for the core API, and `X` - also importable as `Extra` - for additional utilities like Cors, router adapters etc.
 
 ## How does the routing work?
 
@@ -79,14 +79,18 @@ export class ItemModel {
 // This helper type could also work for similar prototypes
 export type ItemType = X.InferModel<typeof ItemModel>;
 
-// This is also a personal helper, all repositories get
-// the DatabaseClientInterface in constructor args.
-// This interface can be extended.
-export class ItemRepository extends X.Repository {
+// Entity is for data transfer objects.
+export class ItemEntity extends C.Entity({
+    name: "Item",
+    schema: { ... }
+}) {}
+
+// Repository layer isn't included.
+export class ItemRepository {
 	// ...
 }
 
-// Service layer isn't included, it's just a good idea
+// Service layer isn't included.
 export class ItemService {
 	constructor(private readonly itemRepository: ItemRepository) {}
 
@@ -154,9 +158,6 @@ declare module "@ozanarslan/corpus" {
 
 	// Any data assigned to c.data anywhere
 	interface ContextDataInterface {}
-
-	// The database client class I use in my app
-	interface DatabaseClientInterface extends DatabaseClient {}
 }
 ```
 

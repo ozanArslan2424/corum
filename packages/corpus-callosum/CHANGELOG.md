@@ -1,5 +1,11 @@
 # @ozanarslan/corpus-callosum
 
+## 0.5.2
+
+### Patch Changes
+
+- Removed XRepository
+
 ## 0.5.1
 
 ### Patch Changes

@@ -45,8 +45,11 @@
 				<p>Simple middleware system for authentication, logging, and request modification.</p>
 			</div>
 			<div class="feature">
-				<h3>Repository Pattern</h3>
-				<p>Base class for data access. Models, Services, Controllers—organized without DI magic.</p>
+				<h3>Entity Pattern</h3>
+				<p>
+					Base class for object data transfer. Models, Services, Controllers—organized without DI
+					magic.
+				</p>
 			</div>
 			<div class="feature">
 				<h3>Static Routes</h3>
@@ -125,7 +128,7 @@ export class ItemModel {
 }
 
 // Repository
-export class ItemRepository extends X.Repository {
+export class ItemRepository {
     async getAll() { /* ... */ }
 }
 

@@ -115,13 +115,13 @@ const api = new CorpusApi(BASE_URL);
 }
 
 {
-	const res = await api.usersGet({ search: { page: 1, limit: 10 } });
+	const res = await api.usersGet({ search: { page: "1", limit: "10" } });
 	T.expect("usersGet returns array", Array.isArray(res)).toBe(true);
 }
 
 {
 	const res = await api.usersGet({
-		search: { page: 1, limit: 5, role: "editor" },
+		search: { page: "1", limit: "5", role: "editor" },
 	});
 	T.expect("usersGet with role filter returns array", Array.isArray(res)).toBe(true);
 }
@@ -220,7 +220,7 @@ const api = new CorpusApi(BASE_URL);
 {
 	const res = await api.orgsOrgIdMembersGet({
 		params: { orgId: "org1" },
-		search: { page: 1, limit: 20 },
+		search: { page: "1", limit: "20" },
 	});
 	T.expect("orgsOrgIdMembersGet returns array", Array.isArray(res)).toBe(true);
 }

@@ -1,8 +1,9 @@
 import type { Config } from "../Config/Config";
+import type { ImportableInterface } from "../Importable/ImportableInterface";
 import type { ModuleInterface } from "../Module/ModuleInterface";
 import { Writer } from "../Writer/Writer";
 
-export function writeRepositoryFile(c: Config, m: ModuleInterface) {
+export function writeRepositoryFile(c: Config, m: ModuleInterface, db: ImportableInterface) {
 	const w = new Writer(m.repository.filePath);
 	w.$import({ keys: ["X"], from: c.pkgPath });
 	w.$import({
@@ -14,7 +15,9 @@ export function writeRepositoryFile(c: Config, m: ModuleInterface) {
 	w.$class({
 		isExported: true,
 		name: m.repository.name,
-		extends: "X.Repository",
+		constr: {
+			args: [{ keyword: "private readonly", key: "db", type: db.name }],
+		},
 		body: (w) => {
 			w.$method({
 				name: "findById",

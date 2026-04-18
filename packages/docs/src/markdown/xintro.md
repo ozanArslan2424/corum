@@ -9,8 +9,7 @@ The X modules provide optional utilities and extensions for common web applicati
 1. [X.Cors](#xcors)
 2. [X.RateLimiter](#xratelimiter)
 3. [X.File](#xfile)
-4. [X.Repository](#xrepository)
-5. [X.InferModel](#xinfermodel)
+4. [X.InferModel](#xinfermodel)
 
 </section>
 
@@ -68,26 +67,6 @@ if (await file.exists()) {
 ```
 
 See [XFile](/docs/xfile) for streaming and full API.
-
-</section>
-
-## X.Repository
-
-<section>
-
-Abstract base class for database repositories.
-
-```ts
-import { X } from "@ozanarslan/corpus";
-
-class UserRepository extends X.Repository {
-	async findById(id: number) {
-		return this.db.query("SELECT * FROM users WHERE id = ?", [id]);
-	}
-}
-```
-
-Extend `DatabaseClientInterface` via module augmentation for type safety. See [XRepository](/docs/xrepository).
 
 </section>
 

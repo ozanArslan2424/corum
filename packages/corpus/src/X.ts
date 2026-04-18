@@ -5,8 +5,6 @@ export { XCors as Cors } from "./XCors/XCors";
 
 export { XFile as File } from "./XFile/XFile";
 
-export { XRepository as Repository } from "./XRepository/XRepository";
-
 export { XRateLimiter as RateLimiter } from "./XRateLimiter/XRateLimiter";
 export * from "./XRateLimiter/RateLimiterFileStore";
 export * from "./XRateLimiter/RateLimiterMemoryStore";

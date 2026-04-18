@@ -36,11 +36,11 @@ export async function initialize(config: Config) {
 	const mod = new Module(im, exampleModuleName);
 
 	writeModelFile(config, mod);
-	writeRepositoryFile(config, mod);
+	writeRepositoryFile(config, mod, database);
 	writeServiceFile(config, mod);
 	writeControllerFile(config, mod);
 	writeDatabaseFile(mod, database);
-	writesTypesFile(config, im.typesFilePath, database);
+	writesTypesFile(config, im.typesFilePath);
 	writeMainFile(config, im.mainFilePath, database, [mod]);
 
 	console.log(`✅ Corpus initialized in ${im.targetDir}`);

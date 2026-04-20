@@ -53,30 +53,30 @@ describe("Parser unit", () => {
 
 	describe("failure", () => {
 		it("ark object", async () => {
-			expect(parse(BAD, TestModel.arkObject)).rejects.toThrow(TC.Error);
+			expect(parse(BAD, TestModel.arkObject)).rejects.toThrow(TC.Exception);
 		});
 		it("zod object", async () => {
-			expect(parse(BAD, TestModel.zodObject)).rejects.toThrow(TC.Error);
+			expect(parse(BAD, TestModel.zodObject)).rejects.toThrow(TC.Exception);
 		});
 		it("ark route", async () => {
-			expect(parse(BAD, TestModel.arkRoute.params)).rejects.toThrow(TC.Error);
-			expect(parse(BAD, TestModel.arkRoute.search)).rejects.toThrow(TC.Error);
-			expect(parse(BAD, TestModel.arkRoute.body)).rejects.toThrow(TC.Error);
+			expect(parse(BAD, TestModel.arkRoute.params)).rejects.toThrow(TC.Exception);
+			expect(parse(BAD, TestModel.arkRoute.search)).rejects.toThrow(TC.Exception);
+			expect(parse(BAD, TestModel.arkRoute.body)).rejects.toThrow(TC.Exception);
 		});
 		it("zod route", async () => {
-			expect(parse(BAD, TestModel.zodRoute.params)).rejects.toThrow(TC.Error);
-			expect(parse(BAD, TestModel.zodRoute.search)).rejects.toThrow(TC.Error);
-			expect(parse(BAD, TestModel.zodRoute.body)).rejects.toThrow(TC.Error);
+			expect(parse(BAD, TestModel.zodRoute.params)).rejects.toThrow(TC.Exception);
+			expect(parse(BAD, TestModel.zodRoute.search)).rejects.toThrow(TC.Exception);
+			expect(parse(BAD, TestModel.zodRoute.body)).rejects.toThrow(TC.Exception);
 		});
 		it("ark route (referenced schemas)", async () => {
-			expect(parse(BAD, TestModel.arkRouteReferenced.params)).rejects.toThrow(TC.Error);
-			expect(parse(BAD, TestModel.arkRouteReferenced.search)).rejects.toThrow(TC.Error);
-			expect(parse(BAD, TestModel.arkRouteReferenced.body)).rejects.toThrow(TC.Error);
+			expect(parse(BAD, TestModel.arkRouteReferenced.params)).rejects.toThrow(TC.Exception);
+			expect(parse(BAD, TestModel.arkRouteReferenced.search)).rejects.toThrow(TC.Exception);
+			expect(parse(BAD, TestModel.arkRouteReferenced.body)).rejects.toThrow(TC.Exception);
 		});
 		it("zod route (referenced schemas)", async () => {
-			expect(parse(BAD, TestModel.zodRouteReferenced.params)).rejects.toThrow(TC.Error);
-			expect(parse(BAD, TestModel.zodRouteReferenced.search)).rejects.toThrow(TC.Error);
-			expect(parse(BAD, TestModel.zodRouteReferenced.body)).rejects.toThrow(TC.Error);
+			expect(parse(BAD, TestModel.zodRouteReferenced.params)).rejects.toThrow(TC.Exception);
+			expect(parse(BAD, TestModel.zodRouteReferenced.search)).rejects.toThrow(TC.Exception);
+			expect(parse(BAD, TestModel.zodRouteReferenced.body)).rejects.toThrow(TC.Exception);
 		});
 	});
 });

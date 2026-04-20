@@ -1,10 +1,10 @@
 import type { Func } from "corpus-utils/Func";
 
-import type { CRequest } from "@/CRequest/CRequest";
-import type { Method } from "@/CRequest/Method";
+import type { Method } from "@/Method/Method";
 import type { RouterAdapterInterface } from "@/Registry/RouterAdapterInterface";
 import type { RouterData } from "@/Registry/RouterData";
 import type { RouterReturn } from "@/Registry/RouterReturn";
+import type { Req } from "@/Req/Req";
 
 type Store = Map<Method, RouterData>;
 
@@ -62,7 +62,7 @@ export class BranchAdapter implements RouterAdapterInterface {
 	private _root: Branch = this.createBranch(this.SLASH, null);
 	private storeFactory: Func<[], Store> = () => new Map();
 
-	find(req: CRequest): RouterReturn | null {
+	find(req: Req): RouterReturn | null {
 		const method = req.method.toUpperCase() as Method;
 		const pathname = req.urlObject.pathname;
 

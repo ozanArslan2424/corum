@@ -1,6 +1,6 @@
-# CError
+# Exception
 
-The `CError` class extends native `Error` with HTTP status codes and optional data payload. It provides a `toResponse()` method for converting errors into `CResponse` objects, making it ideal for consistent error handling across your application.
+The `Exception` class extends native `Error` with HTTP status codes and optional data payload. It provides a `response` getter for converting errors into `Res` objects, making it ideal for consistent error handling across your application.
 
 <section class="table-of-contents">
 
@@ -26,7 +26,7 @@ new C.Route("/users/:id", (c) => {
 	const user = findUser(c.params.id);
 
 	if (!user) {
-		throw new C.Error("User not found", C.Status.NOT_FOUND);
+		throw new C.Exception("User not found", C.Status.NOT_FOUND);
 	}
 
 	return user;
@@ -40,7 +40,7 @@ new C.Route("/validate", (c) => {
 	const errors = validate(c.body);
 
 	if (errors.length > 0) {
-		throw new C.Error("Validation failed", C.Status.BAD_REQUEST, { errors });
+		throw new C.Exception("Validation failed", C.Status.BAD_REQUEST, { errors });
 	}
 
 	return { valid: true };
@@ -54,7 +54,7 @@ new C.Route("/handle", async (c) => {
 	try {
 		return await riskyOperation();
 	} catch (err) {
-		if (err instanceof C.Error) {
+		if (err instanceof C.Exception) {
 			// this is already done in the Server.handleError
 			return err.response;
 		}
@@ -73,7 +73,7 @@ new C.Middleware({
 		try {
 			return c.next();
 		} catch (err) {
-			if (err instanceof C.Error && err.isStatusOf(C.Status.UNAUTHORIZED)) {
+			if (err instanceof C.Exception && err.isStatusOf(C.Status.UNAUTHORIZED)) {
 				c.res.headers.set("X-Auth-Required", "true");
 			}
 			throw err;
@@ -112,7 +112,7 @@ HTTP status code for this error. Use `C.Status` enum for standard codes.
 
 `unknown`
 
-Additional data to include in the response. If a `CResponse` is passed, it will be modified with the status code and returned as-is in the `res` getter.
+Additional data to include in the response. If a `Res` is passed, it will be modified with the status code and returned as-is in the `res` getter.
 
 </section>
 
@@ -125,7 +125,7 @@ Additional data to include in the response. If a `CResponse` is passed, it will 
 | message  | `string`    | Error message (inherited from Error)       |
 | status   | `Status`    | HTTP status code                           |
 | data     | `unknown`   | Optional additional payload                |
-| res      | `CResponse` | Getter to transform to CRequest, see below |
+| response      | `Res` | Getter to transform to Res, see below |
 
 </section>
 
@@ -133,22 +133,22 @@ Additional data to include in the response. If a `CResponse` is passed, it will 
 
 ### response
 
-`get res(): CResponse`
+`get response(): Res`
 
-Converts the error to a `CResponse`:
+Converts the error to a `Res`:
 
-- If `data` is a `CResponse` — returns it with `status` applied
+- If `data` is a `Res` — returns it with `status` applied
 - Otherwise — returns JSON response with `{ error, message }` shape
 
 ```ts
 // With plain data
-const err = new C.Error("Not found", C.Status.NOT_FOUND);
-return err.res;
-// → CResponse with body { error: true, message: "Not found" }
+const err = new C.Exception("Not found", C.Status.NOT_FOUND);
+return err.response;
+// → Res with body { error: true, message: "Not found" }
 
-// With CResponse data
-const err = new C.Error("Failed", C.Status.BAD_REQUEST, new C.Response("custom"));
-return err.res; // → The passed CResponse with status 400
+// With Res data
+const err = new C.Exception("Failed", C.Status.BAD_REQUEST, new C.Res("custom"));
+return err.response; // → The passed Res with status 400
 ```
 
 </section>
@@ -164,7 +164,7 @@ return err.res; // → The passed CResponse with status 400
 Checks if the error matches a specific HTTP status code.
 
 ```ts
-const err = new C.Error("Not found", C.Status.NOT_FOUND);
+const err = new C.Exception("Not found", C.Status.NOT_FOUND);
 err.isStatusOf(C.Status.NOT_FOUND); // true
 err.isStatusOf(C.Status.BAD_REQUEST); // false
 ```

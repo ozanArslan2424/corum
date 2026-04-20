@@ -1,16 +1,16 @@
 import { isNil } from "corpus-utils/isNil";
 import { isPrimitive } from "corpus-utils/isPrimitive";
 
-import { CError } from "@/CError/CError";
 import { CHeaders } from "@/CHeaders/CHeaders";
-import { CommonHeaders } from "@/CHeaders/CommonHeaders";
+import { CommonHeaders } from "@/CommonHeaders/CommonHeaders";
 import { Cookies } from "@/Cookies/Cookies";
-import type { CResponseBody } from "@/CResponse/CResponseBody";
-import type { CResponseInit } from "@/CResponse/CResponseInit";
-import { DefaultStatusTexts } from "@/CResponse/DefaultStatusTexts";
-import type { NdjsonSource } from "@/CResponse/NdjsonSource";
-import type { SseSource } from "@/CResponse/SseSource";
-import { Status } from "@/CResponse/Status";
+import { Exception } from "@/Exception/Exception";
+import type { NdjsonSource } from "@/Res/NdjsonSource";
+import type { ResBody } from "@/Res/ResBody";
+import type { ResInit } from "@/Res/ResInit";
+import type { SseSource } from "@/Res/SseSource";
+import { DefaultStatusTexts } from "@/Status/DefaultStatusTexts";
+import { Status } from "@/Status/Status";
 import { XFile } from "@/XFile/XFile";
 
 /**
@@ -29,26 +29,26 @@ import { XFile } from "@/XFile/XFile";
  * - `ReadableStream` → streamed as-is, set `Content-Type` manually via `init.headers`
  * - Custom class instances → falls back to `.toString()`
  *
- * Use {@link CResponse.response} to get the native web `Response` to return from a route handler.
+ * Use {@link Res.response} to get the native web `Response` to return from a route handler.
  *
  * Static helpers:
- * - {@link CResponse.redirect} / {@link CResponse.permanentRedirect} / {@link CResponse.temporaryRedirect} / {@link CResponse.seeOther} — HTTP redirects
- * - {@link CResponse.sse} — Server-Sent Events stream
- * - {@link CResponse.ndjson} — Newline-delimited JSON stream
- * - {@link CResponse.streamFile} — Stream a file from disk
- * - {@link CResponse.file} — Respond with a static file
+ * - {@link Res.redirect} / {@link Res.permanentRedirect} / {@link Res.temporaryRedirect} / {@link Res.seeOther} — HTTP redirects
+ * - {@link Res.sse} — Server-Sent Events stream
+ * - {@link Res.ndjson} — Newline-delimited JSON stream
+ * - {@link Res.streamFile} — Stream a file from disk
+ * - {@link Res.file} — Respond with a static file
  */
 
-export class CResponse<R = unknown> {
+export class Res<R = unknown> {
 	constructor(
-		public data?: CResponseBody<R>,
-		protected readonly init?: CResponseInit | CResponse,
+		public data?: ResBody<R>,
+		protected readonly init?: ResInit | Res,
 	) {
 		this.cookies = this.resolveCookies();
 		this.headers = this.resolveHeaders();
 		this.body = this.resolveBody();
 		this.status = this.resolveStatus();
-		this.statusText = CResponse.getDefaultStatusText(this.status);
+		this.statusText = Res.getDefaultStatusText(this.status);
 	}
 
 	body: BodyInit;
@@ -73,8 +73,8 @@ export class CResponse<R = unknown> {
 		});
 	}
 
-	static redirect(url: string | URL, init?: CResponseInit): CResponse {
-		const res = new CResponse(undefined, {
+	static redirect(url: string | URL, init?: ResInit): Res {
+		const res = new Res(undefined, {
 			...init,
 			status: init?.status ?? Status.FOUND,
 			statusText: init?.statusText ?? DefaultStatusTexts[Status.FOUND],
@@ -84,24 +84,24 @@ export class CResponse<R = unknown> {
 		return res;
 	}
 
-	static permanentRedirect(url: string | URL, init?: Omit<CResponseInit, "status">): CResponse {
+	static permanentRedirect(url: string | URL, init?: Omit<ResInit, "status">): Res {
 		return this.redirect(url, {
 			...init,
 			status: Status.MOVED_PERMANENTLY,
 		});
 	}
 
-	static temporaryRedirect(url: string | URL, init?: Omit<CResponseInit, "status">): CResponse {
+	static temporaryRedirect(url: string | URL, init?: Omit<ResInit, "status">): Res {
 		return this.redirect(url, { ...init, status: Status.TEMPORARY_REDIRECT });
 	}
 
-	static seeOther(url: string | URL, init?: Omit<CResponseInit, "status">): CResponse {
+	static seeOther(url: string | URL, init?: Omit<ResInit, "status">): Res {
 		return this.redirect(url, { ...init, status: Status.SEE_OTHER });
 	}
 
-	static sse(source: SseSource, init?: Omit<CResponseInit, "status">, retry?: number): CResponse {
+	static sse(source: SseSource, init?: Omit<ResInit, "status">, retry?: number): Res {
 		const encoder = new TextEncoder();
-		const stream = CResponse.createStream((controller, isCancelled) => {
+		const stream = Res.createStream((controller, isCancelled) => {
 			return source((event) => {
 				if (isCancelled()) return;
 				let chunk = "";
@@ -112,7 +112,7 @@ export class CResponse<R = unknown> {
 				controller.enqueue(encoder.encode(chunk));
 			});
 		});
-		const res = new CResponse(stream, { ...init, status: Status.OK });
+		const res = new Res(stream, { ...init, status: Status.OK });
 		res.headers.setMany({
 			[CommonHeaders.ContentType]: "text/event-stream",
 			[CommonHeaders.CacheControl]: "no-cache",
@@ -121,15 +121,15 @@ export class CResponse<R = unknown> {
 		return res;
 	}
 
-	static ndjson(source: NdjsonSource, init?: Omit<CResponseInit, "status">): CResponse {
+	static ndjson(source: NdjsonSource, init?: Omit<ResInit, "status">): Res {
 		const encoder = new TextEncoder();
-		const stream = CResponse.createStream((controller, isCancelled) => {
+		const stream = Res.createStream((controller, isCancelled) => {
 			return source((item) => {
 				if (isCancelled()) return;
 				controller.enqueue(encoder.encode(`${JSON.stringify(item)}\n`));
 			});
 		});
-		const res = new CResponse(stream, { ...init, status: Status.OK });
+		const res = new Res(stream, { ...init, status: Status.OK });
 		res.headers.setMany({
 			[CommonHeaders.ContentType]: "application/x-ndjson",
 			[CommonHeaders.CacheControl]: "no-cache",
@@ -139,7 +139,7 @@ export class CResponse<R = unknown> {
 
 	private static async resolveFile(
 		fileOrPath: XFile | string,
-		init?: Omit<CResponseInit, "status">,
+		init?: Omit<ResInit, "status">,
 	): Promise<XFile> {
 		let file: XFile;
 
@@ -149,10 +149,10 @@ export class CResponse<R = unknown> {
 			file = new XFile(fileOrPath);
 			const exists = await file.exists();
 			if (!exists) {
-				throw new CError(
+				throw new Exception(
 					Status.NOT_FOUND.toString(),
 					Status.NOT_FOUND,
-					new CResponse({ filePath: fileOrPath }, init),
+					new Res({ filePath: fileOrPath }, init),
 				);
 			}
 		}
@@ -163,11 +163,11 @@ export class CResponse<R = unknown> {
 	static async streamFile(
 		fileOrPath: XFile | string,
 		disposition: "attachment" | "inline" = "attachment",
-		init?: Omit<CResponseInit, "status">,
-	): Promise<CResponse<ReadableStream>> {
+		init?: Omit<ResInit, "status">,
+	): Promise<Res<ReadableStream>> {
 		const file = await this.resolveFile(fileOrPath, init);
 		const stream = file.stream();
-		const res = new CResponse(stream, { ...init, status: Status.OK });
+		const res = new Res(stream, { ...init, status: Status.OK });
 		res.headers.setMany({
 			[CommonHeaders.ContentType]: file.mimeType,
 			[CommonHeaders.ContentDisposition]: `${disposition}; filename="${file.name}"`,
@@ -175,10 +175,10 @@ export class CResponse<R = unknown> {
 		return res;
 	}
 
-	static async file(fileOrPath: XFile | string, init?: CResponseInit): Promise<CResponse<string>> {
+	static async file(fileOrPath: XFile | string, init?: ResInit): Promise<Res<string>> {
 		const file = await this.resolveFile(fileOrPath, init);
 		const content = await file.text();
-		const res = new CResponse(content, init);
+		const res = new Res(content, init);
 		res.headers.setMany({
 			[CommonHeaders.ContentType]: file.mimeType,
 			[CommonHeaders.ContentLength]: content.length.toString(),

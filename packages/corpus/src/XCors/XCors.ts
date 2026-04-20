@@ -1,15 +1,15 @@
 import { boolToString } from "corpus-utils/boolToString";
 import { isSomeArray } from "corpus-utils/isSomeArray";
 
-import { CommonHeaders } from "@/CHeaders/CommonHeaders";
-import { CResponse } from "@/CResponse/CResponse";
-import { Status } from "@/CResponse/Status";
+import { CommonHeaders } from "@/CommonHeaders/CommonHeaders";
 import { $registry } from "@/index";
 import { MiddlewareAbstract } from "@/Middleware/MiddlewareAbstract";
 import type { MiddlewareHandler } from "@/Middleware/MiddlewareHandler";
 import type { MiddlewareUseOn } from "@/Middleware/MiddlewareUseOn";
 import { MiddlewareVariant } from "@/Middleware/MiddlewareVariant";
+import { Res } from "@/Res/Res";
 import type { RequestHandler } from "@/Server/RequestHandler";
+import { Status } from "@/Status/Status";
 import type { XCorsOptions } from "@/XCors/XCorsOptions";
 
 /** Simple cors helper to set CORS headers. Also provides a preflight handler for the Server. */
@@ -72,7 +72,7 @@ export class XCors extends MiddlewareAbstract {
 	/** Preflight handler for OPTIONS requests. */
 	getPreflightHandler(): RequestHandler {
 		return (req) => {
-			const res = new CResponse(undefined, { status: Status.NO_CONTENT });
+			const res = new Res(undefined, { status: Status.NO_CONTENT });
 			this.applyHeaders(res.headers, req.headers.get("origin") ?? "", true);
 			return res;
 		};

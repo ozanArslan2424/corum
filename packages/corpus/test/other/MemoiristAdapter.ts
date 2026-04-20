@@ -26,7 +26,7 @@ export class MemoiristAdapter implements TC.RouterAdapterInterface {
 	readonly __brand: string = "MemoiristAdapter";
 	private router = new Memoirist<TC.RouterData>();
 
-	find(req: TC.Request): TC.RouterReturn | null {
+	find(req: TC.Req): TC.RouterReturn | null {
 		const method = req.method;
 		const pathname = req.urlObject.pathname;
 

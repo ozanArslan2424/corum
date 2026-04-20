@@ -3,26 +3,26 @@ import type { MaybePromise } from "corpus-utils/MaybePromise";
 
 import type { BundleRouteConfig } from "@/BundleRoute/BundleRouteConfig";
 import type { RouteModel } from "@/C";
-import { CError } from "@/CError/CError";
-import type { CacheDirective } from "@/CHeaders/CacheDirective";
-import { CommonHeaders } from "@/CHeaders/CommonHeaders";
+import type { CacheDirective } from "@/CommonHeaders/CacheDirective";
+import { CommonHeaders } from "@/CommonHeaders/CommonHeaders";
 import type { Context } from "@/Context/Context";
-import { Method } from "@/CRequest/Method";
-import { CResponse } from "@/CResponse/CResponse";
-import { Status } from "@/CResponse/Status";
-import { RouteAbstract } from "@/Route/RouteAbstract";
-import { RouteVariant } from "@/Route/RouteVariant";
+import { Exception } from "@/Exception/Exception";
+import { Method } from "@/Method/Method";
+import { Res } from "@/Res/Res";
+import { BaseRouteAbstract } from "@/BaseRoute/BaseRouteAbstract";
+import { RouteVariant } from "@/BaseRoute/RouteVariant";
+import { Status } from "@/Status/Status";
 import { XConfig } from "@/XConfig/XConfig";
 import { XFile } from "@/XFile/XFile";
 
-type R = CResponse | string;
+type R = Res | string;
 
 export abstract class BundleRouteAbstract<
 	B = unknown,
 	S = unknown,
 	P = unknown,
 	E extends string = string,
-> extends RouteAbstract<B, S, P, R, E> {
+> extends BaseRouteAbstract<B, S, P, R, E> {
 	// FROM CONSTRUCTOR
 	abstract readonly path: E;
 
@@ -32,8 +32,8 @@ export abstract class BundleRouteAbstract<
 
 	// PROTECTED
 
-	protected onFileNotFound: Func<[], Promise<CResponse | never>> = () => {
-		throw new CError(Status.NOT_FOUND.toString(), Status.NOT_FOUND);
+	protected onFileNotFound: Func<[], Promise<Res | never>> = () => {
+		throw new Exception(Status.NOT_FOUND.toString(), Status.NOT_FOUND);
 	};
 
 	protected defaultConfig: BundleRouteConfig = {
@@ -94,9 +94,7 @@ export abstract class BundleRouteAbstract<
 			}
 
 			const res =
-				file.extension !== "html"
-					? await CResponse.streamFile(file, "inline")
-					: await CResponse.file(file);
+				file.extension !== "html" ? await Res.streamFile(file, "inline") : await Res.file(file);
 
 			const cacheConfig = this.bundleConfig?.cache ?? this.defaultConfig.cache;
 

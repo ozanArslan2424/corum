@@ -1,6 +1,6 @@
-# CResponse
+# Res
 
-The `CResponse` class represents an HTTP response with automatic body serialization, cookie handling, and header management. It provides static helpers for common response patterns like redirects, file streaming, and Server-Sent Events.
+The `Res` class represents an HTTP response with automatic body serialization, cookie handling, and header management. It provides static helpers for common response patterns like redirects, file streaming, and Server-Sent Events.
 
 <section class="table-of-contents">
 
@@ -25,7 +25,7 @@ The `CResponse` class represents an HTTP response with automatic body serializat
 import { C } from "@ozanarslan/corpus";
 
 new C.Route("/hello", () => {
-	return new C.Response("Hello World");
+	return new C.Res("Hello World");
 });
 ```
 
@@ -33,7 +33,7 @@ new C.Route("/hello", () => {
 
 ```ts
 new C.Route("/created", () => {
-	return new C.Response(
+	return new C.Res(
 		{ id: 1 },
 		{
 			status: C.Status.CREATED,
@@ -45,7 +45,7 @@ new C.Route("/created", () => {
 
 ### Setting cookies
 
-The following is the recommended pattern because CResponse init can also receive another CResponse instance and typescript doesn't do a great job differentiating an object with a class.
+The following is the recommended pattern because Res init can also receive another Res instance and typescript doesn't do a great job differentiating an object with a class.
 
 ```ts
 new C.Route("/login", (c) => {
@@ -63,7 +63,7 @@ new C.Route("/login", (c) => {
 ### Accessing the native response
 
 ```ts
-const cres = new C.Response("data");
+const cres = new C.Res("data");
 cres.response; // Returns native Web API Response
 ```
 
@@ -75,7 +75,7 @@ cres.response; // Returns native Web API Response
 
 ### data (optional)
 
-`CResponseBody<R>`
+`ResBody<R>`
 
 The response body. Automatically serialized based on type. See [Body Serialization](#body-serialization).
 
@@ -85,12 +85,12 @@ The response body. Automatically serialized based on type. See [Body Serializati
 
 ### init (optional)
 
-`CResponseInit | CResponse`
+`ResInit | Res`
 
-Response options or another CResponse to copy from.
+Response options or another Res to copy from.
 
 ```ts
-type CResponseInit = {
+type ResInit = {
 	cookies?: CookiesInit;
 	headers?: CHeadersInit;
 	status?: Status;
@@ -121,13 +121,13 @@ type CResponseInit = {
 
 ### redirect
 
-`static redirect(url: string | URL, init?: CResponseInit): CResponse`
+`static redirect(url: string | URL, init?: ResInit): Res`
 
 Creates a redirect response. Defaults to 302 Found.
 
 ```ts
-return C.Response.redirect("/new-path");
-return C.Response.redirect("/new-path", {
+return C.Res.redirect("/new-path");
+return C.Res.redirect("/new-path", {
 	status: C.Status.MOVED_PERMANENTLY,
 });
 ```
@@ -138,7 +138,7 @@ return C.Response.redirect("/new-path", {
 
 ### permanentRedirect
 
-`static permanentRedirect(url: string | URL, init?: Omit<CResponseInit, "status">): CResponse`
+`static permanentRedirect(url: string | URL, init?: Omit<ResInit, "status">): Res`
 
 301 Moved Permanently redirect.
 
@@ -148,7 +148,7 @@ return C.Response.redirect("/new-path", {
 
 ### temporaryRedirect
 
-`static temporaryRedirect(url: string | URL, init?: Omit<CResponseInit, "status">): CResponse`
+`static temporaryRedirect(url: string | URL, init?: Omit<ResInit, "status">): Res`
 
 307 Temporary Redirect.
 
@@ -158,7 +158,7 @@ return C.Response.redirect("/new-path", {
 
 ### seeOther
 
-`static seeOther(url: string | URL, init?: Omit<CResponseInit, "status">): CResponse`
+`static seeOther(url: string | URL, init?: Omit<ResInit, "status">): Res`
 
 303 See Other (redirect with GET).
 
@@ -168,12 +168,12 @@ return C.Response.redirect("/new-path", {
 
 ### sse
 
-`static sse(source: SseSource, init?: Omit<CResponseInit, "status">, retry?: number): CResponse`
+`static sse(source: SseSource, init?: Omit<ResInit, "status">, retry?: number): Res`
 
 Server-Sent Events stream.
 
 ```ts
-return C.Response.sse((send) => {
+return C.Res.sse((send) => {
 	const interval = setInterval(() => {
 		send({ data: { time: Date.now() }, event: "tick" });
 	}, 1000);
@@ -188,12 +188,12 @@ return C.Response.sse((send) => {
 
 ### ndjson
 
-`static ndjson(source: NdjsonSource, init?: Omit<CResponseInit, "status">): CResponse`
+`static ndjson(source: NdjsonSource, init?: Omit<ResInit, "status">): Res`
 
 Newline-delimited JSON stream.
 
 ```ts
-return C.Response.ndjson((send) => {
+return C.Res.ndjson((send) => {
 	for (const item of largeDataset) {
 		send(item);
 	}
@@ -206,15 +206,15 @@ return C.Response.ndjson((send) => {
 
 ### streamFile
 
-`static async streamFile(filePath: string, disposition?: "attachment" | "inline", init?: Omit<CResponseInit, "status">): Promise<CResponse<ReadableStream>>`
+`static async streamFile(filePath: string, disposition?: "attachment" | "inline", init?: Omit<ResInit, "status">): Promise<Res<ReadableStream>>`
 
 Stream a file from disk. Uses `Content-Type` from file extension. Defaults to `attachment` disposition.
 
 ```ts
-return await C.Response.streamFile("assets/video.mp4", "inline");
+return await C.Res.streamFile("assets/video.mp4", "inline");
 ```
 
-Throws [CError](/docs/error) with 404 if file not found.
+Throws [Exception](/docs/exception) with 404 if file not found.
 
 </section>
 
@@ -222,15 +222,15 @@ Throws [CError](/docs/error) with 404 if file not found.
 
 ### file
 
-`static async file(filePath: string, init?: CResponseInit): Promise<CResponse<string>>`
+`static async file(filePath: string, init?: ResInit): Promise<Res<string>>`
 
 Read entire file into memory as string. Sets `Content-Length` header.
 
 ```ts
-return await C.Response.file("assets/doc.txt");
+return await C.Res.file("assets/doc.txt");
 ```
 
-Throws [CError](/docs/error) with 404 if file not found.
+Throws [Exception](/docs/exception) with 404 if file not found.
 
 </section>
 

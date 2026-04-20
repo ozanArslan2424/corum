@@ -4,22 +4,22 @@ import { internFunc } from "corpus-utils/internFunc";
 import { objGetKeys } from "corpus-utils/objGetKeys";
 import { strRemoveWhitespace } from "corpus-utils/strRemoveWhitespace";
 
-import type { CRequest } from "@/CRequest/CRequest";
 import { $registry } from "@/index";
 import { BranchAdapter } from "@/Registry/BranchAdapter";
 import type { RouterAdapterInterface } from "@/Registry/RouterAdapterInterface";
 import type { RouterData } from "@/Registry/RouterData";
 import type { RouterReturn } from "@/Registry/RouterReturn";
-import type { RouteInterface } from "@/Route/RouteInterface";
-import type { RouteModel } from "@/Route/RouteModel";
+import type { Req } from "@/Req/Req";
+import type { BaseRouteInterface } from "@/BaseRoute/BaseRouteInterface";
+import type { RouteModel } from "@/BaseRoute/RouteModel";
 
 export class Router {
 	constructor(private adapter: RouterAdapterInterface = new BranchAdapter()) {}
 
-	private cache = new WeakMap<CRequest, RouterReturn>();
+	private cache = new WeakMap<Req, RouterReturn>();
 	private funcMap = new Map<string, Func>();
 
-	add(route: RouteInterface<any, any, any, any, string>): void {
+	add(route: BaseRouteInterface<any, any, any, any, string>): void {
 		const data = this.routeToRouterData(route);
 		if (route.model) {
 			if (!data.model) {
@@ -47,7 +47,7 @@ export class Router {
 		});
 	}
 
-	find(req: CRequest): RouterReturn | null {
+	find(req: Req): RouterReturn | null {
 		const match = this.cache.get(req) ?? this.adapter.find(req);
 		if (!match) return null;
 		this.cache.set(req, match);
@@ -62,7 +62,7 @@ export class Router {
 		return fn?.() ?? [];
 	}
 
-	private routeToRouterData(route: RouteInterface<any, any, any, any, string>): RouterData {
+	private routeToRouterData(route: BaseRouteInterface<any, any, any, any, string>): RouterData {
 		return {
 			id: route.id,
 			endpoint: route.endpoint,

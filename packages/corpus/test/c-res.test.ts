@@ -4,7 +4,7 @@ import { $registryTesting, TC } from "./_modules";
 
 beforeEach(() => $registryTesting.reset());
 
-describe("C.Response", () => {
+describe("C.Res", () => {
 	const ctHeader = TC.CommonHeaders.ContentType;
 	const otherHeader = "other-header";
 	const otherHeaderValue = "other-header-value";
@@ -20,7 +20,7 @@ describe("C.Response", () => {
 		expectedStatus = TC.Status.OK,
 		expectedOK = true,
 	}: {
-		res: TC.Response;
+		res: TC.Res;
 		response: Response;
 		data: any;
 		expectedBody?: any;
@@ -48,7 +48,7 @@ describe("C.Response", () => {
 	}
 
 	it("REDIRECT BY INIT HEADERS", async () => {
-		const res = new TC.Response(undefined, { headers: [[locHeader, locUrl]] });
+		const res = new TC.Res(undefined, { headers: [[locHeader, locUrl]] });
 		expect(res.headers.get(locHeader)).toBe(locUrl);
 		const response = res.response;
 		expect(response.headers.get(locHeader)).toBe(locUrl);
@@ -63,7 +63,7 @@ describe("C.Response", () => {
 	});
 
 	it("REDIRECT BY STATIC METHOD - REDIRECT", async () => {
-		const res = TC.Response.redirect(locUrl);
+		const res = TC.Res.redirect(locUrl);
 		expect(res.headers.get(locHeader)).toBe(locUrl);
 		const response = res.response;
 		expect(response.headers.get(locHeader)).toBe(locUrl);
@@ -78,7 +78,7 @@ describe("C.Response", () => {
 	});
 
 	it("REDIRECT BY STATIC METHOD - REDIRECT - WITH EXTRA HEADERS", async () => {
-		const res = TC.Response.redirect(locUrl, {
+		const res = TC.Res.redirect(locUrl, {
 			headers: [[otherHeader, otherHeaderValue]],
 		});
 		expect(res.headers.get(locHeader)).toBe(locUrl);
@@ -97,7 +97,7 @@ describe("C.Response", () => {
 	});
 
 	it("REDIRECT BY STATIC METHOD - PERMANENT REDIRECT", async () => {
-		const res = TC.Response.permanentRedirect(locUrl);
+		const res = TC.Res.permanentRedirect(locUrl);
 		expect(res.headers.get(locHeader)).toBe(locUrl);
 		const response = res.response;
 		expect(response.headers.get(locHeader)).toBe(locUrl);
@@ -112,7 +112,7 @@ describe("C.Response", () => {
 	});
 
 	it("REDIRECT BY STATIC METHOD - TEMPORARY REDIRECT", async () => {
-		const res = TC.Response.temporaryRedirect(locUrl);
+		const res = TC.Res.temporaryRedirect(locUrl);
 		expect(res.headers.get(locHeader)).toBe(locUrl);
 		const response = res.response;
 		expect(response.headers.get(locHeader)).toBe(locUrl);
@@ -127,7 +127,7 @@ describe("C.Response", () => {
 	});
 
 	it("REDIRECT BY STATIC METHOD - SEE OTHER", async () => {
-		const res = TC.Response.seeOther(locUrl);
+		const res = TC.Res.seeOther(locUrl);
 		expect(res.headers.get(locHeader)).toBe(locUrl);
 		const response = res.response;
 		expect(response.headers.get(locHeader)).toBe(locUrl);
@@ -142,7 +142,7 @@ describe("C.Response", () => {
 	});
 
 	it("SSE - RETURNS STREAM WITH CORRECT HEADERS", async () => {
-		const res = TC.Response.sse((send) => {
+		const res = TC.Res.sse((send) => {
 			send({ event: "ping", data: { time: 1 } });
 		});
 		const response = res.response;
@@ -156,7 +156,7 @@ describe("C.Response", () => {
 	});
 
 	it("SSE - STREAM EMITS CORRECT CHUNKS", async () => {
-		const res = TC.Response.sse((send) => {
+		const res = TC.Res.sse((send) => {
 			send({ event: "ping", data: { time: 1 } });
 			send({ id: "2", event: "pong", data: { time: 2 } });
 		});
@@ -170,7 +170,7 @@ describe("C.Response", () => {
 	});
 
 	it("SSE - RETRY FIELD IS INCLUDED WHEN SET", async () => {
-		const res = TC.Response.sse(
+		const res = TC.Res.sse(
 			(send) => {
 				send({ data: "ok" });
 			},
@@ -184,7 +184,7 @@ describe("C.Response", () => {
 
 	it("SSE - CLEANUP IS CALLED ON CANCEL", async () => {
 		let cleaned = false;
-		const res = TC.Response.sse(() => {
+		const res = TC.Res.sse(() => {
 			return () => {
 				cleaned = true;
 			};
@@ -196,7 +196,7 @@ describe("C.Response", () => {
 	});
 
 	it("NDJSON - RETURNS STREAM WITH CORRECT HEADERS", async () => {
-		const res = TC.Response.ndjson((send) => {
+		const res = TC.Res.ndjson((send) => {
 			send({ id: 1 });
 		});
 		const response = res.response;
@@ -208,7 +208,7 @@ describe("C.Response", () => {
 	});
 
 	it("NDJSON - STREAM EMITS CORRECT CHUNKS", async () => {
-		const res = TC.Response.ndjson((send) => {
+		const res = TC.Res.ndjson((send) => {
 			send({ id: 1, name: "alice" });
 			send({ id: 2, name: "bob" });
 		});
@@ -225,7 +225,7 @@ describe("C.Response", () => {
 
 	it("NDJSON - CLEANUP IS CALLED ON CANCEL", async () => {
 		let cleaned = false;
-		const res = TC.Response.ndjson(() => {
+		const res = TC.Res.ndjson(() => {
 			return () => {
 				cleaned = true;
 			};
@@ -239,7 +239,7 @@ describe("C.Response", () => {
 	// ─── streamFile ───────────────────────────────────────────────────────────────
 
 	it("STREAM FILE - RETURNS STREAM WITH CORRECT HEADERS FOR TXT", async () => {
-		const res = await TC.Response.streamFile("test/fixtures/sample.txt");
+		const res = await TC.Res.streamFile("test/fixtures/sample.txt");
 
 		expect(res.status).toBe(TC.Status.OK);
 		expect(res.body).toBeInstanceOf(ReadableStream);
@@ -259,24 +259,24 @@ describe("C.Response", () => {
 		];
 
 		for (const [path, expectedMime] of cases) {
-			const res = await TC.Response.streamFile(path);
+			const res = await TC.Res.streamFile(path);
 			expect(res.headers.get(ctHeader)).toBe(expectedMime);
 		}
 	});
 
 	it("STREAM FILE - INLINE DISPOSITION", async () => {
-		const res = await TC.Response.streamFile("test/fixtures/sample.txt", "inline");
+		const res = await TC.Res.streamFile("test/fixtures/sample.txt", "inline");
 		expect(res.headers.get(TC.CommonHeaders.ContentDisposition)).toBe(
 			'inline; filename="sample.txt"',
 		);
 	});
 
 	it("STREAM FILE - THROWS NOT FOUND FOR MISSING FILE", async () => {
-		expect(TC.Response.streamFile("test/fixtures/does-not-exist.txt")).rejects.toThrow();
+		expect(TC.Res.streamFile("test/fixtures/does-not-exist.txt")).rejects.toThrow();
 	});
 
 	it("STREAM FILE - BODY CONTAINS FILE CONTENT", async () => {
-		const res = await TC.Response.streamFile("test/fixtures/sample.txt");
+		const res = await TC.Res.streamFile("test/fixtures/sample.txt");
 		const text = await res.response.text();
 		expect(text.length).toBeGreaterThan(0);
 	});
@@ -284,7 +284,7 @@ describe("C.Response", () => {
 	// ─── Primitives ───────────────────────────────────────────────────────────────
 
 	it("EMPTY BODY", async () => {
-		const res = new TC.Response();
+		const res = new TC.Res();
 		const response = res.response;
 		const data = await response.text();
 		await expectData({
@@ -295,7 +295,7 @@ describe("C.Response", () => {
 	});
 
 	it("NULL BODY", async () => {
-		const res = new TC.Response(null);
+		const res = new TC.Res(null);
 		const response = res.response;
 		const data = await response.text();
 		await expectData({
@@ -306,7 +306,7 @@ describe("C.Response", () => {
 	});
 
 	it("UNDEFINED BODY", async () => {
-		const res = new TC.Response(undefined);
+		const res = new TC.Res(undefined);
 		const response = res.response;
 		const data = await response.text();
 		await expectData({
@@ -318,7 +318,7 @@ describe("C.Response", () => {
 
 	it("ARRAYBUFFER BODY", async () => {
 		const buffer = new TextEncoder().encode("hello").buffer;
-		const res = new TC.Response(buffer);
+		const res = new TC.Res(buffer);
 		const response = res.response;
 
 		expect(res.body).toBeInstanceOf(ArrayBuffer);
@@ -330,7 +330,7 @@ describe("C.Response", () => {
 
 	it("BLOB BODY", async () => {
 		const blob = new Blob(["hello"], { type: "text/html" });
-		const res = new TC.Response(blob);
+		const res = new TC.Res(blob);
 		const response = res.response;
 
 		expect(res.body).toBeInstanceOf(Blob);
@@ -344,7 +344,7 @@ describe("C.Response", () => {
 		class Obj {
 			public readonly key = "value";
 		}
-		const res = new TC.Response(new Obj());
+		const res = new TC.Res(new Obj());
 		const response = res.response;
 
 		expect(res.status).toBe(TC.Status.OK);
@@ -356,7 +356,7 @@ describe("C.Response", () => {
 	it("FORMDATA BODY", async () => {
 		const form = new FormData();
 		form.append("name", "corpus");
-		const res = new TC.Response(form);
+		const res = new TC.Res(form);
 		const response = res.response;
 
 		expect(res.body).toBeInstanceOf(FormData);
@@ -368,7 +368,7 @@ describe("C.Response", () => {
 
 	it("URLSEARCHPARAMS BODY", async () => {
 		const params = new URLSearchParams({ name: "corpus" });
-		const res = new TC.Response(params);
+		const res = new TC.Res(params);
 		const response = res.response;
 
 		expect(res.body).toBeInstanceOf(URLSearchParams);
@@ -379,7 +379,7 @@ describe("C.Response", () => {
 	});
 
 	it("STRING BODY", async () => {
-		const res = new TC.Response("hello");
+		const res = new TC.Res("hello");
 		const response = res.response;
 		expect(res.body).toBe("hello");
 		expect(res.headers.get(ctHeader)).toBe("text/plain");
@@ -387,7 +387,7 @@ describe("C.Response", () => {
 	});
 
 	it("EMPTY STRING BODY", async () => {
-		const res = new TC.Response("");
+		const res = new TC.Res("");
 		const response = res.response;
 		expect(res.body).toBe("");
 		expect(res.headers.get(ctHeader)).toBe("text/plain");
@@ -395,7 +395,7 @@ describe("C.Response", () => {
 	});
 
 	it("NUMBER BODY", async () => {
-		const res = new TC.Response(42);
+		const res = new TC.Res(42);
 		const response = res.response;
 		expect(res.body).toBe("42");
 		expect(res.headers.get(ctHeader)).toBe("text/plain");
@@ -403,7 +403,7 @@ describe("C.Response", () => {
 	});
 
 	it("ZERO BODY", async () => {
-		const res = new TC.Response(0);
+		const res = new TC.Res(0);
 		const response = res.response;
 		expect(res.body).toBe("0");
 		expect(res.headers.get(ctHeader)).toBe("text/plain");
@@ -411,7 +411,7 @@ describe("C.Response", () => {
 	});
 
 	it("BOOLEAN TRUE BODY", async () => {
-		const res = new TC.Response(true);
+		const res = new TC.Res(true);
 		const response = res.response;
 		expect(res.body).toBe("true");
 		expect(res.headers.get(ctHeader)).toBe("text/plain");
@@ -419,7 +419,7 @@ describe("C.Response", () => {
 	});
 
 	it("BOOLEAN FALSE BODY", async () => {
-		const res = new TC.Response(false);
+		const res = new TC.Res(false);
 		const response = res.response;
 		expect(res.body).toBe("false");
 		expect(res.headers.get(ctHeader)).toBe("text/plain");
@@ -427,7 +427,7 @@ describe("C.Response", () => {
 	});
 
 	it("BIGINT BODY", async () => {
-		const res = new TC.Response(9007199254740993n);
+		const res = new TC.Res(9007199254740993n);
 		const response = res.response;
 		expect(res.body).toBe("9007199254740993");
 		expect(res.headers.get(ctHeader)).toBe("text/plain");
@@ -436,7 +436,7 @@ describe("C.Response", () => {
 
 	it("DATE BODY", async () => {
 		const date = new Date("2024-01-01T00:00:00.000Z");
-		const res = new TC.Response(date);
+		const res = new TC.Res(date);
 		const response = res.response;
 		expect(res.body).toBe(date.toISOString());
 		expect(res.headers.get(ctHeader)).toBe("text/plain");
@@ -445,7 +445,7 @@ describe("C.Response", () => {
 
 	it("PLAIN OBJECT BODY", async () => {
 		const obj = { a: 1, b: "two", c: true };
-		const res = new TC.Response(obj);
+		const res = new TC.Res(obj);
 		const response = res.response;
 		expect(res.body).toBe(JSON.stringify(obj));
 		expect(res.headers.get(ctHeader)).toBe("application/json");
@@ -453,7 +453,7 @@ describe("C.Response", () => {
 	});
 
 	it("EMPTY OBJECT BODY", async () => {
-		const res = new TC.Response({});
+		const res = new TC.Res({});
 		const response = res.response;
 		expect(res.body).toBe("{}");
 		expect(res.headers.get(ctHeader)).toBe("application/json");
@@ -462,7 +462,7 @@ describe("C.Response", () => {
 
 	it("NESTED OBJECT BODY", async () => {
 		const obj = { a: { b: { c: [1, 2, 3] } } };
-		const res = new TC.Response(obj);
+		const res = new TC.Res(obj);
 		const response = res.response;
 		expect(res.body).toBe(JSON.stringify(obj));
 		expect(res.headers.get(ctHeader)).toBe("application/json");
@@ -471,7 +471,7 @@ describe("C.Response", () => {
 
 	it("ARRAY BODY", async () => {
 		const arr = [1, "two", true, null];
-		const res = new TC.Response(arr);
+		const res = new TC.Res(arr);
 		const response = res.response;
 		expect(res.body).toBe(JSON.stringify(arr));
 		expect(res.headers.get(ctHeader)).toBe("application/json");
@@ -479,7 +479,7 @@ describe("C.Response", () => {
 	});
 
 	it("EMPTY ARRAY BODY", async () => {
-		const res = new TC.Response([]);
+		const res = new TC.Res([]);
 		const response = res.response;
 		expect(res.body).toBe("[]");
 		expect(res.headers.get(ctHeader)).toBe("application/json");
@@ -488,7 +488,7 @@ describe("C.Response", () => {
 
 	it("ARRAY OF OBJECTS BODY", async () => {
 		const arr = [{ id: 1 }, { id: 2 }];
-		const res = new TC.Response(arr);
+		const res = new TC.Res(arr);
 		const response = res.response;
 		expect(res.body).toBe(JSON.stringify(arr));
 		expect(res.headers.get(ctHeader)).toBe("application/json");
@@ -504,7 +504,7 @@ describe("C.Response", () => {
 				controller.close();
 			},
 		});
-		const res = new TC.Response(stream);
+		const res = new TC.Res(stream);
 		const response = res.response;
 		expect(res.body).toBeInstanceOf(ReadableStream);
 		expect(await response.text()).toBe("chunk1chunk2");

@@ -118,7 +118,7 @@ new TC.Route(
 	(c) => {
 		const body = c.body;
 		if (!body?.name || !body?.email) {
-			throw new TC.Error("name and email are required", 400);
+			throw new TC.Exception("name and email are required", 400);
 		}
 		const id = String(idCounter++);
 		const user = {
@@ -139,7 +139,7 @@ new TC.Route(
 	(ctx) => {
 		const user = db.get(ctx.params.id);
 		if (!user) {
-			throw new TC.Error("not found", 404);
+			throw new TC.Exception("not found", 404);
 		}
 		return user;
 	},
@@ -151,7 +151,7 @@ new TC.Route(
 	(ctx) => {
 		const user = db.get(ctx.params.id);
 		if (!user) {
-			throw new TC.Error("not found", 404);
+			throw new TC.Exception("not found", 404);
 		}
 		const body = ctx.body as any;
 		const updated = { ...user, ...body, id: user.id };
@@ -166,7 +166,7 @@ new TC.Route(
 	(ctx) => {
 		const user = db.get(ctx.params.id);
 		if (!user) {
-			throw new TC.Error("not found", 404);
+			throw new TC.Exception("not found", 404);
 		}
 		const body = ctx.body;
 		const patched = { ...user, ...body, id: user.id };
@@ -181,7 +181,7 @@ new TC.Route(
 	(ctx) => {
 		const existed = db.delete(ctx.params.id);
 		if (!existed) {
-			throw new TC.Error("not found", 404);
+			throw new TC.Exception("not found", 404);
 		}
 		return { deleted: ctx.params.id };
 	},
@@ -199,7 +199,7 @@ const meRoute = new TC.Route("/me", (c) => {
 	if ((c.data as any)?.user) {
 		return (c.data as any).user;
 	}
-	throw new TC.Error("unauthorized", 401);
+	throw new TC.Exception("unauthorized", 401);
 });
 
 new TC.Middleware({
@@ -207,7 +207,7 @@ new TC.Middleware({
 	handler: (c) => {
 		const token = c.headers.get("authorization");
 		if (token !== "Bearer secret-token") {
-			throw new TC.Error("unauthorized", 401);
+			throw new TC.Exception("unauthorized", 401);
 		}
 		(c.data as any).user = { id: "0", name: "Admin", role: "admin" };
 	},

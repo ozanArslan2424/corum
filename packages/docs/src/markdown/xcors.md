@@ -75,7 +75,7 @@ const cors = new X.Cors({ allowedOrigins: ["https://example.com"] });
 // protected handlePreflight: RequestHandler = async (req) => {
 // 	const cors = $routerStore.get().cors;
 // 	if (!cors) {
-// 		return new CResponse(undefined, { status: Status.NO_CONTENT });
+// 		return new Res(undefined, { status: Status.NO_CONTENT });
 // 	}
 // 	const handler = cors.getPreflightHandler();
 // 	return await handler(req);

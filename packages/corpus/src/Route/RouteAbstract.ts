@@ -1,9 +1,14 @@
-import { Method } from "@/CRequest/Method";
+import type { Func } from "corpus-utils/Func";
+import { joinPathSegments } from "corpus-utils/joinPathSegments";
+import type { MaybePromise } from "corpus-utils/MaybePromise";
+
+import { BaseRouteAbstract } from "@/BaseRoute/BaseRouteAbstract";
+import { RouteVariant } from "@/BaseRoute/RouteVariant";
+import type { Context } from "@/Context/Context";
 import { $registry } from "@/index";
-import type { RouteHandler } from "@/Route/RouteHandler";
-import type { RouteInterface } from "@/Route/RouteInterface";
-import type { RouteModel } from "@/Route/RouteModel";
-import { RouteVariant } from "@/Route/RouteVariant";
+import { Method } from "@/Method/Method";
+import type { RouteCallback } from "@/Route/RouteCallback";
+import type { RouteDefinition } from "@/Route/RouteDefinition";
 
 export abstract class RouteAbstract<
 	B = unknown,
@@ -11,22 +16,27 @@ export abstract class RouteAbstract<
 	P = unknown,
 	R = unknown,
 	E extends string = string,
-> implements RouteInterface<B, S, P, R, E> {
-	get id(): string {
-		return `${this.method.toUpperCase()} ${this.endpoint}`;
+> extends BaseRouteAbstract<B, S, P, R, E> {
+	// FROM CONSTRUCTOR
+	abstract readonly definition: RouteDefinition<E>;
+
+	abstract callback: RouteCallback<B, S, P, R>;
+
+	// BASE ROUTE PROPERTIES
+	readonly variant: RouteVariant = RouteVariant.dynamic;
+
+	get endpoint(): E {
+		return joinPathSegments(
+			$registry.prefix,
+			typeof this.definition === "string" ? this.definition : this.definition.path,
+		);
 	}
 
-	abstract get handler(): RouteHandler<B, S, P, R>;
+	get method(): Method {
+		return typeof this.definition === "string" ? Method.GET : this.definition.method;
+	}
 
-	abstract get endpoint(): E;
-
-	abstract get method(): Method;
-
-	abstract readonly variant: RouteVariant;
-
-	abstract readonly model?: RouteModel<B, S, P, R>;
-
-	register(): void {
-		$registry.router.add(this);
+	get handler(): Func<[Context<B, S, P, R>], MaybePromise<R>> {
+		return this.callback;
 	}
 }

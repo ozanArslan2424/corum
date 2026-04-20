@@ -1,18 +1,18 @@
 import { arrIncludes } from "corpus-utils/arrIncludes";
 import type { UnknownObject } from "corpus-utils/UnknownObject";
 
-import { CError } from "@/CError/CError";
-import { CommonHeaders } from "@/CHeaders/CommonHeaders";
-import type { CRequest } from "@/CRequest/CRequest";
-import { Method } from "@/CRequest/Method";
-import type { CResponse } from "@/CResponse/CResponse";
-import { Status } from "@/CResponse/Status";
+import { CommonHeaders } from "@/CommonHeaders/CommonHeaders";
+import { Exception } from "@/Exception/Exception";
+import { Method } from "@/Method/Method";
 import { FormDataParser } from "@/Parser/FormDataParser";
 import { SearchParamsParser } from "@/Parser/SearchParamsParser";
+import type { Req } from "@/Req/Req";
+import type { Res } from "@/Res/Res";
+import { Status } from "@/Status/Status";
 
 export class BodyParser {
 	/** This can be used for both request and response bodies */
-	async parse(r: CRequest | CResponse | Response): Promise<unknown> {
+	async parse(r: Req | Res | Response): Promise<unknown> {
 		let data;
 		const empty = {};
 		const input = r instanceof Request ? r : r instanceof Response ? r : r.response;
@@ -40,7 +40,7 @@ export class BodyParser {
 				case "image":
 				case "audio":
 				case "video":
-					throw new CError("unprocessable.contentType", Status.UNPROCESSABLE_ENTITY);
+					throw new Exception("unprocessable.contentType", Status.UNPROCESSABLE_ENTITY);
 				case "no-body-allowed":
 				default:
 					return empty;

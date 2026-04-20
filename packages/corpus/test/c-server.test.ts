@@ -52,7 +52,7 @@ describe("C.Server", () => {
 	it("SET ON ERROR - CUSTOM HANDLER IS CALLED ON ERROR", async () => {
 		const s = createTestServer();
 		s.setOnError(async () => {
-			return new TC.Response({ error: true, message: "custom error" }, { status: 500 });
+			return new TC.Res({ error: true, message: "custom error" }, { status: 500 });
 		});
 		new TC.Route("/srv-error", () => {
 			throw new Error("boom");
@@ -77,7 +77,7 @@ describe("C.Server", () => {
 	it("SET ON ERROR - HTTP ERROR IS HANDLED BY DEFAULT HANDLER", async () => {
 		const s = createTestServer();
 		new TC.Route("/srv-httperror", () => {
-			throw new TC.Error("bad input", TC.Status.BAD_REQUEST);
+			throw new TC.Exception("bad input", TC.Status.BAD_REQUEST);
 		});
 		const res = await s.handle(req("/srv-httperror"));
 		expect(res.status).toBe(400);
@@ -90,7 +90,7 @@ describe("C.Server", () => {
 	it("SET ON NOT FOUND - CUSTOM HANDLER IS CALLED", async () => {
 		const s = createTestServer();
 		s.setOnNotFound(async () => {
-			return new TC.Response({ error: true, message: "custom not found" }, { status: 404 });
+			return new TC.Res({ error: true, message: "custom not found" }, { status: 404 });
 		});
 		const res = await s.handle(req("/srv-custom-404"));
 		expect(res.status).toBe(404);

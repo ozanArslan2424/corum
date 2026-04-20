@@ -105,8 +105,8 @@ Context is typically not instantiated directly — it is created by the framewor
 
 | Parameter | Type      | Description                                            |
 | --------- | --------- | ------------------------------------------------------ |
-| req       | CRequest  | The incoming request instance                          |
-| res       | CResponse | Optional response instance (defaults to new CResponse) |
+| req       | Req  | The incoming request instance                          |
+| res       | Res | Optional response instance (defaults to new Res) |
 
 </section>
 
@@ -116,14 +116,14 @@ Context is typically not instantiated directly — it is created by the framewor
 
 | Property | Type                 | Description                                        |
 | -------- | -------------------- | -------------------------------------------------- |
-| req      | CRequest             | The request instance with raw access               |
+| req      | Req             | The request instance with raw access               |
 | url      | URL                  | Standard Web API URL object                        |
 | headers  | CHeaders             | Request headers                                    |
 | cookies  | Cookies              | Request cookies                                    |
 | body     | B                    | Parsed and validated request body                  |
 | search   | S                    | Parsed and validated URL search parameters         |
 | params   | P                    | Parsed and validated URL path parameters           |
-| res      | CResponse            | Response builder for setting status, headers, etc. |
+| res      | Res            | Response builder for setting status, headers, etc. |
 | data     | ContextDataInterface | Custom data storage for middleware communication   |
 
 </section>

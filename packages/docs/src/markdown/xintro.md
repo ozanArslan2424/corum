@@ -62,7 +62,7 @@ const file = new X.File("assets/report.pdf");
 
 if (await file.exists()) {
 	console.log(file.mimeType); // "application/pdf"
-	return C.Response.file(file.path);
+	return C.Res.file(file.path);
 }
 ```
 

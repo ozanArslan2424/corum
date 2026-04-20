@@ -3,16 +3,16 @@ import crypto from "crypto";
 import { logFatal } from "corpus-utils/internalLog";
 import { strIsDefined } from "corpus-utils/strIsDefined";
 
-import { CError } from "@/CError/CError";
 import { CHeaders } from "@/CHeaders/CHeaders";
-import { CommonHeaders } from "@/CHeaders/CommonHeaders";
-import { Status } from "@/CResponse/Status";
+import { CommonHeaders } from "@/CommonHeaders/CommonHeaders";
+import { Exception } from "@/Exception/Exception";
 import { $registry } from "@/index";
 import { MiddlewareAbstract } from "@/Middleware/MiddlewareAbstract";
 import type { MiddlewareHandler } from "@/Middleware/MiddlewareHandler";
 import type { MiddlewareUseOn } from "@/Middleware/MiddlewareUseOn";
 import { MiddlewareVariant } from "@/Middleware/MiddlewareVariant";
-import { RouteVariant } from "@/Route/RouteVariant";
+import { RouteVariant } from "@/BaseRoute/RouteVariant";
+import { Status } from "@/Status/Status";
 import type { RateLimitConfig } from "@/XRateLimiter/RateLimitConfig";
 import { RateLimiterFileStore } from "@/XRateLimiter/RateLimiterFileStore";
 import { RateLimiterMemoryStore } from "@/XRateLimiter/RateLimiterMemoryStore";
@@ -43,7 +43,7 @@ export class XRateLimiter extends MiddlewareAbstract {
 		c.res.headers.append(CommonHeaders.AccessControlExposeHeaders, exposedHeaders);
 
 		if (!result.success) {
-			throw new CError("Too many requests", Status.TOO_MANY_REQUESTS, c.res);
+			throw new Exception("Too many requests", Status.TOO_MANY_REQUESTS, c.res);
 		}
 	};
 

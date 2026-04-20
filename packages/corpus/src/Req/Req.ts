@@ -2,18 +2,18 @@ import { strSplit } from "corpus-utils/strSplit";
 
 import { CHeaders } from "@/CHeaders/CHeaders";
 import type { CHeadersInit } from "@/CHeaders/CHeadersInit";
-import { CommonHeaders } from "@/CHeaders/CommonHeaders";
+import { CommonHeaders } from "@/CommonHeaders/CommonHeaders";
 import { Cookies } from "@/Cookies/Cookies";
-import type { CRequestInfo } from "@/CRequest/CRequestInfo";
-import type { CRequestInit } from "@/CRequest/CRequestInit";
-import { Method } from "@/CRequest/Method";
+import { Method } from "@/Method/Method";
+import type { ReqInfo } from "@/Req/ReqInfo";
+import type { ReqInit } from "@/Req/ReqInit";
 
-/** CRequest includes a cookie jar, better headers, and some utilities. */
+/** Req includes a cookie jar, better headers, and some utilities. */
 
-export class CRequest extends Request {
+export class Req extends Request {
 	constructor(
-		readonly info: CRequestInfo,
-		readonly init?: CRequestInit,
+		readonly info: ReqInfo,
+		readonly init?: ReqInit,
 	) {
 		super(info, init);
 	}
@@ -38,7 +38,7 @@ export class CRequest extends Request {
 				urlObject = this.info;
 				break;
 
-			case this.info instanceof CRequest:
+			case this.info instanceof Req:
 				urlObject = this.info.urlObject;
 				break;
 

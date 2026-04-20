@@ -1,8 +1,8 @@
 import type { Controller } from "@/Controller/Controller";
-import type { RouteAbstract } from "@/Route/RouteAbstract";
+import type { BaseRouteAbstract } from "@/BaseRoute/BaseRouteAbstract";
 
 export type MiddlewareUseOn =
-	| Array<RouteAbstract<any, any, any, any, string> | Controller | string>
-	| RouteAbstract<any, any, any, any, string>
+	| Array<BaseRouteAbstract<any, any, any, any, string> | Controller | string>
+	| BaseRouteAbstract<any, any, any, any, string>
 	| Controller
 	| "*";

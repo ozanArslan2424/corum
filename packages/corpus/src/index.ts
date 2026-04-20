@@ -2,8 +2,6 @@ import * as C from "./C";
 import { Registry } from "./Registry/Registry";
 import * as X from "./X";
 
-export { Router } from "./Registry/Router";
-
 export const $registry = new Registry();
 
 export type * from "./types.d.ts";

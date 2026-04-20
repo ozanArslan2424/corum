@@ -1,6 +1,6 @@
 import type { Func } from "corpus-utils/Func";
 import type { MaybePromise } from "corpus-utils/MaybePromise";
 
-import type { CResponse } from "@/CResponse/CResponse";
+import type { Res } from "@/Res/Res";
 
-export type ErrorHandler<R = unknown> = Func<[Error], MaybePromise<CResponse<R>>>;
+export type ErrorHandler<R = unknown> = Func<[Error], MaybePromise<Res<R>>>;

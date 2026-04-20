@@ -1,27 +1,27 @@
 import type { Func } from "corpus-utils/Func";
 import type { MaybePromise } from "corpus-utils/MaybePromise";
 
-import { CError } from "@/CError/CError";
-import type { CacheDirective } from "@/CHeaders/CacheDirective";
-import { CommonHeaders } from "@/CHeaders/CommonHeaders";
+import type { CacheDirective } from "@/CommonHeaders/CacheDirective";
+import { CommonHeaders } from "@/CommonHeaders/CommonHeaders";
 import type { Context } from "@/Context/Context";
-import { Method } from "@/CRequest/Method";
-import { CResponse } from "@/CResponse/CResponse";
-import { Status } from "@/CResponse/Status";
-import { RouteAbstract } from "@/Route/RouteAbstract";
-import { RouteVariant } from "@/Route/RouteVariant";
+import { Exception } from "@/Exception/Exception";
+import { Method } from "@/Method/Method";
+import { Res } from "@/Res/Res";
+import { BaseRouteAbstract } from "@/BaseRoute/BaseRouteAbstract";
+import { RouteVariant } from "@/BaseRoute/RouteVariant";
 import type { StaticRouteCallback } from "@/StaticRoute/StaticRouteCallback";
 import type { StaticRouteDefinition } from "@/StaticRoute/StaticRouteDefinition";
+import { Status } from "@/Status/Status";
 import { XFile } from "@/XFile/XFile";
 
-type R = CResponse | string;
+type R = Res | string;
 
 export abstract class StaticRouteAbstract<
 	B = unknown,
 	S = unknown,
 	P = unknown,
 	E extends string = string,
-> extends RouteAbstract<B, S, P, R, E> {
+> extends BaseRouteAbstract<B, S, P, R, E> {
 	// FROM CONSTRUCTOR
 	abstract readonly path: E;
 
@@ -31,8 +31,8 @@ export abstract class StaticRouteAbstract<
 
 	// PROTECTED
 
-	protected onFileNotFound: Func<[], Promise<CResponse | never>> = () => {
-		throw new CError(Status.NOT_FOUND.toString(), Status.NOT_FOUND);
+	protected onFileNotFound: Func<[], Promise<Res | never>> = () => {
+		throw new Exception(Status.NOT_FOUND.toString(), Status.NOT_FOUND);
 	};
 
 	protected get filePath(): string {
@@ -77,12 +77,12 @@ export abstract class StaticRouteAbstract<
 				return await customHandler(c, content);
 			}
 
-			let res: CResponse;
+			let res: Res;
 
 			if (!isStrDef && this.definition.stream) {
-				res = await CResponse.streamFile(file, this.definition.disposition);
+				res = await Res.streamFile(file, this.definition.disposition);
 			} else {
-				res = await CResponse.file(file);
+				res = await Res.file(file);
 			}
 
 			res.headers.set(CommonHeaders.CacheControl, this.formatCacheHeader(caching));

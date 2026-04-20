@@ -123,12 +123,12 @@ The file definition. If a string is provided, serves the file normally. Use the 
 
 `(context: Context<B, S, P, R>, content: string) => MaybePromise<R>`
 
-Optional custom handler to intercept file content before sending. Receives the context and file content as string. Use `c.res.headers` to modify response headers. Must return string or a `CResponse`.
+Optional custom handler to intercept file content before sending. Receives the context and file content as string. Use `c.res.headers` to modify response headers. Must return string or a `Res`.
 
 ```ts
 (c, content) => {
 	c.res.headers.set("x-custom", "value");
-	return content; // or return new C.Response(...)
+	return content; // or return new C.Res(...)
 };
 ```
 
@@ -168,6 +168,6 @@ All constructor options are stored as readonly properties after resolve methods:
 | `handler`        | `Func<[Context<B, S, P, R>, string], MaybePromise<R>>` | The route handler function (file serve or custom) |
 | `model`          | `RouteModel \| undefined`                              | Validation model if provided                      |
 | `variant`        | `RouteVariant.static`                                  | Fixed to `static` for this class                  |
-| `onFileNotFound` | `Func<[],Promise<CResponse                             | never>>`                                          | override to change file not found behavior |
+| `onFileNotFound` | `Func<[],Promise<Res                             | never>>`                                          | override to change file not found behavior |
 
 </section>

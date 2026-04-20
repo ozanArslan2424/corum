@@ -2,20 +2,20 @@ import type { Func } from "corpus-utils/Func";
 import { log, logFatal } from "corpus-utils/internalLog";
 import type { MaybePromise } from "corpus-utils/MaybePromise";
 
-import { CError } from "@/CError/CError";
 import { Context } from "@/Context/Context";
-import { CRequest } from "@/CRequest/CRequest";
-import { CResponse } from "@/CResponse/CResponse";
-import { Status } from "@/CResponse/Status";
+import { Exception } from "@/Exception/Exception";
 import { $registry } from "@/index";
 import { Router } from "@/Registry/Router";
 import type { RouterData } from "@/Registry/RouterData";
-import { RouteVariant } from "@/Route/RouteVariant";
+import { Req } from "@/Req/Req";
+import { Res } from "@/Res/Res";
+import { RouteVariant } from "@/BaseRoute/RouteVariant";
 import type { ErrorHandler } from "@/Server/ErrorHandler";
 import type { RequestHandler } from "@/Server/RequestHandler";
 import type { ServeArgs } from "@/Server/ServeArgs";
 import type { ServerInterface } from "@/Server/ServerInterface";
 import type { ServerOptions } from "@/Server/ServerOptions";
+import { Status } from "@/Status/Status";
 import { WebSocketRoute } from "@/WebSocketRoute/WebSocketRoute";
 
 export abstract class ServerAbstract implements ServerInterface {
@@ -56,7 +56,7 @@ export abstract class ServerAbstract implements ServerInterface {
 	}
 
 	async handle(request: Request): Promise<Response> {
-		const req = new CRequest(request);
+		const req = new Req(request);
 		const handled = await this.handleRequest(req, () => undefined);
 		if (!handled) {
 			logFatal("WebSocket requests cannot be handled with this method.");
@@ -65,9 +65,9 @@ export abstract class ServerAbstract implements ServerInterface {
 	}
 
 	protected async handleRequest(
-		req: CRequest,
+		req: Req,
 		onUpgrade: Func<[WebSocketRoute], undefined>,
-	): Promise<CResponse | undefined> {
+	): Promise<Res | undefined> {
 		const ctx = new Context(req);
 
 		// gmw = global middlewares
@@ -75,7 +75,7 @@ export abstract class ServerAbstract implements ServerInterface {
 
 		try {
 			const gmwir = await gmw.inbound(ctx);
-			if (gmwir instanceof CResponse) {
+			if (gmwir instanceof Res) {
 				return gmwir;
 			}
 			const match = $registry.router.find(req);
@@ -89,7 +89,7 @@ export abstract class ServerAbstract implements ServerInterface {
 				const lmw = $registry.middlewares.find(match.route.id);
 
 				const lmwir = await lmw.inbound(ctx);
-				if (lmwir instanceof CResponse) {
+				if (lmwir instanceof Res) {
 					return lmwir;
 				}
 
@@ -97,20 +97,20 @@ export abstract class ServerAbstract implements ServerInterface {
 				const mr = await match.route.handler(ctx);
 				if (match.route.variant === RouteVariant.websocket && req.isWebsocket) {
 					return onUpgrade(mr);
-				} else if (mr instanceof CResponse) {
+				} else if (mr instanceof Res) {
 					ctx.res = mr;
 				} else {
-					ctx.res = new CResponse(mr, ctx.res);
+					ctx.res = new Res(mr, ctx.res);
 				}
 
 				const lmwor = await lmw.outbound(ctx);
-				if (lmwor instanceof CResponse) {
+				if (lmwor instanceof Res) {
 					return lmwor;
 				}
 			}
 
 			const gmwor = await gmw.outbound(ctx);
-			if (gmwor instanceof CResponse) {
+			if (gmwor instanceof Res) {
 				return gmwor;
 			}
 		} catch (err) {
@@ -139,11 +139,11 @@ export abstract class ServerAbstract implements ServerInterface {
 		this.handleError = handler;
 	}
 	defaultErrorHandler: ErrorHandler = (err) => {
-		if (err instanceof CError) {
-			return err.res;
+		if (err instanceof Exception) {
+			return err.response;
 		}
 
-		return new CResponse(
+		return new Res(
 			{ error: err, message: "message" in err ? err.message : "Unknown" },
 			{ status: Status.INTERNAL_SERVER_ERROR },
 		);
@@ -154,7 +154,7 @@ export abstract class ServerAbstract implements ServerInterface {
 		this.handleNotFound = handler;
 	}
 	defaultNotFoundHandler: RequestHandler = (req) => {
-		return new CResponse(
+		return new Res(
 			{ error: true, message: `${req.method} on ${req.url} does not exist.` },
 			{ status: Status.NOT_FOUND },
 		);
@@ -162,7 +162,7 @@ export abstract class ServerAbstract implements ServerInterface {
 
 	protected handlePreflight: RequestHandler = async (req) => {
 		if (!$registry.cors) {
-			return new CResponse(undefined, { status: Status.NO_CONTENT });
+			return new Res(undefined, { status: Status.NO_CONTENT });
 		}
 		const handler = $registry.cors.getPreflightHandler();
 		return await handler(req);

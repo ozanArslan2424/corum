@@ -6,7 +6,7 @@ import { MiddlewareVariant } from "@/Middleware/MiddlewareVariant";
  * Simple Middleware registration class.
  * variant = "inbound" runs before route handlers
  * variant = "outbound" runs after route handlers
- * Both variants manipulate the context and can return CResponse or void.
+ * Both variants manipulate the context and can return Res or void.
  */
 
 export class Middleware extends MiddlewareAbstract {

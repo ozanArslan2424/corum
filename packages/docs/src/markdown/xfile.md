@@ -37,7 +37,7 @@ if (await file.exists()) {
 const video = new X.File("assets/video.mp4");
 
 // Stream for responses
-return X.CResponse.streamFile(video.path);
+return X.Res.streamFile(video.path);
 ```
 
 ### MIME type detection
@@ -130,7 +130,7 @@ Returns a readable stream for the file. Useful for large files that shouldn't be
 ```ts
 const file = new X.File("assets/video.mp4");
 const stream = file.stream();
-// Use with CResponse or pipe elsewhere
+// Use with Res or pipe elsewhere
 ```
 
 </section>

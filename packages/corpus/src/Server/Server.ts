@@ -1,10 +1,10 @@
-import { CError } from "@/CError/CError";
-import { CRequest } from "@/CRequest/CRequest";
-import { Status } from "@/CResponse/Status";
+import { Exception } from "@/Exception/Exception";
+import { Req } from "@/Req/Req";
 import type { ServeArgs } from "@/Server/ServeArgs";
 import { ServerAbstract } from "@/Server/ServerAbstract";
 import type { ServerApp } from "@/Server/ServerApp";
 import type { ServerWebSocketHandler } from "@/Server/ServerWebSocketHandler";
+import { Status } from "@/Status/Status";
 import { WebSocketRoute } from "@/WebSocketRoute/WebSocketRoute";
 import { XConfig } from "@/XConfig/XConfig";
 
@@ -42,11 +42,11 @@ export class Server extends ServerAbstract {
 	}
 
 	private async fetch(request: Request, server: ServerApp): Promise<Response | undefined> {
-		const req = new CRequest(request);
+		const req = new Req(request);
 		const res = await this.handleRequest(req, (wsRoute) => {
 			const upgraded = server.upgrade(request, { data: wsRoute });
 			if (!upgraded) {
-				throw new CError("Upgrade failed", Status.UPGRADE_REQUIRED);
+				throw new Exception("Upgrade failed", Status.UPGRADE_REQUIRED);
 			}
 			return undefined;
 		});

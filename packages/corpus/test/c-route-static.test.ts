@@ -167,7 +167,7 @@ describe("C.StaticRoute", () => {
 			override callback?: TC.StaticRouteCallback<unknown, unknown, unknown> | undefined = () => "";
 
 			override model?:
-				| TC.RouteModel<unknown, unknown, unknown, string | TC.Response<unknown>>
+				| TC.RouteModel<unknown, unknown, unknown, string | TC.Res<unknown>>
 				| undefined;
 		}
 

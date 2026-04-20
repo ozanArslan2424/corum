@@ -2,8 +2,8 @@ import { isObjectWith } from "corpus-utils/isObjectWith";
 import type { SchemaValidator, ValidationIssues } from "corpus-utils/Schema";
 import type { UnknownObject } from "corpus-utils/UnknownObject";
 
-import { CError } from "@/CError/CError";
-import { Status } from "@/CResponse/Status";
+import { Exception } from "@/Exception/Exception";
+import { Status } from "@/Status/Status";
 
 export class SchemaParser {
 	async parse<T = UnknownObject>(
@@ -15,7 +15,7 @@ export class SchemaParser {
 		const result = await validate(data);
 		if (result.issues !== undefined) {
 			const msg = this.issuesToErrorMessage(label, data, result.issues);
-			throw new CError(msg, Status.UNPROCESSABLE_ENTITY, data);
+			throw new Exception(msg, Status.UNPROCESSABLE_ENTITY, data);
 		}
 		return result.value;
 	}
@@ -28,7 +28,7 @@ export class SchemaParser {
 		}
 		if (result.issues !== undefined) {
 			const msg = this.issuesToErrorMessage(label, data, result.issues);
-			throw new CError(msg, Status.UNPROCESSABLE_ENTITY, data);
+			throw new Exception(msg, Status.UNPROCESSABLE_ENTITY, data);
 		}
 		return result.value;
 	}

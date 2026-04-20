@@ -1,4 +1,4 @@
-import type { CacheDirective } from "@/CHeaders/CacheDirective";
+import type { CacheDirective } from "@/CommonHeaders/CacheDirective";
 
 export type StaticRouteDefinition =
 	// just the file path, doesn't stream

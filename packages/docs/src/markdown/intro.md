@@ -92,7 +92,7 @@ Register middleware to run before routes. Middleware can validate, log, authenti
 export class AuthMiddleware extends C.Middleware {
 	override handler: C.MiddlewareHandler = async (c) => {
 		const token = c.headers.authorization;
-		if (!token) throw new C.Error("no token", 401);
+		if (!token) throw new C.Exception("no token", 401);
 		c.data.user = await verifyToken(token);
 	};
 }
@@ -116,7 +116,7 @@ This keeps your code testable and organized without forcing a specific DI system
 - **Static Routes** — Serve static files with StaticRoute or via Controller.
 - **Middleware** — Register global or route-specific middleware easily.
 - **Extras Module** — CORS, router adapters, and utilities like env helper.
-- **Error Handling** — Structured error responses with CError and built-in status codes.
+- **Error Handling** — Structured error responses with Exception and built-in status codes.
 
 ## What You Don't Get (And That's Okay)
 

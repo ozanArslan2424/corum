@@ -56,7 +56,7 @@ class ProtectedController extends C.Controller {
 	// This is undefined by default so you need to override it.
 	override beforeEach?: C.MiddlewareHandler | undefined = async (c) => {
 		if (!c.headers.has("authorization")) {
-			throw new C.Error("Unauthorized", 401);
+			throw new C.Exception("Unauthorized", 401);
 		}
 	};
 

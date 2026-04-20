@@ -114,7 +114,7 @@ Example:
 const server = new C.Server();
 new C.Route("/hello", () => "world"); // see the Route (dynamic) module
 // The port is arbitrary; Request requires a complete URL.
-const req = new Request("http://localhost:1234/hello");
+const req = new Request("http://localhost:1234/hello"); // or C.Req
 const res = await server.handle(req); // resolves successfully
 const data = await res.text(); // returns "world"
 ```
@@ -125,13 +125,13 @@ const data = await res.text(); // returns "world"
 
 ### `.setOnError`
 
-Registers a custom error handler for the server. When an unhandled error occurs during request processing, this handler will be invoked. The default error handler responds with a status of `C.Error` (or `500`) and returns JSON in the following format:
+Registers a custom error handler for the server. When an unhandled error occurs during request processing, this handler will be invoked. The default error handler responds with a status of `C.Exception` (or `500`) and returns JSON in the following format:
 
 ```ts
 { error: unknown | true, message: string }
 ```
 
-If a non-`Error` instance is thrown, the default response will still return a `500` status with:
+If a non-error instance is thrown, the default response will still return a `500` status with:
 
 ```ts
 { error: Instance, message: "Unknown" }

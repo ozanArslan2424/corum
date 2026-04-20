@@ -54,7 +54,7 @@ class MyAdapter implements RouterAdapterInterface {
 		// register a route
 	}
 
-	find(req: C.Request): RouterReturn | null {
+	find(req: C.Req): RouterReturn | null {
 		// return matched route data, or null if not found
 		// You can also throw in here and it will be handled by
 		// the Server.handleError method.

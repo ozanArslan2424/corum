@@ -82,16 +82,16 @@ new C.Route(
 
 Handlers can return:
 
-- **Plain data** — automatically wrapped in `CResponse` (objects → JSON, strings → text, etc.) with applied headers.
-- **`CResponse`** — for custom status codes, headers, or response control
+- **Plain data** — automatically wrapped in `Res` (objects → JSON, strings → text, etc.) with applied headers.
+- **`Res`** — for custom status codes, headers, or response control
 
 ```ts
 // Automatic JSON response
 new C.Route("/users", () => ({ users: [] }));
 
-// Custom CResponse
+// Custom Res
 new C.Route("/error", () => {
-	return new C.Response("Not Found", { status: 404 });
+	return new C.Res("Not Found", { status: 404 });
 });
 ```
 
@@ -120,7 +120,7 @@ The route definition. If a string is provided, defaults to `GET`. For other HTTP
 
 `(context: Context<B, S, P, R>) => MaybePromise<R>`
 
-The route handler function. Receives the request context with typed access to body (`c.body`), search params (`c.search`), URL params (`c.params`), CRequest (`c.req`), and CResponse for response manipulation without returning a CResponse (`c.res`).
+The route handler function. Receives the request context with typed access to body (`c.body`), search params (`c.search`), URL params (`c.params`), Req (`c.req`), and Res for response manipulation without returning a Res (`c.res`).
 
 </section>
 

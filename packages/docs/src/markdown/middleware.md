@@ -1,6 +1,6 @@
 # Middleware
 
-The Middleware class registers inbound or outbound middleware into the global router. Inbound middleware runs before route handlers; outbound middleware runs after. Both variants receive the request context and can return a [CResponse](/docs/response) to short-circuit the request, or void to continue.
+The Middleware class registers inbound or outbound middleware into the global router. Inbound middleware runs before route handlers; outbound middleware runs after. Both variants receive the request context and can return a [Res](/docs/res) to short-circuit the request, or void to continue.
 
 <section class="table-of-contents">
 
@@ -30,7 +30,7 @@ new C.Middleware({
 	useOn: "*",
 	handler: async (c) => {
 		if (!c.headers.get("authorization")) {
-			return new C.Response("Unauthorized", { status: 401 });
+			return new C.Res("Unauthorized", { status: 401 });
 		}
 	},
 });
@@ -81,8 +81,8 @@ Either "inbound" or "outbound". Defaults to "inbound". Inbound middlewares run b
 | --------------------------------------- | ------------------------------------------------ |
 | Inbound Middleware returning void       | Middleware (calling `next()`)                    |
 | Outbound Middleware returning void      | Interceptor (post-handler, returning observable) |
-| Inbound Middleware returning CResponse  | Guard returning `false` or throwing              |
-| Outbound Middleware returning CResponse | Exception Filter catching and transforming       |
+| Inbound Middleware returning Res  | Guard returning `false` or throwing              |
+| Outbound Middleware returning Res | Exception Filter catching and transforming       |
 | Inbound Middleware throwing             | Guard or Middleware throwing                     |
 | Outbound Middleware throwing            | Interceptor or Exception Filter throwing         |
 
@@ -108,7 +108,7 @@ export type MiddlewareUseOn =
 
 ### `handler`
 
-The middleware function. Receives the request context and can return a CResponse or throw and error to halt further processing, or void to pass through.
+The middleware function. Receives the request context and can return a Res or throw and error to halt further processing, or void to pass through.
 
 </section>
 

@@ -1,10 +1,10 @@
-import { CResponse } from "@/CResponse/CResponse";
-import type { RouteModel } from "@/Route/RouteModel";
+import { Res } from "@/Res/Res";
+import type { RouteModel } from "@/BaseRoute/RouteModel";
 import { StaticRouteAbstract } from "@/StaticRoute/StaticRouteAbstract";
 import type { StaticRouteCallback } from "@/StaticRoute/StaticRouteCallback";
 import type { StaticRouteDefinition } from "@/StaticRoute/StaticRouteDefinition";
 
-type R = CResponse | string;
+type R = Res | string;
 
 /**
  * Defines a route that serves a static file. Accepts a path and a {@link StaticRouteDefinition}

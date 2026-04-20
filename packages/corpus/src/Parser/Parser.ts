@@ -1,12 +1,12 @@
 import type { SchemaValidator } from "corpus-utils/Schema";
 import type { UnknownObject } from "corpus-utils/UnknownObject";
 
-import type { CRequest } from "@/CRequest/CRequest";
-import type { CResponse } from "@/CResponse/CResponse";
 import { BodyParser } from "@/Parser/BodyParser";
 import { FormDataParser } from "@/Parser/FormDataParser";
 import { SchemaParser } from "@/Parser/SchemaParser";
 import { SearchParamsParser } from "@/Parser/SearchParamsParser";
+import type { Req } from "@/Req/Req";
+import type { Res } from "@/Res/Res";
 
 export class Parser {
 	static readonly formDataParser = new FormDataParser();
@@ -15,7 +15,7 @@ export class Parser {
 	static readonly schemaParser = new SchemaParser();
 
 	static async parseBody<T = UnknownObject>(
-		r: CRequest | CResponse | Response,
+		r: Req | Res | Response,
 		validate?: SchemaValidator<T>,
 	): Promise<T> {
 		const data = await this.bodyParser.parse(r);

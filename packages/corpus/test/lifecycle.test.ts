@@ -39,7 +39,7 @@ beforeEach(() => {
 		handler: (c) => {
 			const token = c.req.headers.get("authorization");
 			if (token !== "Bearer secret") {
-				return new TC.Response({ error: "unauthorized" }, { status: 401 });
+				return new TC.Res({ error: "unauthorized" }, { status: 401 });
 			}
 			(c.data as any).user = "alice";
 		},

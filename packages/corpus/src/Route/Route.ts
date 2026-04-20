@@ -1,15 +1,15 @@
-import { DynamicRouteAbstract } from "@/DynamicRoute/DynamicRouteAbstract";
-import type { DynamicRouteCallback } from "@/DynamicRoute/DynamicRouteCallback";
-import type { DynamicRouteDefinition } from "@/DynamicRoute/DynamicRouteDefinition";
-import type { RouteModel } from "@/Route/RouteModel";
+import type { RouteModel } from "@/BaseRoute/RouteModel";
+import { RouteAbstract } from "@/Route/RouteAbstract";
+import type { RouteCallback } from "@/Route/RouteCallback";
+import type { RouteDefinition } from "@/Route/RouteDefinition";
 
 /**
- * Defines an HTTP endpoint. Accepts a {@link DynamicRouteDefinition} which can either be a plain
+ * Defines an HTTP endpoint. Accepts a {@link RouteDefinition} which can either be a plain
  * path string (defaults to GET) or an object with a `method` and `path` for other HTTP methods.
  *
- * The handler receives a {@link Context} and can return any data, a {@link CResponse} directly,
+ * The handler receives a {@link Context} and can return any data, a {@link Res} directly,
  * or a plain web `Response` for cases where full control over the response is needed.
- * Returned data is automatically serialized by {@link CResponse} — plain objects become JSON,
+ * Returned data is automatically serialized by {@link Res} — plain objects become JSON,
  * primitives become plain text, and so on.
  *
  * An optional {@link RouteModel} can be provided to validate and parse the request body,
@@ -27,16 +27,16 @@ import type { RouteModel } from "@/Route/RouteModel";
  * }, { body: UserModel });
  */
 
-export class DynamicRoute<
+export class Route<
 	B = unknown,
 	S = unknown,
 	P = unknown,
 	R = unknown,
 	E extends string = string,
-> extends DynamicRouteAbstract<B, S, P, R, E> {
+> extends RouteAbstract<B, S, P, R, E> {
 	constructor(
-		readonly definition: DynamicRouteDefinition<E>,
-		readonly callback: DynamicRouteCallback<B, S, P, R>,
+		readonly definition: RouteDefinition<E>,
+		readonly callback: RouteCallback<B, S, P, R>,
 		readonly model?: RouteModel<B, S, P, R>,
 	) {
 		super();

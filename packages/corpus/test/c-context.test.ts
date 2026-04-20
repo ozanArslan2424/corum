@@ -13,11 +13,11 @@ const s = createTestServer();
 describe("C.Context", () => {
 	it("HAS CORRECT SHAPE", async () => {
 		new TC.Route("/ctx-shape", (c) => {
-			expect(c.req).toBeInstanceOf(TC.Request);
+			expect(c.req).toBeInstanceOf(TC.Req);
 			expect(c.url).toBeInstanceOf(URL);
 			expect(c.headers).toBeInstanceOf(TC.Headers);
 			expect(c.cookies).toBeInstanceOf(TC.Cookies);
-			expect(c.res).toBeInstanceOf(TC.Response);
+			expect(c.res).toBeInstanceOf(TC.Res);
 			expect(c.body).toBeDefined();
 			expect(c.search).toBeDefined();
 			expect(c.params).toBeDefined();
@@ -29,7 +29,7 @@ describe("C.Context", () => {
 	});
 
 	it("APPENDS CORRECT PARSED DATA", async () => {
-		const r = new TC.Request("http://localhost:3000/hello/randomID?a=b", {
+		const r = new TC.Req("http://localhost:3000/hello/randomID?a=b", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({ hello: "world" }),

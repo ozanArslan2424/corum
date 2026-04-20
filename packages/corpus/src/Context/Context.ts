@@ -1,9 +1,9 @@
 import type { CHeaders } from "@/CHeaders/CHeaders";
 import type { Cookies } from "@/Cookies/Cookies";
-import type { CRequest } from "@/CRequest/CRequest";
-import { CResponse } from "@/CResponse/CResponse";
 import { Parser } from "@/Parser/Parser";
 import type { RouterReturn } from "@/Registry/RouterReturn";
+import type { Req } from "@/Req/Req";
+import { Res } from "@/Res/Res";
 import type { ContextDataInterface } from "@/types.d.ts";
 
 /**
@@ -27,15 +27,15 @@ import type { ContextDataInterface } from "@/types.d.ts";
  * */
 
 export class Context<B = unknown, S = unknown, P = unknown, R = unknown> {
-	constructor(req: CRequest, res?: CResponse<R>) {
+	constructor(req: Req, res?: Res<R>) {
 		this.req = req;
 		this.url = req.urlObject;
 		this.headers = req.headers;
 		this.cookies = req.cookies;
-		this.res = res ?? new CResponse<R>();
+		this.res = res ?? new Res<R>();
 	}
 
-	readonly req: CRequest;
+	readonly req: Req;
 	url: URL;
 	headers: CHeaders;
 	cookies: Cookies;
@@ -43,11 +43,11 @@ export class Context<B = unknown, S = unknown, P = unknown, R = unknown> {
 	search: S = {} as S;
 	params: P = {} as P;
 	data: ContextDataInterface = {};
-	res: CResponse<R>;
+	res: Res<R>;
 
 	static async appendParsedData<B = unknown, S = unknown, P = unknown, R = unknown>(
 		ctx: Context<B, S, P, R>,
-		req: CRequest,
+		req: Req,
 		data: RouterReturn,
 	) {
 		ctx.body = await Parser.parseBody(req, data.route.model?.body);

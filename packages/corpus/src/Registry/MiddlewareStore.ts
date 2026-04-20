@@ -6,7 +6,7 @@ import type { MiddlewareUseOn } from "@/Middleware/MiddlewareUseOn";
 import { MiddlewareVariant } from "@/Middleware/MiddlewareVariant";
 import type { MiddlewareInterface } from "@/Middleware/MiddlwareInterface";
 import type { MiddlewareStoreReturn } from "@/Registry/MiddlewareStoreReturn";
-import { RouteAbstract } from "@/Route/RouteAbstract";
+import { BaseRouteAbstract } from "@/BaseRoute/BaseRouteAbstract";
 
 export class MiddlewareStore {
 	private inboundMap = new Map<string, Array<MiddlewareHandler>>();
@@ -50,7 +50,7 @@ export class MiddlewareStore {
 		const routeIds: string[] = [];
 
 		for (const target of targets) {
-			if (target instanceof RouteAbstract) {
+			if (target instanceof BaseRouteAbstract) {
 				routeIds.push(target.id);
 			} else if (target instanceof Controller) {
 				routeIds.push(...target.routeIds);

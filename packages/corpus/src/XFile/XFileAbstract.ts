@@ -11,11 +11,21 @@ export abstract class XFileAbstract implements XFileInterface {
 	abstract exists(): Promise<boolean>;
 
 	get name(): string {
-		return this.path.split("/").pop() ?? this.path;
+		return (this.path.split("/").pop() ?? this.path).replace(`.${this.extension}`, "");
 	}
 
 	get extension(): string {
 		return this.path.split(".").pop() ?? this.fallbackExtension ?? "txt";
+	}
+
+	get fullname(): string {
+		return `${this.name}.${this.extension}`;
+	}
+
+	get parentDirs(): string[] {
+		const segments = this.path.split("/");
+		segments.pop();
+		return segments.filter((segment) => segment.length > 0).reverse();
 	}
 
 	get mimeType(): string {

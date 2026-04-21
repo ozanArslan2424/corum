@@ -1,24 +1,76 @@
 <nav class="topbar">
-	<a href="/" class="topbar-brand">
-		<h1>Corpus Docs</h1>
+	<a href="/index.html" class="topbar-brand">
+		<h1>@ozanarslan/corpus</h1>
 	</a>
 	<div class="topbar-actions">
-		<input
-			type="text"
-			class="topbar-search"
-			placeholder="Search..."
-			readonly
-			onclick="openSearchDialog()"
-		/>
+		<input type="text" class="topbar-search" id="topbar-search" placeholder="Search..." readonly />
 	</div>
 </nav>
 
 <dialog class="search-dialog" id="search-dialog">
-	<input
-		type="text"
-		class="search-dialog-input"
-		placeholder="Search..."
-		oninput="filterSearchResults(this.value)"
-	/>
+	<input type="text" class="search-dialog-input" id="search-dialog-input" placeholder="Search..." />
 	<ul class="search-dialog-results" id="search-results"></ul>
 </dialog>
+
+<script>
+	document.addEventListener("DOMContentLoaded", () => {
+		const searchLinks = Array.from(document.querySelectorAll("aside nav a"))
+			.filter((a) => a.getAttribute("href") !== "#" && !a.hasAttribute("aria-disabled"))
+			.map((a) => ({
+				label: a.textContent.trim(),
+				href: a.getAttribute("href"),
+				group: a.closest("nav").querySelector("h3").textContent.trim(),
+			}));
+
+		const trigger = document.getElementById("topbar-search");
+		const input = document.getElementById("search-dialog-input");
+		const dialog = document.getElementById("search-dialog");
+		const results = document.getElementById("search-results");
+
+		function renderResults(links) {
+			results.innerHTML = links
+				.map(
+					(l) =>
+						`<li><a href="${l.href}"><span>${l.label}</span><span class="search-result-group">${l.group}</span></a></li>`,
+				)
+				.join("");
+		}
+
+		function filterSearchResults(query) {
+			const q = query.toLowerCase();
+			renderResults(
+				q
+					? searchLinks.filter(
+							(l) => l.label.toLowerCase().includes(q) || l.group.toLowerCase().includes(q),
+						)
+					: searchLinks,
+			);
+		}
+
+		function openSearchDialog() {
+			renderResults(searchLinks);
+			dialog.showModal();
+			dialog.querySelector("input").focus();
+		}
+
+		dialog.addEventListener("click", (e) => {
+			if (e.target === dialog) dialog.close();
+		});
+
+		document.addEventListener("keydown", (e) => {
+			if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+				e.preventDefault();
+				openSearchDialog();
+			}
+			if (e.key === "Escape") dialog.close();
+		});
+
+		trigger.addEventListener("click", () => {
+			openSearchDialog();
+		});
+
+		input.addEventListener("input", (e) => {
+			filterSearchResults(e.target.value);
+		});
+	});
+</script>

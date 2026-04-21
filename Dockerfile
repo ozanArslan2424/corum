@@ -4,6 +4,7 @@ WORKDIR /usr/src/app
 # STEP 1: BUILD
 FROM base AS build
 COPY . .
+ENV CI=true
 # Bun workspaces doesn't work very well, so we use pnpm.
 RUN bun add -g pnpm
 # install all deps because why bother filtering

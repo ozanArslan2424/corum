@@ -170,7 +170,7 @@ export class Res<R = unknown> {
 		const res = new Res(stream, { ...init, status: Status.OK });
 		res.headers.setMany({
 			[CommonHeaders.ContentType]: file.mimeType,
-			[CommonHeaders.ContentDisposition]: `${disposition}; filename="${file.name}"`,
+			[CommonHeaders.ContentDisposition]: `${disposition}; filename="${file.fullname}"`,
 		});
 		return res;
 	}

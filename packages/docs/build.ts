@@ -2,9 +2,10 @@ async function build() {
 	await Bun.$`mkdir -p ./dist`.quiet();
 
 	await Promise.all([
-		Bun.$`cp -r ./src/css ./dist/`.quiet(),
-		Bun.$`cp -r ./src/html ./dist/`.quiet(),
-		Bun.$`cp -r ./src/markdown ./dist/`.quiet(),
+		Bun.$`cp -r ./src/html ./dist/html`.quiet(),
+		Bun.$`cp -r ./src/css ./dist/css`.quiet(),
+		Bun.$`cp -r ./src/js ./dist/js`.quiet(),
+		Bun.$`cp -r ./src/md ./dist/md`.quiet(),
 	]);
 
 	const b2 = await Bun.build({

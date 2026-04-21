@@ -1,5 +1,11 @@
 # @ozanarslan/corpus
 
+## 0.5.4
+
+### Patch Changes
+
+- some changes with docs
+
 ## 0.5.3
 
 ### Patch Changes

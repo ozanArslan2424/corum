@@ -10,6 +10,13 @@
 	},
 	"dependencies": {
 		"@ozanarslan/corpus": "workspace:*",
-		"marked": "^18.0.0"
+		"highlight.js": "^11.11.1",
+		"html-minifier-terser": "^7.2.0",
+		"marked": "^18.0.0",
+		"posthtml": "^0.16.7"
+	},
+	"devDependencies": {
+		"@types/html-minifier-terser": "^7.0.2",
+		"esbuild": "^0.28.0"
 	}
 }

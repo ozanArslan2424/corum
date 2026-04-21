@@ -1,7 +1,7 @@
 {
 	"$schema": "https://www.schemastore.org/package.json",
 	"name": "@ozanarslan/corpus-callosum",
-	"version": "0.5.3",
+	"version": "0.5.4",
 	"description": "CLI for @ozanarslan/corpus",
 	"license": "MIT",
 	"author": "Ozan Arslan <ozanarslanwork@gmail.com>",

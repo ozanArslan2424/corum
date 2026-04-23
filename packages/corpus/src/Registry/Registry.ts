@@ -11,13 +11,14 @@ import type { SchemaParserInterface } from "@/Parser/SchemaParserInterface";
 import { SearchParamsParser } from "@/Parser/SearchParamsParser";
 import { URLParamsParser } from "@/Parser/URLParamsParser";
 import type { RegistryDocEntry } from "@/Registry/RegistryDocEntry";
+import type { RegistryInterface } from "@/Registry/RegistryInterface";
 import { Router } from "@/Router/Router";
 import type { RouterInterface } from "@/Router/RouterInterface";
 import { BranchAdapter } from "@/RouterAdapter/BranchAdapter";
 import type { RouterAdapterInterface } from "@/RouterAdapter/RouterAdapterInterface";
 import type { XCorsInterface } from "@/XCors/XCorsInterface";
 
-export class Registry {
+export class Registry implements RegistryInterface {
 	public adapter!: RouterAdapterInterface;
 	public router!: RouterInterface;
 	public docs!: Map<string, RegistryDocEntry>;

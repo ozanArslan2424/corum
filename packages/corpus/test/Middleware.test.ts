@@ -1,6 +1,6 @@
-import { describe, expect, it, spyOn, beforeEach } from "bun:test";
+import { describe, expect, it, beforeEach } from "bun:test";
 
-import { $registryTesting, TC, testLog } from "./_modules";
+import { $registryTesting, TC } from "./_modules";
 import { createTestController } from "./utils/createTestController";
 import { createTestServer } from "./utils/createTestServer";
 import { parseBody } from "./utils/parse";
@@ -8,11 +8,9 @@ import { req } from "./utils/req";
 
 beforeEach(() => {
 	$registryTesting.reset();
-	testLogSpy.mockClear();
 });
 
 const s = createTestServer();
-const testLogSpy = spyOn(testLog, "log");
 
 const pathnameFromId = (id: string) => id.split(" ")[1]!;
 

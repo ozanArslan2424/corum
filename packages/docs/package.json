@@ -12,8 +12,7 @@
 		"@ozanarslan/corpus": "workspace:*",
 		"highlight.js": "^11.11.1",
 		"html-minifier-terser": "^7.2.0",
-		"marked": "^18.0.2",
-		"posthtml": "^0.16.7"
+		"marked": "^18.0.2"
 	},
 	"devDependencies": {
 		"@types/bun": "^1.3.12",

@@ -10,11 +10,11 @@ export class XFile extends XFileAbstract implements XFileInterface {
 	file: Bun.BunFile;
 
 	async exists(): Promise<boolean> {
-		return await this.file.exists();
+		return this.file.exists();
 	}
 
 	async text(): Promise<string> {
-		return await this.file.text();
+		return this.file.text();
 	}
 
 	stream(): ReadableStream {

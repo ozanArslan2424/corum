@@ -4,14 +4,14 @@ import type { MaybePromise } from "corpus-utils/MaybePromise";
 import type { RouterData } from "@/Registry/RouterData";
 import type { ErrorHandler } from "@/Server/ErrorHandler";
 import type { RequestHandler } from "@/Server/RequestHandler";
-import type { ServeArgs } from "@/Server/ServeArgs";
+import type { ServerOpenArgs } from "@/Server/ServerOpenArgs";
 
 export interface ServerInterface {
 	get routes(): Array<RouterData>;
 
 	setGlobalPrefix(value: string): void;
 
-	listen(port: ServeArgs["port"], hostname?: ServeArgs["hostname"]): Promise<void>;
+	listen(port: ServerOpenArgs["port"], hostname?: ServerOpenArgs["hostname"]): Promise<void>;
 
 	close(closeActiveConnections?: boolean): Promise<void>;
 

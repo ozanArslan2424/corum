@@ -6,12 +6,13 @@ const action = ConfigManager.getAction();
 const config = await ConfigManager.getResolvedConfig();
 ConfigManager.writeConfigFile(config);
 
-if (action === "api") {
-	await generateApiClient(config);
-	process.exit(0);
+switch (action) {
+	case "api":
+		generateApiClient(config);
+		break;
+	case "init":
+		await initialize(config);
+		break;
 }
 
-if (action === "init") {
-	await initialize(config);
-	process.exit(0);
-}
+process.exit(0);

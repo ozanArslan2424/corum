@@ -29,7 +29,7 @@ describe("C.StaticRoute", () => {
 
 	it("STATIC ROUTE - ID IS SET", () => {
 		const route = new TC.StaticRoute("/sr4", f("sample.html"));
-		expect(route.id).toBe(`${TC.Method.GET} ${"/sr4"}`);
+		expect(route.id).toBe(`${TC.Method.GET} /sr4`);
 	});
 
 	it("STATIC ROUTE - WITH MODEL", () => {
@@ -164,11 +164,9 @@ describe("C.StaticRoute", () => {
 
 			definition: TC.StaticRouteDefinition = f("sample.txt");
 
-			override callback?: TC.StaticRouteCallback<unknown, unknown, unknown> | undefined = () => "";
+			override callback?: TC.StaticRouteCallback | undefined = () => "";
 
-			override model?:
-				| TC.RouteModel<unknown, unknown, unknown, string | TC.Res<unknown>>
-				| undefined;
+			override model?: TC.RouteModel<unknown, unknown, unknown, string | TC.Res> | undefined;
 		}
 
 		new MyRoute();

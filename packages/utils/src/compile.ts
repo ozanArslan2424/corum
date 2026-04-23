@@ -4,7 +4,7 @@ import type { MaybePromise } from "./MaybePromise";
 export function compile<F extends Func>(
 	fns: Array<F | undefined>,
 ): Func<Parameters<F>, MaybePromise<Awaited<ReturnType<F>> | void>> {
-	return async (...args: Parameters<F>) => {
+	return async (...args) => {
 		for (const fn of fns) {
 			if (!fn) continue;
 			const result = await fn(...args);

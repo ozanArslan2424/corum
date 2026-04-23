@@ -13,7 +13,8 @@ export class XConfig {
 			return "bun";
 		}
 
-		if (typeof process !== "undefined" && process?.env) {
+		// oxlint-disable-next-line typescript/no-unnecessary-condition
+		if (typeof process?.env !== "undefined") {
 			return "node";
 		}
 
@@ -56,11 +57,11 @@ export class XConfig {
 		const value = this.env[key];
 
 		if (strIsDefined(value)) {
-			return opts?.parser ? opts?.parser(value) : (value as T);
+			return opts?.parser ? opts.parser(value) : (value as T);
 		}
 
 		if (opts?.fallback !== undefined) {
-			return opts?.fallback;
+			return opts.fallback;
 		}
 
 		log.warn(`${key} doesn't exist in env`);

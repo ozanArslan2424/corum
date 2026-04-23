@@ -1,7 +1,7 @@
 import type { EntityDefinition } from "@/Entity/EntityDefinition";
 
 export class EntityStore {
-	private map = new Map<string, EntityDefinition>();
+	private readonly map = new Map<string, EntityDefinition>();
 
 	add(def: EntityDefinition) {
 		this.warnOverride(def.name);

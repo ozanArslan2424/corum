@@ -3,7 +3,7 @@ import type { InferSchemaIn, InferSchemaOut, Schema } from "corpus-utils/Schema"
 import type { EntityDefinition } from "@/Entity/EntityDefinition";
 import type { EntityJsonSchema } from "@/Entity/EntityJsonSchema";
 import { $registry } from "@/index";
-import { Parser } from "@/Parser/Parser";
+import { parseSchemaSync } from "@/Parser/parseSchema";
 
 export function Entity<T extends Schema = Schema>(def: EntityDefinition<T>) {
 	$registry.entities.add(def);
@@ -16,7 +16,7 @@ export function Entity<T extends Schema = Schema>(def: EntityDefinition<T>) {
 		constructor(values: InferSchemaIn<T>) {
 			const data = def.disableParsing
 				? values
-				: Parser.schemaParser.parseSync(def.name, values, def.schema["~standard"].validate);
+				: parseSchemaSync(def.name, values, def.schema["~standard"].validate);
 			Object.assign(this, data);
 		}
 	}

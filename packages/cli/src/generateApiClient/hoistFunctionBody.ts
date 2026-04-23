@@ -24,7 +24,7 @@ export function hoistFunctionBody(source: string): string {
 
 	function findFunc(node: ts.Node) {
 		if (ts.isFunctionDeclaration(node) && findListen(node)) {
-			if (!targetFunc) targetFunc = node;
+			targetFunc ??= node;
 			return;
 		}
 		ts.forEachChild(node, findFunc);

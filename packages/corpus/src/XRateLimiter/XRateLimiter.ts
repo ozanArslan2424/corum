@@ -48,7 +48,7 @@ export class XRateLimiter extends MiddlewareAbstract {
 	};
 
 	private readonly config: RateLimitConfig;
-	private store: RateLimitStoreInterface;
+	private readonly store: RateLimitStoreInterface;
 	private storedSalt: string;
 	private saltRotatesAt: number;
 
@@ -124,13 +124,13 @@ export class XRateLimiter extends MiddlewareAbstract {
 
 	private getMax(id: string): number {
 		const prefix = id.charAt(0) as RateLimitIdPrefix;
-		return this.config.limits[prefix] ?? this.config.limits.f;
+		return this.config.limits[prefix];
 	}
 
 	private extractIp(headers: CHeaders): string | null {
 		const raw =
-			headers.get("cf-connecting-ip") ||
-			headers.get("x-real-ip") ||
+			headers.get("cf-connecting-ip") ??
+			headers.get("x-real-ip") ??
 			headers.get("x-forwarded-for")?.split(",")[0]?.trim();
 
 		return this.isValidIp(raw) ? raw : null;
@@ -184,7 +184,7 @@ export class XRateLimiter extends MiddlewareAbstract {
 		const now = Date.now();
 		await this.store.cleanup(now);
 
-		return await this.store.size();
+		return this.store.size();
 	}
 
 	private hash(data: string, len: number): string {
@@ -200,7 +200,7 @@ export class XRateLimiter extends MiddlewareAbstract {
 	}
 
 	async getStoreSize(): Promise<number> {
-		return await this.store.size();
+		return this.store.size();
 	}
 
 	private readonly defaultConfig: RateLimitConfig = {

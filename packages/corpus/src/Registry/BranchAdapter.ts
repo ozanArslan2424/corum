@@ -59,8 +59,8 @@ export class BranchAdapter implements RouterAdapterInterface {
 	private readonly SLASH = "/";
 	private readonly SLASH_CHAR_CODE = 47;
 
-	private _root: Branch = this.createBranch(this.SLASH, null);
-	private storeFactory: Func<[], Store> = () => new Map();
+	private readonly _root: Branch = this.createBranch(this.SLASH, null);
+	private readonly storeFactory: Func<[], Store> = () => new Map();
 
 	find(req: Req): RouterReturn | null {
 		const method = req.method.toUpperCase() as Method;
@@ -219,7 +219,7 @@ export class BranchAdapter implements RouterAdapterInterface {
 		}
 
 		const staticParts = path.split(/:.+?(?=\/|$)/);
-		const paramParts = path.match(/:.+?(?=\/|$)/g) || [];
+		const paramParts = path.match(/:.+?(?=\/|$)/g) ?? [];
 
 		// remove last part if empty
 		if (staticParts[staticParts.length - 1] === this.EMPTY) {
@@ -316,26 +316,20 @@ export class BranchAdapter implements RouterAdapterInterface {
 				);
 			}
 
-			if (branch.paramBranch.store === null) {
-				branch.paramBranch.store = this.storeFactory();
-			}
+			branch.paramBranch.store ??= this.storeFactory();
 
 			return branch.paramBranch.store;
 		}
 
 		if (endsWithWildcard) {
 			// The final part is a wildcard
-			if (branch.wildcardStore === null) {
-				branch.wildcardStore = this.storeFactory();
-			}
+			branch.wildcardStore ??= this.storeFactory();
 
 			return branch.wildcardStore;
 		}
 
 		// The final part is static
-		if (branch.store === null) {
-			branch.store = this.storeFactory();
-		}
+		branch.store ??= this.storeFactory();
 
 		return branch.store;
 	}

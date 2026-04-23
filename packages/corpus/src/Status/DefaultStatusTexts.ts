@@ -1,8 +1,6 @@
-import type { ValueOf } from "corpus-utils/ValueOf";
-
 import { Status } from "@/Status/Status";
 
-export const DefaultStatusTexts = {
+export const DefaultStatusTexts: Record<number, string> = {
 	[Status.OK]: "OK",
 	[Status.CREATED]: "Created",
 	[Status.NO_CONTENT]: "No Content",
@@ -17,5 +15,3 @@ export const DefaultStatusTexts = {
 	[Status.NOT_FOUND]: "Not Found",
 	[Status.INTERNAL_SERVER_ERROR]: "Internal Server Error",
 };
-
-export type DefaultStatusTexts = ValueOf<typeof DefaultStatusTexts>;

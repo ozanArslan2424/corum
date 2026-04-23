@@ -23,7 +23,7 @@ beforeEach(() => {
 
 const postRoute = (
 	routePath: string,
-	{ param, search, body }: { param: string | number; search: string | number; body: object },
+	{ param, search, body }: { param: string | number; search: string | number; body: any },
 ) => {
 	const url = new URL(
 		reqPath(joinPathSegments(...routePath.replace(/:hello/, String(param)).split("/"))),
@@ -128,7 +128,7 @@ describe("real HTTP requests", () => {
 		it("optional search param — omitted", async () => {
 			const url = new URL(reqPath(joinPathSegments("controller", "optional")));
 			const res = await s.handle(new Request(url));
-			expect(await parseBody<{}>(res)).toBeEmptyObject();
+			expect(await parseBody(res)).toBeEmptyObject();
 		});
 
 		it("missing required route param — fails", async () => {

@@ -9,6 +9,7 @@ export async function perform<F extends Func>(fn: F, name?: string): Promise<Ret
 	const end = performance.now();
 	const startup = end - start;
 
+	// oxlint-disable-next-line typescript/no-unnecessary-condition
 	const msg = `🚀 ${name ?? fn.name ?? "function"} took ${startup.toFixed(2)}ms`;
 
 	if (startup > 10) {

@@ -18,7 +18,7 @@ async function run(withAbstract: boolean) {
 
 	// ── helpers ──────────────────────────────────────────────────────────────────
 
-	async function send(ws: WebSocket, payload: object) {
+	async function send(ws: WebSocket, payload: any) {
 		await new Promise((resolve) => setTimeout(resolve, 10));
 		const message = T.stringify(payload);
 		T.log.debug(`Sending message: ${message}`);
@@ -40,8 +40,8 @@ async function run(withAbstract: boolean) {
 		T.log.info(`Creating client: ${label}`);
 		return new Promise((resolve, reject) => {
 			const ws = new WebSocket(WS_URL);
-			const queue: object[] = [];
-			const waiters: ((v: object) => void)[] = [];
+			const queue: any[] = [];
+			const waiters: ((v: any) => void)[] = [];
 
 			ws.onmessage = (e) => {
 				const msg = JSON.parse(e.data as string);
@@ -51,8 +51,8 @@ async function run(withAbstract: boolean) {
 				else queue.push(msg);
 			};
 
-			const next = (): Promise<object> => {
-				if (queue.length) return Promise.resolve(queue.shift()!);
+			const next = (): Promise<any> => {
+				if (queue.length) return Promise.resolve(queue.shift());
 				return new Promise((res) => waiters.push(res));
 			};
 
@@ -135,7 +135,7 @@ async function run(withAbstract: boolean) {
 		// ── query subscriptions ───────────────────────────────────────────────────
 		T.log.info("Querying Carol's subscriptions...");
 		await send(carol, { event: "subscriptions" });
-		const carolSubs = (await carolNext()) as any;
+		const carolSubs = await carolNext();
 		T.log.info("[carol] active subscriptions:", carolSubs);
 		T.expect("carol subs event", carolSubs).toHaveProperty("event", "subscriptions");
 		T.expect("carol subs data", carolSubs.data).toEqual(["sports", "news"]);
@@ -153,9 +153,9 @@ async function run(withAbstract: boolean) {
 			data: { headline: "corpus ships" },
 		});
 
-		const aliceAck = (await aliceNext()) as any;
-		const bobNews = (await bobReceives) as any;
-		const carolNews = (await carolReceives) as any;
+		const aliceAck = await aliceNext();
+		const bobNews = await bobReceives;
+		const carolNews = await carolReceives;
 
 		T.log.info("[alice] publish ack:", aliceAck);
 		T.log.info("[bob]   received news:", bobNews);
@@ -179,7 +179,7 @@ async function run(withAbstract: boolean) {
 			topic: "sports",
 			data: { score: "2-1" },
 		});
-		const carolSportsAck = (await carolNext()) as any;
+		const carolSportsAck = await carolNext();
 		T.log.info("[carol] sports publish ack:", carolSportsAck);
 		T.expect("carol sports ack event", carolSportsAck).toHaveProperty("event", "published");
 		T.expect("carol sports ack topic", carolSportsAck).toHaveProperty("topic", "sports");
@@ -204,8 +204,8 @@ async function run(withAbstract: boolean) {
 			topic: "news",
 			data: { headline: "bob missed this" },
 		});
-		const aliceAck2 = (await aliceNext()) as any;
-		const carolNews2 = (await carolReceives2) as any;
+		const aliceAck2 = await aliceNext();
+		const carolNews2 = await carolReceives2;
 
 		T.log.info("[alice] publish ack 2:", aliceAck2);
 		T.log.info("[carol] received news after bob left:", carolNews2);
@@ -220,7 +220,7 @@ async function run(withAbstract: boolean) {
 		// ── unknown event ─────────────────────────────────────────────────────────
 		T.log.info("Testing unknown event handling...");
 		await send(bob, { event: "explode" });
-		const err = (await bobNext()) as any;
+		const err = await bobNext();
 		T.log.info("[bob]   error response:", err);
 		T.expect("unknown event error", err).toHaveProperty("event", "error");
 		T.expect("unknown event message", err.data).toContain("unknown event");

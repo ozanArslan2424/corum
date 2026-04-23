@@ -15,7 +15,7 @@ import { Writer } from "../Writer/Writer";
 export class ConfigManager {
 	static getAction(): Action {
 		const args = process.argv;
-		const action = args[2] as Action;
+		const action = args[2] as Action | undefined;
 
 		if (!action || !ACTIONS.includes(action)) {
 			log.bold("No action provided. Available actions:");
@@ -179,8 +179,8 @@ export class ConfigManager {
 		const defC = this.getDefaultConfig();
 
 		function use<T>(flag: T | null | undefined, file: T | null | undefined, def: T): T {
-			if (flag != null && flag !== undefined) return flag;
-			if (file != null && file !== undefined) return file;
+			if (flag != null) return flag;
+			if (file != null) return file;
 			return def;
 		}
 

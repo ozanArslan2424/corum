@@ -29,8 +29,8 @@ export class PackageManager {
 		return JSON.parse(readFileSync(this.path, "utf-8"));
 	}
 
-	get name() {
-		return (this.content.name as string) ?? "app";
+	get name(): string {
+		return this.content.name ?? "app";
 	}
 
 	get exists(): boolean {
@@ -50,11 +50,11 @@ export class PackageManager {
 	}
 
 	async install() {
-		return await Bun.$`${this.manager} install`;
+		return Bun.$`${this.manager} install`;
 	}
 
 	async run(cmd: string) {
-		return await Bun.$`${this.manager} run ${cmd}`;
+		return Bun.$`${this.manager} run ${cmd}`;
 	}
 
 	async add(...pkgs: PackageInterface[]) {

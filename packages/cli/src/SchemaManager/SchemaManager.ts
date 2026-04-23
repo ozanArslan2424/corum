@@ -1,7 +1,7 @@
 import { convertSchema as yupToJsonSchema } from "@sodaru/yup-to-json-schema";
 import type { Type } from "arktype";
 import { compile } from "json-schema-to-typescript";
-import z from "zod";
+import { ZodType } from "zod";
 
 import type { Config } from "../Config/Config";
 import type { Schema } from "../utils/Schema";
@@ -16,15 +16,13 @@ export class SchemaManager {
 	}
 
 	toJsonSchema(schema: Schema): Record<string, unknown> {
-		const confLib = this.config.validationLibrary;
 		const vendor = schema["~standard"].vendor;
-		const lib = confLib !== vendor ? vendor : (confLib ?? vendor);
-		switch (lib) {
+		switch (vendor) {
 			case "yup":
 				return yupToJsonSchema(schema as any, this.options) as Record<string, unknown>;
 
 			case "zod":
-				return z.toJSONSchema(schema as any, {
+				return (schema as ZodType).toJSONSchema({
 					target: "draft-07",
 					unrepresentable: "any",
 					...this.options,
@@ -48,20 +46,6 @@ export class SchemaManager {
 		});
 
 		if (!name) {
-			// const clean = schemaType
-			// 	.replace("export ", "")
-			// 	.replace("type DoesnTMatterWillBeDeleted = ", "")
-			// 	.replace("interface DoesnTMatterWillBeDeleted", "")
-			// 	.trim();
-			//
-			// let bld = "";
-			// for (let line of clean.split("\n")) {
-			// 	if (!line.endsWith("{")) {
-			// 		line += ";";
-			// 	}
-			// 	bld += line;
-			// }
-			// return bld;
 			return schemaType
 				.replace("export ", "")
 				.replace("type DoesnTMatterWillBeDeleted = ", "")

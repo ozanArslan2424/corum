@@ -14,11 +14,11 @@ import { hoistFunctionBody } from "./hoistFunctionBody";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-export async function generateApiClient(config: Config) {
+export function generateApiClient(config: Config) {
 	const mainPath = resolve(config.main);
 
 	const cliOverrides = Object.fromEntries(
-		Object.entries(config).filter(([k, v]) => v !== undefined && k !== "jsonSchemaOptions"),
+		Object.entries(config).filter(([k, v]) => v != null && k !== "jsonSchemaOptions"),
 	);
 
 	const tempPath = mainPath.replace(/\.ts$/, ".gen.ts");

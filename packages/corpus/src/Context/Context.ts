@@ -1,6 +1,9 @@
 import type { CHeaders } from "@/CHeaders/CHeaders";
 import type { Cookies } from "@/Cookies/Cookies";
-import { Parser } from "@/Parser/Parser";
+import { BodyParser } from "@/Parser/BodyParser";
+import { parseSchema } from "@/Parser/parseSchema";
+import { SearchParamsParser } from "@/Parser/SearchParamsParser";
+import { URLParamsParser } from "@/Parser/URLParamsParser";
 import type { RouterReturn } from "@/Registry/RouterReturn";
 import type { Req } from "@/Req/Req";
 import { Res } from "@/Res/Res";
@@ -36,27 +39,35 @@ export class Context<B = unknown, S = unknown, P = unknown, R = unknown> {
 	}
 
 	readonly req: Req;
+	res: Res<R>;
 	url: URL;
 	headers: CHeaders;
 	cookies: Cookies;
-	body: B = {} as B;
-	search: S = {} as S;
-	params: P = {} as P;
-	data: ContextDataInterface = {};
-	res: Res<R>;
+	body: B = Object.create(null);
+	search: S = Object.create(null);
+	params: P = Object.create(null);
+	data: ContextDataInterface = Object.create(null);
 
 	static async appendParsedData<B = unknown, S = unknown, P = unknown, R = unknown>(
 		ctx: Context<B, S, P, R>,
 		req: Req,
 		data: RouterReturn,
+		urlParamsParser: URLParamsParser,
+		searchParamsParser: SearchParamsParser,
+		bodyParser: BodyParser,
 	) {
-		ctx.body = await Parser.parseBody(req, data.route.model?.body);
+		const body = await bodyParser.parse(req);
 
-		ctx.search = await Parser.parseSearchParams(
-			req.urlObject.searchParams,
-			data.route.model?.search,
-		);
+		if (body instanceof ReadableStream) {
+			ctx.body = body as B;
+		} else {
+			ctx.body = await parseSchema("body", body, data.route.model?.body);
+		}
 
-		ctx.params = await Parser.parseUrlParams(data.params, data.route.model?.params);
+		const search = searchParamsParser.toObject(req.urlObject.searchParams);
+		ctx.search = await parseSchema("search", search, data.route.model?.search);
+
+		const params = urlParamsParser.toObject(data.params);
+		ctx.params = await parseSchema("params", params, data.route.model?.params);
 	}
 }

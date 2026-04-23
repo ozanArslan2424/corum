@@ -24,7 +24,7 @@ export function createTestWebSocketRoute(log: Log, withAbstract: boolean) {
 			};
 
 			onClose?: TC.WebSocketRouteDefinition["onClose"] | undefined = (_ws, code, reason) => {
-				log.info(`[ws] Connection closed — code=${code} reason=${reason || "no reason provided"}`);
+				log.info(`[ws] Connection closed — code=${code} reason=${reason ?? "no reason provided"}`);
 			};
 
 			onMessage: TC.WebSocketRouteDefinition["onMessage"] = (ws, message) => {
@@ -117,7 +117,7 @@ export function createTestWebSocketRoute(log: Log, withAbstract: boolean) {
 			},
 
 			onClose: (_ws, code, reason) => {
-				log.info(`[ws] Connection closed — code=${code} reason=${reason || "no reason provided"}`);
+				log.info(`[ws] Connection closed — code=${code} reason=${reason ?? "no reason provided"}`);
 			},
 
 			onMessage: (ws, message) => {

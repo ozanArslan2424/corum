@@ -1,7 +1,6 @@
 import { strSplit } from "corpus-utils/strSplit";
 
 import { CHeaders } from "@/CHeaders/CHeaders";
-import type { CHeadersInit } from "@/CHeaders/CHeadersInit";
 import { CommonHeaders } from "@/CommonHeaders/CommonHeaders";
 import { Cookies } from "@/Cookies/Cookies";
 import { Method } from "@/Method/Method";
@@ -16,7 +15,15 @@ export class Req extends Request {
 		readonly init?: ReqInit,
 	) {
 		super(info, init);
+		this.headers = new CHeaders(super.headers);
+		this.urlObject = new URL(super.url);
+		if (!this.urlObject.pathname) this.urlObject.pathname += "/";
+		this.cookies = this.resolveCookies();
 	}
+
+	override readonly headers: CHeaders;
+	readonly urlObject: URL;
+	readonly cookies: Cookies;
 
 	get isPreflight(): boolean {
 		return (
@@ -30,49 +37,7 @@ export class Req extends Request {
 		return isUpgrade && isWebsocket;
 	}
 
-	get urlObject(): URL {
-		let urlObject: URL;
-
-		switch (true) {
-			case this.info instanceof URL:
-				urlObject = this.info;
-				break;
-
-			case this.info instanceof Req:
-				urlObject = this.info.urlObject;
-				break;
-
-			case this.info instanceof Request:
-				urlObject = new URL(this.info.url);
-				break;
-
-			default: // string
-				urlObject = new URL(this.info);
-				break;
-		}
-
-		if (!urlObject.pathname) {
-			urlObject.pathname += "/";
-		}
-
-		return urlObject;
-	}
-
-	override get headers(): CHeaders {
-		let init: CHeadersInit | undefined;
-
-		if (this.info instanceof Request) {
-			init = this.info.headers;
-		}
-
-		if (this.init?.headers) {
-			init = this.init.headers;
-		}
-
-		return new CHeaders(init);
-	}
-
-	get cookies(): Cookies {
+	private resolveCookies(): Cookies {
 		const jar = new Cookies();
 
 		const cookieHeader = this.headers.get(CommonHeaders.Cookie);

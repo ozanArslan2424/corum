@@ -16,7 +16,7 @@ describe("X.Config", () => {
 	it("SET", () => {
 		TX.Config.set(key, val);
 		expect(TX.Config.env[key]).toBe(val);
-		expect(TX.Config.get<string>(key)).toBe(val);
+		expect(TX.Config.get<typeof val>(key)).toBe(val);
 		expect(process.env[key]).toBe(val);
 		expect(Bun.env[key]).toBe(val);
 	});
@@ -28,7 +28,7 @@ describe("X.Config", () => {
 	});
 
 	it("GET - DEFINED", () => {
-		expect(TX.Config.get<string>(key)).toBe(val);
+		expect(TX.Config.get<typeof val>(key)).toBe(val);
 	});
 
 	it("GET - DEFINED PARSE NUMBER", () => {

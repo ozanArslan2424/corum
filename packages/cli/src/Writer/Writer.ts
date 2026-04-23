@@ -122,7 +122,7 @@ export class Writer {
 
 	$constructor(o: CWT.Constructor) {
 		this.tab(
-			`constructor(${o.args ? o.args.map((a) => `${a.keyword ? `${a.keyword} ` : ``}${a.key}: ${a.type}`) : ``}) {`,
+			`constructor(${o.args ? o.args.map((a) => `${a.keyword ? `${a.keyword} ` : ``}${a.key}: ${a.type}`).join(", ") : ``}) {`,
 		);
 
 		if (!o.superArgs && !o.body) {
@@ -269,41 +269,40 @@ export class Writer {
 	}
 
 	$if(...conditions: SWT.Condition[]): SWT.If {
-		const self = this;
-
 		return {
-			then(body) {
+			then: (body) => {
 				const conditionStr = conditions.join(" ");
-				self.line(`if (${conditionStr}) {`);
-				self.writeBody(self, body);
-				self.line(`}`);
+				this.line(`if (${conditionStr}) {`);
+				this.writeBody(this, body);
+				this.line(`}`);
 
 				return {
-					elseif(...newConditions) {
+					elseif: (...newConditions) => {
 						return {
-							then(newBody) {
+							then: (newBody) => {
 								const conditionStr2 = newConditions.join(" ");
-								self.line(`else if (${conditionStr2}) {`);
-								self.writeBody(self, newBody);
-								self.line(`}`);
+								this.line(`else if (${conditionStr2}) {`);
+								this.writeBody(this, newBody);
+								this.line(`}`);
 
 								return {
+									// not the class this, this this
 									elseif(...newConditions2) {
 										return this.elseif(...newConditions2);
 									},
-									else(finalBody) {
-										self.line(`else {`);
-										self.writeBody(self, finalBody);
-										self.line(`}`);
+									else: (finalBody) => {
+										this.line(`else {`);
+										this.writeBody(this, finalBody);
+										this.line(`}`);
 									},
 								};
 							},
 						};
 					},
-					else(finalBody) {
-						self.line(`else {`);
-						self.writeBody(self, finalBody);
-						self.line(`}`);
+					else: (finalBody) => {
+						this.line(`else {`);
+						this.writeBody(this, finalBody);
+						this.line(`}`);
 					},
 				};
 			},
@@ -389,7 +388,7 @@ export class Writer {
 
 	$import(o: SWT.Import) {
 		this.line("import ");
-		this.inline(o.isType ? "type " : "", o.def ? o.def : "");
+		this.inline(o.isType ? "type " : "", o.def ?? "");
 
 		if (o.keys) {
 			if (o.def) {
@@ -429,7 +428,7 @@ export class Writer {
 				this.line(`export const ${o.name} = { ${o.keys.join(", ")} };`);
 				break;
 			case "default":
-				this.line(`export default ${o.keys.length > 1 ? `{ ${o.keys.join(", ")} }` : o.keys};`);
+				this.line(`export default ${o.keys.length > 1 ? `{ ${o.keys.join(", ")} }` : o.keys[0]};`);
 				break;
 			case "reexport":
 				this.line(`export { ${o.keys.join(", ")} } from "${o.from}";`);

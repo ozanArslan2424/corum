@@ -9,7 +9,7 @@ beforeEach(() => $registryTesting.reset());
 const s = createTestServer();
 
 describe("C.Route", () => {
-	const handler = async () => "ok";
+	const handler = () => "ok";
 
 	it("STRING DEFINITION DEFAULTS TO GET", () => {
 		const path = "/r1";
@@ -32,7 +32,7 @@ describe("C.Route", () => {
 
 	it("REGISTERS TO ROUTER", async () => {
 		const path = "/r5";
-		new TC.Route(path, async () => "registered");
+		new TC.Route(path, () => "registered");
 
 		const res = await s.handle(req(path));
 		expect(res.status).toBe(200);
@@ -40,7 +40,7 @@ describe("C.Route", () => {
 
 	it("REGISTERS WITH CORRECT METHOD", async () => {
 		const path = "/r6";
-		new TC.Route({ method: TC.Method.POST, path }, async () => "posted");
+		new TC.Route({ method: TC.Method.POST, path }, () => "posted");
 
 		const res = await s.handle(req(path, { method: "POST" }));
 		expect(res.status).toBe(200);
@@ -78,9 +78,9 @@ describe("C.Route", () => {
 				this.register();
 			}
 
-			definition: TC.RouteDefinition<string> = path;
+			definition: TC.RouteDefinition = path;
 			callback: TC.RouteCallback = () => "extended";
-			model?: TC.RouteModel<unknown, unknown, unknown, unknown> | undefined = undefined;
+			model?: TC.RouteModel | undefined = undefined;
 		}
 
 		new MyRoute();

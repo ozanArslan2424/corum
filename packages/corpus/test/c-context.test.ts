@@ -2,6 +2,11 @@ import { beforeEach, describe, expect, it } from "bun:test";
 
 import { type } from "arktype";
 
+import { BodyParser } from "@/Parser/BodyParser";
+import { FormDataParser } from "@/Parser/FormDataParser";
+import { SearchParamsParser } from "@/Parser/SearchParamsParser";
+import { URLParamsParser } from "@/Parser/URLParamsParser";
+
 import { $registryTesting, TC } from "./_modules";
 import { createTestServer } from "./utils/createTestServer";
 import { req } from "./utils/req";
@@ -51,7 +56,19 @@ describe("C.Context", () => {
 		expect(c.search).toBeEmptyObject();
 		expect(c.params).toBeEmptyObject();
 
-		await TC.Context.appendParsedData(c, r, fakeRouterReturn);
+		const urlParamsParser = new URLParamsParser();
+		const formDataParser = new FormDataParser();
+		const searchParamsParser = new SearchParamsParser();
+		const bodyParser = new BodyParser(formDataParser, searchParamsParser);
+
+		await TC.Context.appendParsedData(
+			c,
+			r,
+			fakeRouterReturn,
+			urlParamsParser,
+			searchParamsParser,
+			bodyParser,
+		);
 
 		expect(c.body).toEqual({ hello: "world" });
 		expect(c.params).toEqual(fakeRouterReturn.params);
@@ -130,7 +147,7 @@ describe("C.Context", () => {
 
 	it("PARAMS - SINGLE PARAM", async () => {
 		new TC.Route("/ctx-params/:id", (c) => {
-			expect(c.params).toEqual({ id: "123" });
+			expect(c.params).toEqual({ id: 123 });
 			return "ok";
 		});
 

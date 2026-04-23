@@ -24,7 +24,7 @@ import type { TC } from "../_modules";
  */
 export class MemoiristAdapter implements TC.RouterAdapterInterface {
 	readonly __brand: string = "MemoiristAdapter";
-	private router = new Memoirist<TC.RouterData>();
+	private readonly router = new Memoirist<TC.RouterData>();
 
 	find(req: TC.Req): TC.RouterReturn | null {
 		const method = req.method;

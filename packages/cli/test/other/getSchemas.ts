@@ -8,6 +8,7 @@ export function getSchemas(lib: ValidationLib) {
 		case "zod":
 			return getZodSchemas();
 		case "arktype":
+		case null:
 		default:
 			return getArkSchemas();
 		case "yup":

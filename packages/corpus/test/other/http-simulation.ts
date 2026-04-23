@@ -116,16 +116,12 @@ new TC.Route("/users", () => [...db.values()]);
 new TC.Route(
 	{ method: TC.Method.POST, path: "/users" },
 	(c) => {
-		const body = c.body;
-		if (!body?.name || !body?.email) {
-			throw new TC.Exception("name and email are required", 400);
-		}
 		const id = String(idCounter++);
 		const user = {
 			id,
-			name: body.name,
-			email: body.email,
-			role: body.role ?? "user",
+			name: c.body.name,
+			email: c.body.email,
+			role: c.body.role ?? "user",
 		};
 		db.set(id, user);
 		c.res.status = 201;

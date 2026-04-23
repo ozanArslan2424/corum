@@ -28,7 +28,7 @@ export class FormDataParser extends ObjectParserAbstract<FormData> {
 			// container[part] is undefined so we assign it as inner container
 			if (container[part] === undefined) {
 				const isIndexAssigned = typeof next === "number";
-				container[part] = isIndexAssigned ? [] : {};
+				container[part] = isIndexAssigned ? [] : this.newSafeObject();
 			}
 
 			// if container[part] defined, it is a value assigned directly
@@ -36,23 +36,18 @@ export class FormDataParser extends ObjectParserAbstract<FormData> {
 		}
 
 		const last = parts[parts.length - 1]!;
-		if (parts.length === 1) {
-			// just for readability, current can be used directly as well
-			const container = this.newContainer(current);
-			const existing = container[last];
-			if (existing !== undefined) {
-				container[last] = Array.isArray(existing)
-					? // array assignment
-						[...existing, value]
-					: // multiple assignments to single key
-						[existing, value];
-			} else {
-				// key assignment
-				container[last] = value;
-			}
+		const container = this.newContainer(current);
+		const existing = container[last];
+
+		if (existing === undefined) {
+			// first write at this slot
+			container[last] = value;
+		} else if (Array.isArray(existing)) {
+			// slot already holds an array, append
+			container[last] = [...existing, value];
 		} else {
-			// last is assigned directly
-			(current as any)[last] = value;
+			// slot holds a single value, promote to array
+			container[last] = [existing, value];
 		}
 	}
 }

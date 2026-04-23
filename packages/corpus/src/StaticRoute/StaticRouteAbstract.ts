@@ -31,7 +31,7 @@ export abstract class StaticRouteAbstract<
 
 	// PROTECTED
 
-	protected onFileNotFound: Func<[], Promise<Res | never>> = () => {
+	protected onFileNotFound: Func<[], Promise<Res>> = () => {
 		throw new Exception(Status.NOT_FOUND.toString(), Status.NOT_FOUND);
 	};
 
@@ -64,7 +64,7 @@ export abstract class StaticRouteAbstract<
 			const file = new XFile(this.filePath);
 			const exists = await file.exists();
 			if (!exists) {
-				return await this.onFileNotFound();
+				return this.onFileNotFound();
 			}
 
 			if (customHandler !== undefined) {
@@ -74,7 +74,7 @@ export abstract class StaticRouteAbstract<
 					[CommonHeaders.ContentLength]: content.length.toString(),
 					[CommonHeaders.CacheControl]: this.formatCacheHeader(caching),
 				});
-				return await customHandler(c, content);
+				return customHandler(c, content);
 			}
 
 			let res: Res;

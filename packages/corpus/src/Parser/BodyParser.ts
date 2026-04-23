@@ -1,73 +1,76 @@
 import { arrIncludes } from "corpus-utils/arrIncludes";
+import type { UnknownArray } from "corpus-utils/UnknownArray";
 import type { UnknownObject } from "corpus-utils/UnknownObject";
 
 import { CommonHeaders } from "@/CommonHeaders/CommonHeaders";
-import { Exception } from "@/Exception/Exception";
 import { Method } from "@/Method/Method";
 import { FormDataParser } from "@/Parser/FormDataParser";
 import { SearchParamsParser } from "@/Parser/SearchParamsParser";
 import type { Req } from "@/Req/Req";
 import type { Res } from "@/Res/Res";
-import { Status } from "@/Status/Status";
+
+type NormalizedContentType =
+	| "json"
+	| "form-urlencoded"
+	| "form-data"
+	| "text"
+	| "xml"
+	| "binary"
+	| "pdf"
+	| "image"
+	| "audio"
+	| "video"
+	| "unknown";
 
 export class BodyParser {
+	constructor(
+		private readonly formDataParser: FormDataParser,
+		private readonly searchParamsParser: SearchParamsParser,
+	) {}
+
 	/** This can be used for both request and response bodies */
-	async parse(r: Req | Res | Response): Promise<unknown> {
-		let data;
-		const empty = {};
-		const input = r instanceof Request ? r : r instanceof Response ? r : r.response;
+	async parse(
+		r: Req | Res | Response,
+	): Promise<UnknownObject | UnknownArray | string | ReadableStream<Uint8Array>> {
+		const input = this.toWebRequestResponse(r);
+		const empty = Object.create(null);
+
+		if (this.isMethodWithoutBody(input)) return empty;
 
 		try {
-			switch (this.getNormalizedContentType(input)) {
+			switch (this.getContentTypeDisco(input)) {
 				case "json":
-					data = await this.getJsonBody(input);
-					break;
+					return await this.getJsonBody(input);
 				case "form-urlencoded":
-					data = await this.getFormUrlEncodedBody(input);
-					break;
+					return await this.getFormUrlEncodedBody(input);
 				case "form-data":
-					data = await this.getFormDataBody(input);
-					break;
+					return await this.getFormDataBody(input);
 				case "text":
-					data = await this.getTextBody(input);
-					break;
-				case "unknown":
-					data = await this.getUnknownBody(input);
-					break;
 				case "xml":
+					return await this.getTextBody(input);
 				case "binary":
 				case "pdf":
 				case "image":
 				case "audio":
 				case "video":
-					throw new Exception("unprocessable.contentType", Status.UNPROCESSABLE_ENTITY);
-				case "no-body-allowed":
+					return this.getBinaryBody(input) ?? empty;
+				case "unknown":
+					return await this.getUnknownBody(input);
 				default:
 					return empty;
 			}
-
-			return data;
 		} catch (err) {
 			if (err instanceof SyntaxError) return empty;
 			throw err;
 		}
 	}
 
-	getNormalizedContentType(input: Request | Response): string {
-		const contentTypeHeader = input.headers.get(CommonHeaders.ContentType) || "";
+	private toWebRequestResponse(r: Req | Res | Response): Request | Response {
+		return r instanceof Request ? r : r instanceof Response ? r : r.response;
+	}
 
-		if (
-			"method" in input &&
-			typeof input.method === "string" &&
-			!arrIncludes(input.method.toUpperCase(), [
-				Method.POST,
-				Method.PUT,
-				Method.PATCH,
-				Method.DELETE,
-			])
-		) {
-			return "no-body-allowed";
-		}
+	getContentTypeDisco(input: Request | Response): NormalizedContentType {
+		const contentTypeHeader = input.headers.get(CommonHeaders.ContentType) ?? "";
 
 		if (contentTypeHeader.includes("application/json")) {
 			return "json";
@@ -96,25 +99,34 @@ export class BodyParser {
 		return "unknown";
 	}
 
-	private async getJsonBody(req: Request | Response): Promise<unknown> {
-		return await req.json();
+	private isMethodWithoutBody(input: Request | Response): boolean {
+		if (!("method" in input) || typeof input.method !== "string") return false;
+
+		return !arrIncludes(input.method.toUpperCase(), [
+			Method.POST,
+			Method.PUT,
+			Method.PATCH,
+			Method.DELETE,
+		]);
 	}
 
-	private async getFormUrlEncodedBody(input: Request | Response): Promise<unknown> {
+	private getJsonBody(input: Request | Response): Promise<UnknownObject | UnknownArray> {
+		return input.json();
+	}
+
+	private async getFormUrlEncodedBody(input: Request | Response): Promise<UnknownObject> {
 		const text = await input.text();
 		if (!text || text.trim().length === 0) {
 			throw new SyntaxError("Body is empty");
 		}
 
 		const searchParams = new URLSearchParams(text);
-		const urlSearchParamsParser = new SearchParamsParser();
-		return urlSearchParamsParser.toObject(searchParams);
+		return this.searchParamsParser.toObject(searchParams);
 	}
 
 	private async getFormDataBody(input: Request | Response): Promise<UnknownObject> {
 		const formData = await input.formData();
-		const formDataParser = new FormDataParser();
-		return formDataParser.toObject(formData);
+		return this.formDataParser.toObject(formData);
 	}
 
 	private async getTextBody(input: Request | Response): Promise<string> {
@@ -123,23 +135,30 @@ export class BodyParser {
 
 		// 1MB threshold
 		if (length > 0 && length < 1024 * 1024) {
-			return await input.text();
+			return input.text();
 		}
 
 		const buffer = await input.arrayBuffer();
-		const contentType = input.headers.get(CommonHeaders.ContentType) || "";
+		const contentType = input.headers.get(CommonHeaders.ContentType) ?? "";
 		const match = contentType.match(/charset=([^;]+)/i);
 		const charset = match?.[1] ? match[1].trim() : null;
 
-		const decoder = new TextDecoder(charset || "utf-8");
+		const decoder = new TextDecoder(charset ?? "utf-8");
 		return decoder.decode(buffer);
 	}
 
-	private async getUnknownBody(input: Request | Response): Promise<unknown> {
+	private getBinaryBody(input: Request | Response): ReadableStream<Uint8Array> | null {
+		return input.body;
+	}
+
+	private async getUnknownBody(
+		input: Request | Response,
+	): Promise<UnknownObject | UnknownArray | string> {
+		const text = await this.getTextBody(input);
 		try {
-			return await this.getJsonBody(input);
+			return JSON.parse(text);
 		} catch {
-			return await this.getTextBody(input);
+			return text;
 		}
 	}
 }

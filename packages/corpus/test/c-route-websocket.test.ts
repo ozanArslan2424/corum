@@ -27,7 +27,7 @@ describe("C.WebSocketRoute", () => {
 
 	it("WEBSOCKET ROUTE - ID IS SET", () => {
 		const route = new TC.WebSocketRoute("/ws4", { onMessage: () => {} });
-		expect(route.id).toBe(`${TC.Method.GET} ${"/ws4"}`);
+		expect(route.id).toBe(`${TC.Method.GET} /ws4`);
 	});
 
 	it("WEBSOCKET ROUTE - WITHOUT MODEL", () => {

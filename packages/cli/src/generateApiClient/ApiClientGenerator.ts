@@ -62,7 +62,7 @@ export class ApiClientGenerator {
 		this.writeArgsNamespace(w, map);
 		this.writeApiClientClass(w, map);
 		this.writeExports(w);
-		w.format("typescript");
+		await w.format("typescript");
 	}
 
 	private getRouteMap(routes: DocEntry[]) {
@@ -394,7 +394,7 @@ export class ApiClientGenerator {
 	}
 
 	private extractParams(path: string): string[] {
-		const named = path.match(/:([a-zA-Z_][a-zA-Z0-9_]*)/g)?.map((p) => p.substring(1)) || [];
+		const named = path.match(/:([a-zA-Z_][a-zA-Z0-9_]*)/g)?.map((p) => p.substring(1)) ?? [];
 		if (path.includes("*")) named.push("*");
 		return named;
 	}

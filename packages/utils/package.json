@@ -35,7 +35,9 @@
 		"./strRemoveWhitespace": "./dist/strRemoveWhitespace.mjs",
 		"./strSplit": "./dist/strSplit.mjs",
 		"./TestHelper": "./dist/TestHelper.mjs",
+		"./Timer": "./dist/Timer.mjs",
 		"./tuple": "./dist/tuple.mjs",
+		"./UnknownArray": "./dist/UnknownArray.mjs",
 		"./UnknownObject": "./dist/UnknownObject.mjs",
 		"./ValueOf": "./dist/ValueOf.mjs",
 		"./package.json": "./package.json"
@@ -45,6 +47,7 @@
 	},
 	"devDependencies": {
 		"@standard-schema/spec": "^1.1.0",
+		"@types/bun": "^1.3.12",
 		"tsdown": "^0.21.9",
 		"typescript": "^6.0.3"
 	},

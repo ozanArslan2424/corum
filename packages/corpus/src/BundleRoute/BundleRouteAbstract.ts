@@ -89,7 +89,7 @@ export abstract class BundleRouteAbstract<
 			});
 
 			if (isIgnored) {
-				return await this.onIgnore();
+				return this.onIgnore();
 			}
 
 			let file = new XFile(targetPath);
@@ -106,7 +106,7 @@ export abstract class BundleRouteAbstract<
 			}
 
 			if (!exists) {
-				return await this.onFileNotFound();
+				return this.onFileNotFound();
 			}
 
 			const res =

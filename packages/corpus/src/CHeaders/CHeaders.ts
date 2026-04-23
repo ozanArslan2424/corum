@@ -25,7 +25,7 @@ export class CHeaders extends Headers {
 	}
 
 	override get(name: CHeaderKey): string | null {
-		return super.get(name) || super.get(name.toLowerCase());
+		return super.get(name) ?? super.get(name.toLowerCase());
 	}
 
 	override has(name: CHeaderKey): boolean {

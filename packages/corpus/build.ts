@@ -1,29 +1,14 @@
 import dts from "bun-plugin-dts";
 import { log } from "corpus-utils/internalLog";
+import { Timer } from "corpus-utils/Timer";
 
-function ms(start: number) {
-	const elapsed = performance.now() - start;
-	return elapsed >= 1000
-		? `\x1b[31m${(elapsed / 1000).toFixed(2)}s\x1b[0m`
-		: `\x1b[33m${elapsed.toFixed(2)}ms\x1b[0m`;
-}
+try {
+	const t = new Timer();
 
-function step(label: string) {
-	log.step(label);
-	return performance.now();
-}
-
-function done(label: string, start: number) {
-	log.success(`${label} ${ms(start)}`);
-}
-
-async function build() {
-	let t: number;
-
-	t = step("cleaning dist");
+	t.step("cleaning dist");
 	try {
 		await Bun.$`rm -rf ./dist`.quiet();
-		done("cleaned dist", t);
+		t.done("cleaned dist");
 	} catch {
 		log.warn("could not clean dist (might not exist yet)");
 	}
@@ -37,7 +22,7 @@ async function build() {
 		sourcemap: true,
 	};
 
-	t = step("building esm + cjs");
+	t.step("building esm + cjs");
 	const [esm, cjs] = await Promise.all([
 		Bun.build({
 			...defaultBuildConfig,
@@ -60,14 +45,7 @@ async function build() {
 	if (!esm.success) esm.logs.forEach((l) => log.error(l));
 	if (!cjs.success) cjs.logs.forEach((l) => log.error(l));
 	if (!esm.success || !cjs.success) process.exit(1);
-	done("built esm + cjs", t);
-}
-
-try {
-	let t: number;
-	t = step("started");
-	await build();
-	done("done", t);
+	t.done("built esm + cjs");
 } catch (err) {
 	log.error(err);
 	process.exit(1);

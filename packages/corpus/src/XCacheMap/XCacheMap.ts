@@ -2,7 +2,7 @@ import type { Func } from "corpus-utils/Func";
 import type { MaybePromise } from "corpus-utils/MaybePromise";
 
 export class XCacheMap<K = string, V = unknown> {
-	private map = new Map<K, V>();
+	private readonly map = new Map<K, V>();
 
 	constructor(private readonly getter: Func<[key: K], MaybePromise<V>>) {}
 

@@ -9,8 +9,8 @@ import type { MiddlewareInterface } from "@/Middleware/MiddlwareInterface";
 import type { MiddlewareStoreReturn } from "@/Registry/MiddlewareStoreReturn";
 
 export class MiddlewareStore {
-	private inboundMap = new Map<string, Array<MiddlewareHandler>>();
-	private outboundMap = new Map<string, Array<MiddlewareHandler>>();
+	private readonly inboundMap = new Map<string, Array<MiddlewareHandler>>();
+	private readonly outboundMap = new Map<string, Array<MiddlewareHandler>>();
 
 	add(middleware: MiddlewareInterface): void {
 		const resolved = MiddlewareStore.resolveRouteIds(middleware.useOn, middleware.variant);

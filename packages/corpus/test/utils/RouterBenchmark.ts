@@ -1,12 +1,12 @@
 import { $registryTesting, TC, RouterTesting } from "../_modules";
 
 export class RouterBenchmark {
-	private router: RouterTesting;
-	private routes: TC.Route<any, any, any, any, any>[] = [];
+	private readonly router: RouterTesting;
+	private readonly routes: TC.Route<any, any, any, any, any>[] = [];
 	private requests: Array<{ request: TC.Req; expectedId: string }> = [];
 
-	private usedStaticPaths = new Set<string>();
-	private usedDynamicShapes = new Set<string>(); // "GET:/static/*/static" - no param names, includes method
+	private readonly usedStaticPaths = new Set<string>();
+	private readonly usedDynamicShapes = new Set<string>(); // "GET:/static/*/static" - no param names, includes method
 
 	constructor(private readonly adapter: TC.RouterAdapterInterface) {
 		this.router = new RouterTesting(adapter);
@@ -40,13 +40,13 @@ export class RouterBenchmark {
 		} while (this.usedStaticPaths.has(key));
 		this.usedStaticPaths.add(key);
 		return [
-			new TC.Route({ method, path }, async () => ({ ok: true })),
+			new TC.Route({ method, path }, () => ({ ok: true })),
 			new TC.Route(
 				{
 					method: methods[methodIndex + 1] ?? methods[methodIndex - 1] ?? TC.Method.GET,
 					path,
 				},
-				async () => ({ ok: true }),
+				() => ({ ok: true }),
 			),
 		];
 	}
@@ -87,13 +87,13 @@ export class RouterBenchmark {
 		} while (this.usedDynamicShapes.has(shape));
 		this.usedDynamicShapes.add(shape);
 		return [
-			new TC.Route({ method, path }, async () => ({ ok: true })),
+			new TC.Route({ method, path }, () => ({ ok: true })),
 			new TC.Route(
 				{
 					method: methods[methodIndex + 1] ?? methods[methodIndex - 1] ?? TC.Method.GET,
 					path,
 				},
-				async () => ({ ok: true }),
+				() => ({ ok: true }),
 			),
 		];
 	}
@@ -125,7 +125,7 @@ export class RouterBenchmark {
 		}
 	}
 
-	async run(iterations = 100) {
+	run(iterations = 100) {
 		const times: number[] = [];
 		let hits = 0;
 		let correct = 0;

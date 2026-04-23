@@ -3,10 +3,7 @@ export function joinPathSegments<E extends string>(
 ): E {
 	const joined = segments
 		.map((segment) => (typeof segment === "number" ? segment.toString() : segment))
-		.filter(
-			(segment): segment is string =>
-				segment !== undefined && segment !== null && segment.trim() !== "",
-		)
+		.filter((segment): segment is string => segment != null && segment.trim() !== "")
 		.map((segment) => segment.replace(/^\/+|\/+$/g, ""))
 		.filter((segment) => segment.length > 0)
 		.join("/");

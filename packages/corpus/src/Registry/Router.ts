@@ -14,17 +14,15 @@ import type { RouterReturn } from "@/Registry/RouterReturn";
 import type { Req } from "@/Req/Req";
 
 export class Router {
-	constructor(private adapter: RouterAdapterInterface = new BranchAdapter()) {}
+	constructor(private readonly adapter: RouterAdapterInterface = new BranchAdapter()) {}
 
-	private cache = new WeakMap<Req, RouterReturn>();
-	private funcMap = new Map<string, Func>();
+	private readonly cache = new WeakMap<Req, RouterReturn>();
+	private readonly funcMap = new Map<string, Func>();
 
-	add(route: BaseRouteInterface<any, any, any, any, string>): void {
+	add(route: BaseRouteInterface<any, any, any, any>): void {
 		const data = this.routeToRouterData(route);
 		if (route.model) {
-			if (!data.model) {
-				data.model = {};
-			}
+			data.model ??= {};
 			// const modelData: RouterData["model"] = {};
 			for (const key of objGetKeys<keyof RouteModel>(route.model)) {
 				if (key === "response") continue;
@@ -62,7 +60,7 @@ export class Router {
 		return fn?.() ?? [];
 	}
 
-	private routeToRouterData(route: BaseRouteInterface<any, any, any, any, string>): RouterData {
+	private routeToRouterData(route: BaseRouteInterface<any, any, any, any>): RouterData {
 		return {
 			id: route.id,
 			endpoint: route.endpoint,

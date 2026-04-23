@@ -32,7 +32,11 @@ describe("FormDataParser", () => {
 		});
 	});
 
-	describe("formDataToObject", () => {
+	describe("toObject", () => {
+		it("handles empty FormData", () => {
+			expect(parser.toObject(new FormData())).toEqual({});
+		});
+
 		it("handles flat fields", () => {
 			const fd = new FormData();
 			fd.set("title", "hello");
@@ -126,6 +130,72 @@ describe("FormDataParser", () => {
 			fd.set("image", file);
 			const result = parser.toObject(fd);
 			expect(result.image).toBeInstanceOf(File);
+		});
+
+		it("does not JSON-parse File values", () => {
+			const fd = new FormData();
+			const file = new File(["123"], "x.txt", { type: "text/plain" });
+			fd.set("upload", file);
+			const parsed = parser.toObject(fd).upload;
+			expect(parsed).toBeInstanceOf(File);
+			expect(parsed).toEqual(file);
+		});
+	});
+
+	describe("duplicate-key merging", () => {
+		it("merges duplicate nested dot-notation keys into an array", () => {
+			const fd = new FormData();
+			fd.append("a.b", "x");
+			fd.append("a.b", "y");
+			expect(parser.toObject(fd)).toEqual({ a: { b: ["x", "y"] } });
+		});
+
+		it("merges three+ duplicate nested keys into a single array", () => {
+			const fd = new FormData();
+			fd.append("a.b", "x");
+			fd.append("a.b", "y");
+			fd.append("a.b", "z");
+			expect(parser.toObject(fd)).toEqual({ a: { b: ["x", "y", "z"] } });
+		});
+
+		it("merges duplicate bracket-indexed keys at the same slot", () => {
+			const fd = new FormData();
+			fd.append("a[0]", "x");
+			fd.append("a[0]", "y");
+			expect(parser.toObject(fd)).toEqual({ a: [["x", "y"]] });
+		});
+	});
+
+	describe("prototype safety", () => {
+		it("does not pollute Object.prototype via __proto__ key", () => {
+			const fd = new FormData();
+			fd.set("__proto__.polluted", "yes");
+			parser.toObject(fd);
+			// @ts-expect-error intentional probe
+			expect({}.polluted).toBeUndefined();
+		});
+
+		it("does not pollute Object.prototype via nested __proto__ key", () => {
+			const fd = new FormData();
+			fd.set("a.__proto__.polluted", "yes");
+			parser.toObject(fd);
+			// @ts-expect-error intentional probe
+			expect({}.polluted).toBeUndefined();
+		});
+
+		it("produces null-prototype root object", () => {
+			const fd = new FormData();
+			fd.set("x", "1");
+			const result = parser.toObject(fd);
+			expect(Object.getPrototypeOf(result)).toBeNull();
+		});
+
+		it("produces null-prototype nested objects", () => {
+			const fd = new FormData();
+			fd.set("a.b.c", "deep");
+			const result = parser.toObject(fd) as { a: { b: {} } };
+			expect(Object.getPrototypeOf(result.a)).toBeNull();
+			expect(Object.getPrototypeOf(result.a.b)).toBeNull();
 		});
 	});
 });

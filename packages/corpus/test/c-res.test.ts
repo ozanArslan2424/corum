@@ -11,7 +11,7 @@ describe("C.Res", () => {
 	const locHeader = TC.CommonHeaders.Location;
 	const locUrl = "/hello";
 
-	async function expectData({
+	function expectData({
 		res,
 		response,
 		data,
@@ -53,7 +53,7 @@ describe("C.Res", () => {
 		const response = res.response;
 		expect(response.headers.get(locHeader)).toBe(locUrl);
 		const data = await response.text();
-		await expectData({
+		expectData({
 			res,
 			response,
 			data,
@@ -68,7 +68,7 @@ describe("C.Res", () => {
 		const response = res.response;
 		expect(response.headers.get(locHeader)).toBe(locUrl);
 		const data = await response.text();
-		await expectData({
+		expectData({
 			res,
 			response,
 			data,
@@ -87,7 +87,7 @@ describe("C.Res", () => {
 		expect(response.headers.get(locHeader)).toBe(locUrl);
 		expect(response.headers.get(otherHeader)).toBe(otherHeaderValue);
 		const data = await response.text();
-		await expectData({
+		expectData({
 			res,
 			response,
 			data,
@@ -102,7 +102,7 @@ describe("C.Res", () => {
 		const response = res.response;
 		expect(response.headers.get(locHeader)).toBe(locUrl);
 		const data = await response.text();
-		await expectData({
+		expectData({
 			res,
 			response,
 			data,
@@ -117,7 +117,7 @@ describe("C.Res", () => {
 		const response = res.response;
 		expect(response.headers.get(locHeader)).toBe(locUrl);
 		const data = await response.text();
-		await expectData({
+		expectData({
 			res,
 			response,
 			data,
@@ -132,7 +132,7 @@ describe("C.Res", () => {
 		const response = res.response;
 		expect(response.headers.get(locHeader)).toBe(locUrl);
 		const data = await response.text();
-		await expectData({
+		expectData({
 			res,
 			response,
 			data,
@@ -141,7 +141,7 @@ describe("C.Res", () => {
 		});
 	});
 
-	it("SSE - RETURNS STREAM WITH CORRECT HEADERS", async () => {
+	it("SSE - RETURNS STREAM WITH CORRECT HEADERS", () => {
 		const res = TC.Res.sse((send) => {
 			send({ event: "ping", data: { time: 1 } });
 		});
@@ -195,7 +195,7 @@ describe("C.Res", () => {
 		expect(cleaned).toBe(true);
 	});
 
-	it("NDJSON - RETURNS STREAM WITH CORRECT HEADERS", async () => {
+	it("NDJSON - RETURNS STREAM WITH CORRECT HEADERS", () => {
 		const res = TC.Res.ndjson((send) => {
 			send({ id: 1 });
 		});
@@ -271,7 +271,7 @@ describe("C.Res", () => {
 		);
 	});
 
-	it("STREAM FILE - THROWS NOT FOUND FOR MISSING FILE", async () => {
+	it("STREAM FILE - THROWS NOT FOUND FOR MISSING FILE", () => {
 		expect(TC.Res.streamFile("test/fixtures/does-not-exist.txt")).rejects.toThrow();
 	});
 
@@ -287,7 +287,7 @@ describe("C.Res", () => {
 		const res = new TC.Res();
 		const response = res.response;
 		const data = await response.text();
-		await expectData({
+		expectData({
 			res,
 			response,
 			data,
@@ -298,7 +298,7 @@ describe("C.Res", () => {
 		const res = new TC.Res(null);
 		const response = res.response;
 		const data = await response.text();
-		await expectData({
+		expectData({
 			res,
 			response,
 			data,
@@ -309,7 +309,7 @@ describe("C.Res", () => {
 		const res = new TC.Res(undefined);
 		const response = res.response;
 		const data = await response.text();
-		await expectData({
+		expectData({
 			res,
 			response,
 			data,

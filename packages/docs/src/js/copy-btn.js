@@ -13,6 +13,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	document.querySelector(".install-hint").addEventListener("click", () => {
-		navigator.clipboard?.writeText("bun add @ozanarslan/corpus");
+		void navigator.clipboard.writeText("bun add @ozanarslan/corpus");
 	});
 });

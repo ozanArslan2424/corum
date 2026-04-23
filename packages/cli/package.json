@@ -50,8 +50,5 @@
 		"tsdown": "^0.21.9",
 		"yup": "^1.7.1",
 		"zod": "^4.3.6"
-	},
-	"inlinedDependencies": {
-		"zod": "4.3.6"
 	}
 }

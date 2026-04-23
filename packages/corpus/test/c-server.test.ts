@@ -51,7 +51,7 @@ describe("C.Server", () => {
 
 	it("SET ON ERROR - CUSTOM HANDLER IS CALLED ON ERROR", async () => {
 		const s = createTestServer();
-		s.setOnError(async () => {
+		s.setOnError(() => {
 			return new TC.Res({ error: true, message: "custom error" }, { status: 500 });
 		});
 		new TC.Route("/srv-error", () => {
@@ -89,7 +89,7 @@ describe("C.Server", () => {
 
 	it("SET ON NOT FOUND - CUSTOM HANDLER IS CALLED", async () => {
 		const s = createTestServer();
-		s.setOnNotFound(async () => {
+		s.setOnNotFound(() => {
 			return new TC.Res({ error: true, message: "custom not found" }, { status: 404 });
 		});
 		const res = await s.handle(req("/srv-custom-404"));

@@ -187,8 +187,7 @@ export class Res<R = unknown> {
 	}
 
 	static getDefaultStatusText(status: number): string {
-		const key = status as keyof typeof DefaultStatusTexts;
-		return DefaultStatusTexts[key] ?? "Unknown";
+		return DefaultStatusTexts[status] ?? "Unknown";
 	}
 
 	private static createStream(

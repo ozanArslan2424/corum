@@ -4,8 +4,8 @@ import type { CacheDirective } from "@/CommonHeaders/CacheDirective";
 import type { Res } from "@/Res/Res";
 
 export type BundleRouteConfig = {
-	onFileNotFound: Func<[], Promise<Res | never>>;
-	onIgnore: Func<[], Promise<Res | never>>;
+	onFileNotFound: Func<[], Promise<Res>>;
+	onIgnore: Func<[], Promise<Res>>;
 	assetsDir: string;
 	ignore: string[];
 	cache: {

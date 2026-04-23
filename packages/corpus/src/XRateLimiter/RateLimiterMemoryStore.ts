@@ -2,10 +2,10 @@ import type { RateLimitEntry } from "@/XRateLimiter/RateLimitEntry";
 import type { RateLimitStoreInterface } from "@/XRateLimiter/RateLimitStoreInterface";
 
 export class RateLimiterMemoryStore implements RateLimitStoreInterface {
-	private store = new Map<string, RateLimitEntry>();
-	private locks = new Map<string, Promise<void>>();
+	private readonly store = new Map<string, RateLimitEntry>();
+	private readonly locks = new Map<string, Promise<void>>();
 
-	async get(id: string): Promise<RateLimitEntry | undefined> {
+	get(id: string): RateLimitEntry | undefined {
 		return this.store.get(id);
 	}
 
@@ -30,23 +30,23 @@ export class RateLimiterMemoryStore implements RateLimitStoreInterface {
 		}
 	}
 
-	async delete(id: string): Promise<void> {
+	delete(id: string): void {
 		this.store.delete(id);
 	}
 
-	async cleanup(now: number): Promise<void> {
+	cleanup(now: number): void {
 		for (const [id, entry] of this.store) {
 			if (entry.resetAt <= now) {
-				await this.delete(id);
+				this.delete(id);
 			}
 		}
 	}
 
-	async clear(): Promise<void> {
+	clear(): void {
 		this.store.clear();
 	}
 
-	async size(): Promise<number> {
+	size(): number {
 		return this.store.size;
 	}
 }

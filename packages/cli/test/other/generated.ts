@@ -336,7 +336,7 @@ class CorpusApi {
 				}
 				url.searchParams.append(
 					key,
-					typeof val === "object" ? JSON.stringify(val as object) : String(val as _Prim),
+					typeof val === "object" ? JSON.stringify(val) : String(val as _Prim),
 				);
 			}
 		}
@@ -351,9 +351,9 @@ class CorpusApi {
 		const req = new Request(url, { method, headers, body, ...args.init });
 		const res = await fetch(req);
 		const contentType = res.headers.get("content-type");
-		if (contentType?.includes("application/json")) return await res.json();
-		if (contentType?.includes("text/")) return await res.text();
-		return await res.blob();
+		if (contentType?.includes("application/json")) return res.json();
+		if (contentType?.includes("text/")) return res.text();
+		return res.blob();
 	};
 
 	public setFetchFn(cb: <R = unknown>(args: RequestDescriptor) => Promise<R>) {

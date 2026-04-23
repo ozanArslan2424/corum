@@ -10,10 +10,10 @@ import type { RateLimitStoreInterface } from "@/XRateLimiter/RateLimitStoreInter
 
 export class RateLimiterFileStore implements RateLimitStoreInterface {
 	private readonly storeDir: string;
-	private locks = new Map<string, Promise<void>>();
+	private readonly locks = new Map<string, Promise<void>>();
 
 	constructor(storeDir?: string) {
-		this.storeDir = storeDir || path.join(os.tmpdir(), "rate-limit-store");
+		this.storeDir = storeDir ?? path.join(os.tmpdir(), "rate-limit-store");
 		this.ensureStoreDir();
 	}
 

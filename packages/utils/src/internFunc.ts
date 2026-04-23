@@ -7,7 +7,7 @@ export function internFunc<T extends Func>(
 ): T {
 	const key = namespace.join("::");
 	const existing = map.get(key);
-	if (existing) return existing as T;
+	if (existing) return existing;
 	map.set(key, value);
 	return value;
 }

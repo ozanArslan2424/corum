@@ -1,7 +1,5 @@
 import { compile } from "corpus-utils/compile";
 
-import { BaseRouteAbstract } from "@/BaseRoute/BaseRouteAbstract";
-import { Controller } from "@/Controller/Controller";
 import type { MiddlewareHandler } from "@/Middleware/MiddlewareHandler";
 import type { MiddlewareInterface } from "@/Middleware/MiddlewareInterface";
 import type { MiddlewareUseOn } from "@/Middleware/MiddlewareUseOn";
@@ -17,7 +15,7 @@ export class MiddlewareRouter implements MiddlewareRouterInterface {
 
 	add(middleware: MiddlewareInterface): void {
 		const map = this.maps[middleware.variant];
-		for (const routeId of MiddlewareRouter.resolveRouteIds(middleware.useOn)) {
+		for (const routeId of this.resolveRouteIds(middleware.useOn)) {
 			let handlers = map.get(routeId);
 			if (!handlers) {
 				handlers = [];
@@ -34,16 +32,19 @@ export class MiddlewareRouter implements MiddlewareRouterInterface {
 		};
 	}
 
-	// STATIC
-	static resolveRouteIds(useOn: MiddlewareUseOn): string[] {
+	private resolveRouteIds(useOn: MiddlewareUseOn): string[] {
 		if (useOn === "*") return ["*"];
 		const targets = Array.isArray(useOn) ? useOn : [useOn];
-		const routeIds: string[] = [];
+		const routeIds = new Set<string>();
 		for (const target of targets) {
-			if (target instanceof BaseRouteAbstract) routeIds.push(target.id);
-			else if (target instanceof Controller) routeIds.push(...target.routeIds);
-			else routeIds.push(target);
+			if (typeof target === "string") {
+				routeIds.add(target);
+			} else if ("id" in target) {
+				routeIds.add(target.id);
+			} else {
+				target.routeIds.forEach((id) => routeIds.add(id));
+			}
 		}
-		return routeIds;
+		return Array.from(routeIds);
 	}
 }

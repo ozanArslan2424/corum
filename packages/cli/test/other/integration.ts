@@ -127,7 +127,7 @@ const api = new CorpusApi(BASE_URL);
 }
 
 {
-	const res = await api.usersIdGet({ params: { id: "1" } });
+	const res = await api.usersIdGet({ params: { id: 1 } });
 	T.expect("usersIdGet has id", res).toHaveProperty("id");
 	T.expect("usersIdGet has role", res).toHaveProperty("role");
 	T.expect("usersIdGet has status", res).toHaveProperty("status");
@@ -136,7 +136,7 @@ const api = new CorpusApi(BASE_URL);
 
 {
 	const res = await api.usersIdPut({
-		params: { id: "1" },
+		params: { id: 1 },
 		body: {
 			name: "ozan updated",
 			age: 26,
@@ -145,19 +145,19 @@ const api = new CorpusApi(BASE_URL);
 			address: { city: "istanbul", country: "turkey", zip: undefined },
 		},
 	});
-	T.expect("usersIdPut has id", res).toHaveProperty("id", "1");
+	T.expect("usersIdPut has id", res).toHaveProperty("id", 1);
 	T.expect("usersIdPut has updated name", res).toHaveProperty("name", "ozan updated");
 	T.expect("usersIdPut has updated role", res).toHaveProperty("role", "editor");
 }
 
 {
-	const res = await api.usersIdDelete({ params: { id: "1" } });
-	T.expect("usersIdDelete has deleted", res).toHaveProperty("deleted", "1");
+	const res = await api.usersIdDelete({ params: { id: 1 } });
+	T.expect("usersIdDelete has deleted", res).toHaveProperty("deleted", 1);
 }
 
 {
 	const res = await api.usersIdPostsPost({
-		params: { id: "42" },
+		params: { id: 42 },
 		body: {
 			title: "Hello World",
 			content: "my first post",
@@ -166,14 +166,14 @@ const api = new CorpusApi(BASE_URL);
 		},
 	});
 	T.expect("usersIdPostsPost has id", res).toHaveProperty("id");
-	T.expect("usersIdPostsPost has authorId", res).toHaveProperty("authorId", "42");
+	T.expect("usersIdPostsPost has authorId", res).toHaveProperty("authorId", 42);
 	T.expect("usersIdPostsPost has title", res).toHaveProperty("title", "Hello World");
 	T.expect("usersIdPostsPost has metadata", res).toHaveProperty("metadata");
 }
 
 {
 	const res = await api.usersIdPostsPost({
-		params: { id: "99" },
+		params: { id: 99 },
 		body: {
 			title: "Draft",
 			content: "not published yet",
@@ -198,7 +198,7 @@ const api = new CorpusApi(BASE_URL);
 			name: "Acme Corp",
 			plan: "pro",
 			seats: 10,
-			owner: { userId: "u1", role: "admin" },
+			owner: { userId: 1, role: "admin" },
 		},
 	});
 	T.expect("orgsPost has id", res).toHaveProperty("id");
@@ -211,7 +211,7 @@ const api = new CorpusApi(BASE_URL);
 			name: "Tiny Ltd",
 			plan: "free",
 			seats: 1,
-			owner: { userId: "u2", role: "viewer" },
+			owner: { userId: 2, role: "viewer" },
 		},
 	});
 	T.expect("orgsPost free plan has id", res).toHaveProperty("id");
@@ -219,7 +219,7 @@ const api = new CorpusApi(BASE_URL);
 
 {
 	const res = await api.orgsOrgIdMembersGet({
-		params: { orgId: "org1" },
+		params: { orgId: 1 },
 		search: { page: 1, limit: 20 },
 	});
 	T.expect("orgsOrgIdMembersGet returns array", Array.isArray(res)).toBe(true);
@@ -231,17 +231,17 @@ const api = new CorpusApi(BASE_URL);
 	formData.set("status", "active");
 
 	const res = await api.orgsOrgIdMembersMemberIdPut({
-		params: { orgId: "org1", memberId: "m1" },
+		params: { orgId: 1, memberId: 1 },
 		formData,
 	});
-	T.expect("orgsOrgIdMembersMemberIdPut has orgId", res).toHaveProperty("orgId", "org1");
-	T.expect("orgsOrgIdMembersMemberIdPut has memberId", res).toHaveProperty("memberId", "m1");
+	T.expect("orgsOrgIdMembersMemberIdPut has orgId", res).toHaveProperty("orgId", 1);
+	T.expect("orgsOrgIdMembersMemberIdPut has memberId", res).toHaveProperty("memberId", 1);
 	T.expect("orgsOrgIdMembersMemberIdPut has role", res).toHaveProperty("role", "editor");
 }
 
 {
 	const res = await api.orgsOrgIdMembersMemberIdPut({
-		params: { orgId: "org1", memberId: "m2" },
+		params: { orgId: 1, memberId: 2 },
 		body: { role: "viewer", status: "inactive" },
 	});
 	T.expect("orgsOrgIdMembersMemberIdPut inactive has status", res).toHaveProperty(
@@ -252,9 +252,9 @@ const api = new CorpusApi(BASE_URL);
 
 {
 	const res = await api.orgsOrgIdMembersMemberIdDelete({
-		params: { orgId: "org1", memberId: "m1" },
+		params: { orgId: 1, memberId: 1 },
 	});
-	T.expect("orgsOrgIdMembersMemberIdDelete has removed", res).toHaveProperty("removed", "m1");
+	T.expect("orgsOrgIdMembersMemberIdDelete has removed", res).toHaveProperty("removed", 1);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

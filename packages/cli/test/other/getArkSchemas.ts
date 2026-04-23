@@ -8,7 +8,7 @@ export function getArkSchemas() {
 		limit: "number",
 	});
 	const Timestamp = type({ createdAt: "string", updatedAt: "string" });
-	const UserParams = type({ id: "string" });
+	const UserParams = type({ id: "number" });
 	const UserBody = type({
 		name: "string",
 		age: "number",
@@ -22,7 +22,7 @@ export function getArkSchemas() {
 	});
 	const UserSearch = Pagination.and(type({ "role?": Role, "status?": Status }));
 	const UserResponse = type({
-		id: "string",
+		id: "number",
 		name: "string",
 		age: "number",
 		role: Role,
@@ -40,28 +40,28 @@ export function getArkSchemas() {
 		}),
 	});
 	const PostResponse = type({
-		id: "string",
+		id: "number",
 		title: "string",
 		content: "string",
 		published: "boolean",
-		authorId: "string",
+		authorId: "number",
 		metadata: type({
 			views: "number",
 			likes: "number",
 			category: "'tech' | 'life' | 'other'",
 		}),
 	}).and(Timestamp);
-	const OrgParams = type({ orgId: "string" });
+	const OrgParams = type({ orgId: "number" });
 	const OrgBody = type({
 		name: "string",
 		plan: "'free' | 'pro' | 'enterprise'",
 		seats: "number",
 		owner: type({
-			userId: "string",
+			userId: "number",
 			role: Role,
 		}),
 	});
-	const OrgMemberParams = type({ orgId: "string", memberId: "string" });
+	const OrgMemberParams = type({ orgId: "number", memberId: "number" });
 	const OrgMemberBody = type({
 		role: Role,
 		status: Status,

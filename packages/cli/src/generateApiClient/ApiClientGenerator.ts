@@ -278,7 +278,7 @@ export class ApiClientGenerator {
 							w.$for([`const`, `[key, val]`, `of`, `Object.entries(args.search)`], (w) => {
 								w.$if(`val == null`).then((w) => w.line(`continue;`));
 								w.line(
-									`url.searchParams.append(key, typeof val === "object" ? JSON.stringify(val as object) : String(val as _Prim));`,
+									`url.searchParams.append(key, typeof val === "object" ? JSON.stringify(val) : String(val as _Prim));`,
 								);
 							});
 						});

@@ -42,7 +42,7 @@ export async function startServer(PORT: number) {
 	new C.Route(
 		{ method: "POST", path: "/users" },
 		(c) => ({
-			id: "1",
+			id: 1,
 			...c.body,
 			status: "active" as const,
 			createdAt: "",
@@ -92,7 +92,7 @@ export async function startServer(PORT: number) {
 	new C.Route(
 		{ method: "POST", path: "/users/:id/posts" },
 		(c) => ({
-			id: "1",
+			id: 1,
 			authorId: c.params.id,
 			...c.body,
 			createdAt: "",

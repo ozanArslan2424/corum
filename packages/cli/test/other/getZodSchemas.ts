@@ -8,7 +8,7 @@ export function getZodSchemas() {
 		limit: z.number(),
 	});
 	const Timestamp = z.object({ createdAt: z.string(), updatedAt: z.string() });
-	const UserParams = z.object({ id: z.string() });
+	const UserParams = z.object({ id: z.number() });
 	const UserBody = z.object({
 		name: z.string(),
 		age: z.number(),
@@ -23,7 +23,7 @@ export function getZodSchemas() {
 	const UserSearch = Pagination.and(z.object({ role: Role.optional(), status: Status.optional() }));
 	const UserResponse = z
 		.object({
-			id: z.string(),
+			id: z.number(),
 			name: z.string(),
 			age: z.number(),
 			role: Role,
@@ -43,11 +43,11 @@ export function getZodSchemas() {
 	});
 	const PostResponse = z
 		.object({
-			id: z.string(),
+			id: z.number(),
 			title: z.string(),
 			content: z.string(),
 			published: z.boolean(),
-			authorId: z.string(),
+			authorId: z.number(),
 			metadata: z.object({
 				views: z.number(),
 				likes: z.number(),
@@ -55,17 +55,17 @@ export function getZodSchemas() {
 			}),
 		})
 		.and(Timestamp);
-	const OrgParams = z.object({ orgId: z.string() });
+	const OrgParams = z.object({ orgId: z.number() });
 	const OrgBody = z.object({
 		name: z.string(),
 		plan: z.enum(["free", "pro", "enterprise"]),
 		seats: z.number(),
 		owner: z.object({
-			userId: z.string(),
+			userId: z.number(),
 			role: Role,
 		}),
 	});
-	const OrgMemberParams = z.object({ orgId: z.string(), memberId: z.string() });
+	const OrgMemberParams = z.object({ orgId: z.number(), memberId: z.number() });
 	const OrgMemberBody = z.object({ role: Role, status: Status });
 	return {
 		Role,

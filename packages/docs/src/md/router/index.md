@@ -1,15 +1,38 @@
 # Router
 
-The `Router` class is NOT part of the public Corpus API. It is automatically created by the [Server module](/server.html) and each [Route](/route.html), [StaticRoute](/route-static.html), [WebSocketRoute](/route-websocket.html), [Controller](/controller.html), and [Middleware](/middleware.html) object will register itself into the global router. Even though it is not part of the public API, if you really need to, you can still access the global instance by importing `$registry.router`.
+The `Router` class is NOT part of the public Corpus API. It's a part of the global registry, Since the registry is _plug & play_, you can reassign it to your own router interface implementation. However, replacing the router is not recommended since it is responsible for registering the entries for the CLI tool (coming soon). The main matching logic is in the [adapter layer](#creating-your-own-adapter) which is separated to fix this exact issue.
+
+Each [Route](/route.html), [StaticRoute](/route-static.html), [WebSocketRoute](/route-websocket.html), [Controller](/controller.html), and [Middleware](/middleware.html) object will register itself into the global router.
+
+The router instance can be accessed through `$registry.router`.
 
 <section class="table-of-contents">
 
 ##### Contents
 
-1. [Router Adapters](#router-adapters)
-2. [Creating Your Own Adapter](#creating-your-own-adapter)
+1. [Interface](#interface)
+2. [Plug & Play](#plug-and-play)
+3. [Router Adapters](#router-adapters)
+4. [Creating Your Own Adapter](#creating-your-own-adapter)
 
 </section>
+
+## Interface
+
+```ts
+interface RouterInterface {
+	add(route: BaseRouteInterface<any, any, any, any>): void;
+	find(req: Req): RouterReturn | null;
+	list(): Array<RouterData>;
+}
+```
+
+## Plug & Play (not recommended)
+
+```ts
+import { $registry } from "@ozanarslan/corpus";
+$registry.router = new MyRouter();
+```
 
 ## Router Adapters
 
@@ -22,15 +45,14 @@ The default router adapter, based on [@medley/router](https://github.com/medleyj
 
 ### MemoiristAdapter
 
-An alternative adapter layer for [memoirist](https://github.com/SaltyAom/memoirist) by [SaltyAom](https://github.com/SaltyAom). This is the router used in ElysiaJS. Requires the `memoirist` dependency. Also extremely fast. Copy and paste from [Router DIY](/router/diy/memoirist-adapter.html) and pass to the adapter parameter.
+An alternative adapter layer for [memoirist](https://github.com/SaltyAom/memoirist) by [SaltyAom](https://github.com/SaltyAom). This is the router used in ElysiaJS. Requires the `memoirist` dependency. Also extremely fast. Copy and paste from [Router DIY](/router/diy/memoirist-adapter.html) and replace the registry adapter.
 
 ```ts
-import { C } from "@ozanarslan/corpus";
+import { C, $registry } from "@ozanarslan/corpus";
 import { MemoiristAdapter } from "./MemoiristAdapter";
+$registry.adapter = new MemoiristAdapter();
 
-const server = new C.Server({
-	adapter: new MemoiristAdapter(),
-});
+const server = new C.Server();
 ```
 
 ## Creating Your Own Adapter
@@ -38,7 +60,7 @@ const server = new C.Server({
 You can implement a custom router adapter by satisfying the `RouterAdapterInterface`. The interface and supporting types are exported by name from the package. You can also see the example from the DIY tab.
 
 ```ts
-import { C } from "@ozanarslan/corpus";
+import { C, $registry } from "@ozanarslan/corpus";
 import type { RouterAdapterInterface, RouterReturn, RouterData } from "@ozanarslan/corpus";
 
 class MyAdapter implements RouterAdapterInterface {
@@ -56,7 +78,7 @@ class MyAdapter implements RouterAdapterInterface {
 	list: (() => Array<RouterData>) | undefined;
 }
 
-const server = new C.Server({
-	adapter: new MyAdapter(),
-});
+$registry.adapter = new MyAdapter();
+
+const server = new C.Server();
 ```

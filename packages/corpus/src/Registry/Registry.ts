@@ -21,29 +21,30 @@ import type { XCorsInterface } from "@/XCors/XCorsInterface";
 export class Registry implements RegistryInterface {
 	public adapter!: RouterAdapterInterface;
 	public router!: RouterInterface;
-	public docs!: Map<string, RegistryDocEntry>;
 	public cors!: XCorsInterface | null;
 	public prefix!: string;
 	public middlewares!: MiddlewareRouterInterface;
-	public entities!: EntityStoreInterface;
 	public urlParamsParser!: ObjectParserInterface<Record<string, string>>;
 	public searchParamsParser!: ObjectParserInterface<URLSearchParams>;
 	public formDataParser!: ObjectParserInterface<FormData>;
 	public bodyParser!: BodyParserInterface;
 	public schemaParser!: SchemaParserInterface;
 
+	public readonly docs: Map<string, RegistryDocEntry>;
+	public readonly entities: EntityStoreInterface;
+
 	constructor() {
+		this.docs = new Map();
+		this.entities = new EntityStore();
 		this.reset();
 	}
 
 	reset(): void {
 		this.adapter = new BranchAdapter();
 		this.router = new Router(this.adapter);
-		this.docs = new Map();
 		this.cors = null;
 		this.prefix = "";
 		this.middlewares = new MiddlewareRouter();
-		this.entities = new EntityStore();
 		this.urlParamsParser = new URLParamsParser();
 		this.searchParamsParser = new SearchParamsParser();
 		this.formDataParser = new FormDataParser();

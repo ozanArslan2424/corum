@@ -92,7 +92,7 @@ namespace Models {
 			response: {
 				age: number;
 				createdAt: string;
-				id: string;
+				id: number;
 				name: string;
 				role: "admin" | "editor" | "viewer";
 				status: "active" | "banned" | "inactive";
@@ -132,12 +132,12 @@ namespace Models {
 	export type UsersIdGet = Prettify<{
 		search?: Record<string, unknown>;
 		params: {
-			id: string;
+			id: number;
 		};
 		response: {
 			age: number;
 			createdAt: string;
-			id: string;
+			id: number;
 			name: string;
 			role: "admin" | "editor" | "viewer";
 			status: "active" | "banned" | "inactive";
@@ -149,12 +149,12 @@ namespace Models {
 		{
 			search?: Record<string, unknown>;
 			params: {
-				id: string;
+				id: number;
 			};
 			response: {
 				age: number;
 				createdAt: string;
-				id: string;
+				id: number;
 				name: string;
 				role: "admin" | "editor" | "viewer";
 				status: "active" | "banned" | "inactive";
@@ -185,7 +185,7 @@ namespace Models {
 	export type UsersIdDelete = Prettify<{
 		search?: Record<string, unknown>;
 		params: {
-			id: string;
+			id: number;
 		};
 		response: void;
 	}>;
@@ -193,13 +193,13 @@ namespace Models {
 		{
 			search?: Record<string, unknown>;
 			params: {
-				id: string;
+				id: number;
 			};
 			response: {
-				authorId: string;
+				authorId: number;
 				content: string;
 				createdAt: string;
-				id: string;
+				id: number;
 				metadata: {
 					category: "life" | "other" | "tech";
 					likes: number;
@@ -239,7 +239,7 @@ namespace Models {
 						name: string;
 						owner: {
 							role: "admin" | "editor" | "viewer";
-							userId: string;
+							userId: number;
 						};
 						plan: "enterprise" | "free" | "pro";
 						seats: number;
@@ -258,7 +258,7 @@ namespace Models {
 			page: number;
 		};
 		params: {
-			orgId: string;
+			orgId: number;
 		};
 		response: void;
 	}>;
@@ -266,8 +266,8 @@ namespace Models {
 		{
 			search?: Record<string, unknown>;
 			params: {
-				memberId: string;
-				orgId: string;
+				memberId: number;
+				orgId: number;
 			};
 			response: void;
 		} & (
@@ -287,8 +287,8 @@ namespace Models {
 	export type OrgsOrgIdMembersMemberIdDelete = Prettify<{
 		search?: Record<string, unknown>;
 		params: {
-			memberId: string;
-			orgId: string;
+			memberId: number;
+			orgId: number;
 		};
 		response: void;
 	}>;
@@ -351,9 +351,9 @@ class CorpusApi {
 		const req = new Request(url, { method, headers, body, ...args.init });
 		const res = await fetch(req);
 		const contentType = res.headers.get("content-type");
-		if (contentType?.includes("application/json")) return res.json();
-		if (contentType?.includes("text/")) return res.text();
-		return res.blob();
+		if (contentType?.includes("application/json")) return await res.json();
+		if (contentType?.includes("text/")) return await res.text();
+		return await res.blob();
 	};
 
 	public setFetchFn(cb: <R = unknown>(args: RequestDescriptor) => Promise<R>) {

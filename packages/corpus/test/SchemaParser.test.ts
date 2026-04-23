@@ -2,6 +2,8 @@ import { beforeEach, describe, expect, it } from "bun:test";
 
 import type { Schema, SchemaValidator, ValidationIssues } from "corpus-utils/Schema";
 
+import type { SchemaParser } from "@/Parser/SchemaParser";
+
 import { $registryTesting, TC } from "./_modules";
 import { createTestServer } from "./utils/createTestServer";
 import { TestModel } from "./utils/TestModel";
@@ -17,7 +19,7 @@ beforeEach(() => {
 	new TestParsingController();
 });
 
-const parser = $registryTesting.schemaParser;
+const parser = $registryTesting.schemaParser as SchemaParser;
 const parse = (data: unknown, schema: Schema) =>
 	parser.parse("test", data, schema["~standard"].validate);
 

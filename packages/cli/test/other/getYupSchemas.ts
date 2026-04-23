@@ -13,7 +13,7 @@ export function getYupSchemas() {
 		createdAt: y.string().required(),
 		updatedAt: y.string().required(),
 	});
-	const UserParams = y.object({ id: y.string().required() });
+	const UserParams = y.object({ id: y.number().required() });
 	const UserBody = y.object({
 		name: y.string().required(),
 		age: y.number().required(),
@@ -32,7 +32,7 @@ export function getYupSchemas() {
 	);
 	const UserResponse = y
 		.object({
-			id: y.string().required(),
+			id: y.number().required(),
 			name: y.string().required(),
 			age: y.number().required(),
 			role: Role.required(),
@@ -54,11 +54,11 @@ export function getYupSchemas() {
 	});
 	const PostResponse = y
 		.object({
-			id: y.string().required(),
+			id: y.number().required(),
 			title: y.string().required(),
 			content: y.string().required(),
 			published: y.boolean().required(),
-			authorId: y.string().required(),
+			authorId: y.number().required(),
 			metadata: y
 				.object({
 					views: y.number().required(),
@@ -71,21 +71,21 @@ export function getYupSchemas() {
 				.required(),
 		})
 		.concat(Timestamp);
-	const OrgParams = y.object({ orgId: y.string().required() });
+	const OrgParams = y.object({ orgId: y.number().required() });
 	const OrgBody = y.object({
 		name: y.string().required(),
 		plan: y.mixed<"free" | "pro" | "enterprise">().oneOf(["free", "pro", "enterprise"]).required(),
 		seats: y.number().required(),
 		owner: y
 			.object({
-				userId: y.string().required(),
+				userId: y.number().required(),
 				role: Role.required(),
 			})
 			.required(),
 	});
 	const OrgMemberParams = y.object({
-		orgId: y.string().required(),
-		memberId: y.string().required(),
+		orgId: y.number().required(),
+		memberId: y.number().required(),
 	});
 	const OrgMemberBody = y.object({
 		role: Role.required(),

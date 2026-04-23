@@ -8,6 +8,9 @@ RED='\033[0;31m'
 RESET='\033[0m'
 STEP=0
 
+next() {
+  STEP=$((STEP + 1))
+}
 
 pause() {
   echo ""
@@ -15,15 +18,20 @@ pause() {
   echo -e "Press any key to continue, or Ctrl+C to abort..."
   read -rsk 1
   echo ""
-  STEP=$((STEP + 1))
+  next
 }
 
 echo -e "${GREEN}=== Corpus Release Script ===${RESET}"
 
 # Login
-echo -e "${GREEN}Step ${STEP}: Running pnpm login...${RESET}"
-pnpm login
-pause "Step ${STEP} complete. Ready to backup?"
+if pnpm whoami &>/dev/null; then
+  echo -e "${GREEN}Step ${STEP}: Already logged in as $(pnpm whoami), skipping...${RESET}"
+  next
+else
+  echo -e "${GREEN}Step ${STEP}: Running pnpm login...${RESET}"
+  pnpm login
+  pause "Step ${STEP} complete. Ready to backup?"
+fi
 
 # Clean dist and node_modules from all packages (with backup)
 echo -e "${RED}Step ${STEP}: Backing up and deleting dist and node_modules...${RESET}"

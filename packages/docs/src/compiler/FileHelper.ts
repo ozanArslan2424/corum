@@ -8,9 +8,9 @@ export class FileHelper {
 
 	addr(...p: string[]) {
 		if (X.Config.nodeEnv === "development") {
-			return path.resolve(X.Config.cwd(), "src", ...p);
+			return path.resolve(process.cwd(), "src", ...p);
 		}
-		return path.resolve(X.Config.cwd(), ...p);
+		return path.resolve(process.cwd(), ...p);
 	}
 
 	out(...p: string[]) {

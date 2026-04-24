@@ -1,3 +1,5 @@
+import path from "node:path";
+
 import type { Func } from "corpus-utils/Func";
 import type { MaybePromise } from "corpus-utils/MaybePromise";
 
@@ -12,7 +14,6 @@ import { Exception } from "@/Exception/Exception";
 import { Method } from "@/Method/Method";
 import { Res } from "@/Res/Res";
 import { Status } from "@/Status/Status";
-import { XConfig } from "@/XConfig/XConfig";
 import { XFile } from "@/XFile/XFile";
 
 type R = Res | string;
@@ -78,7 +79,7 @@ export abstract class BundleRouteAbstract<
 			const subPath = pathname.startsWith(this.path) ? pathname.slice(this.path.length) : pathname;
 
 			const relFilePath = subPath === "" || subPath === "/" ? idx : subPath;
-			const targetPath = XConfig.joinPath(this.dir, relFilePath);
+			const targetPath = path.join(this.dir, relFilePath);
 
 			const isIgnored = this.ignore.some((pattern) => {
 				if (pattern.endsWith("*")) {
@@ -96,7 +97,7 @@ export abstract class BundleRouteAbstract<
 			let exists = await file.exists();
 
 			if (!exists && file.extension !== "html") {
-				const idxPath = XConfig.joinPath(this.dir, idx);
+				const idxPath = path.join(this.dir, idx);
 				const idxFile = new XFile(idxPath);
 
 				if (await idxFile.exists()) {

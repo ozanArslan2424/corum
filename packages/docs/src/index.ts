@@ -1,8 +1,8 @@
-import { C, X } from "@ozanarslan/corpus";
+import { C } from "@ozanarslan/corpus";
 
 import { compile } from "@/compiler/compile";
 
-const outDir = `${X.Config.cwd()}/public`;
+const outDir = `${process.cwd()}/public`;
 
 await compile(outDir);
 

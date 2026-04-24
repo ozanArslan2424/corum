@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "bun:test";
+import path from "node:path";
 
-import { $registryTesting, TC, TX } from "./_modules";
+import { $registryTesting, TC } from "./_modules";
 import { createTestServer } from "./utils/createTestServer";
 import { req } from "./utils/req";
 
@@ -8,7 +9,7 @@ beforeEach(() => $registryTesting.reset());
 
 describe("C.StaticRoute", () => {
 	const s = createTestServer();
-	const f = (file: string) => TX.Config.resolvePath("test", "fixtures", file);
+	const f = (file: string) => path.resolve("test", "fixtures", file);
 
 	// ─── constructor ──────────────────────────────────────────────
 

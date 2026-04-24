@@ -1,5 +1,11 @@
 # @ozanarslan/corpus
 
+## 0.5.8
+
+### Patch Changes
+
+- XConfig cleanup
+
 ## 0.5.7
 
 ### Patch Changes

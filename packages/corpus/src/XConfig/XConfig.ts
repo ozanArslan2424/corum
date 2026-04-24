@@ -1,5 +1,3 @@
-import path from "path";
-
 import type { Func } from "corpus-utils/Func";
 import { log } from "corpus-utils/internalLog";
 import type { OrString } from "corpus-utils/OrString";
@@ -36,18 +34,6 @@ export class XConfig {
 				log.warn("⚠️ process.env wasn't available. Your environment variables are in memory.");
 				return {};
 		}
-	}
-
-	static cwd() {
-		return process.cwd();
-	}
-
-	static resolvePath(...paths: string[]) {
-		return path.resolve(...paths);
-	}
-
-	static joinPath(...paths: string[]) {
-		return path.join(...paths);
 	}
 
 	static get<T = string>(
